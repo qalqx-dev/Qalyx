@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#000000">
+    <title>Qalyx Mobile</title>
+    <style>
+        /* THEME: DEEP ONYX & NEON CYAN */
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            font-family: sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* HEADER AREA */
+        .header {
+            margin-top: 40px;
+            text-align: center;
+            border-bottom: 2px solid #00E5FF;
+            padding-bottom: 10px;
+            width: 80%;
+        }
+
+        h1 { margin: 0; letter-spacing: 2px; font-size: 2.5rem; text-transform: uppercase; }
+        .sub { color: #00E5FF; font-size: 0.8rem; letter-spacing: 4px; }
+
+        /* THE MENU GRID */
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* 2 columns */
+            gap: 15px;
+            width: 90%;
+            margin-top: 30px;
+        }
+
+        .btn {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 12px;
+            height: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #eee;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        /* ACTIVE STATE (When you tap) */
+        .btn:active {
+            background: #00E5FF;
+            color: #000;
+            border-color: #00E5FF;
+        }
+
+        .icon { font-size: 2rem; margin-bottom: 5px; }
+        .label { font-size: 0.9rem; font-weight: bold; }
+
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>QalQx</h1>
+        <div class="sub">SUPREME UTILITY</div>
+    </div>
+
+        <div class="grid">
+        <a href="tools/age.html" class="btn">
+            <div class="card-icon">🎂</div>
+            <div class="card-name">Age Detailed</div>
+        </a>
+
+        <a href="tools/health/bmi.html" class="btn">
+            <div class="card-icon">💪</div>
+            <div class="card-name">BMI Index</div>
+        </a>
+
+        <a href="tools/math/calc.html" class="btn">
+            <div class="card-icon">🧮</div>
+            <div class="card-name">Prime Calc</div>
+        </a>
+
+        <div class="btn" style="opacity: 0.5;">
+            <div class="card-icon">🔒</div>
+            <div class="card-name">Coming Soon</div>
+        </div>
+    </div>
+
+
+</body>
+</html>

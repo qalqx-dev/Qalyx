@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMI | QALQX</title>
+    <style>
+        body { background-color: #000; color: #E0E0E0; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; min-height: 100vh; margin: 0; }
+        .nav { width: 100%; padding: 20px; background: #111; border-bottom: 1px solid #333; display: flex; align-items: center; }
+        .back-btn { text-decoration: none; color: #888; font-size: 1.5rem; margin-right: 20px; }
+        h2 { margin: 0; color: #00E5FF; text-transform: uppercase; letter-spacing: 1px; }
+
+        .container { width: 85%; max-width: 500px; margin-top: 30px; display: flex; flex-direction: column; gap: 15px; }
+        input { background: #1A1A1A; border: 1px solid #333; color: white; padding: 15px; border-radius: 8px; font-size: 1.1rem; width: 100%; box-sizing: border-box; outline: none; }
+        input:focus { border-color: #00E5FF; }
+        button { background: #00E5FF; color: #000; border: none; padding: 15px; border-radius: 8px; font-weight: bold; font-size: 1rem; margin-top: 10px; width: 100%; }
+
+        /* RESULT DASHBOARD */
+        #resultArea { display: none; margin-top: 30px; background: #111; padding: 20px; border-radius: 12px; border: 1px solid #333; text-align: center; }
+        .bmi-value { font-size: 3rem; font-weight: bold; color: #fff; }
+        .bmi-label { font-size: 1.2rem; margin-bottom: 15px; font-weight: bold; }
+        
+        /* THE BAR */
+        .bar-container { width: 100%; height: 10px; background: #333; border-radius: 5px; margin-top: 10px; overflow: hidden; }
+        .bar-fill { height: 100%; width: 0%; transition: width 0.5s ease, background-color 0.5s ease; }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="../../index.html" class="back-btn">←</a> <h2>BMI Index</h2>
+    </div>
+
+    <div class="container">
+        <input type="number" id="weight" placeholder="Weight (kg)">
+        <input type="number" id="height" placeholder="Height (cm)">
+        <button onclick="calcBMI()">CHECK HEALTH</button>
+
+        <div id="resultArea">
+            <div class="bmi-value" id="val">0.0</div>
+            <div class="bmi-label" id="label">Normal</div>
+            <div class="bar-container">
+                <div class="bar-fill" id="bar"></div>
+            </div>
+            <p style="color:#666; font-size:0.8rem; margin-top:15px;">Healthy range: 18.5 - 24.9</p>
+        </div>
+    </div>
+
+    <script>
+        function calcBMI() {
+            let kg = parseFloat(document.getElementById('weight').value);
+            let cm = parseFloat(document.getElementById('height').value);
+            
+            if (!kg || !cm) { alert("Enter both values!"); return; }
+
+            let m = cm / 100;
+            let bmi = kg / (m * m);
+            let finalBMI = bmi.toFixed(1);
+
+            // Logic for Color & Label
+            let label = "";
+            let color = "";
+            let width = "0%";
+
+            if (bmi < 18.5) {
+                label = "Underweight"; color = "#FFD700"; width = "30%"; // Yellow
+            } else if (bmi >= 18.5 && bmi < 24.9) {
+                label = "Normal Weight"; color = "#00FF7F"; width = "50%"; // Spring Green
+            } else if (bmi >= 25 && bmi < 29.9) {
+                label = "Overweight"; color = "#FFA500"; width = "75%"; // Orange
+            } else {
+                label = "Obese"; color = "#FF4500"; width = "100%"; // Red-Orange
+            }
+
+            // Update UI
+            document.getElementById('resultArea').style.display = 'block';
+            document.getElementById('val').innerText = finalBMI;
+            document.getElementById('label').innerText = label;
+            document.getElementById('label').style.color = color;
+            
+            let bar = document.getElementById('bar');
+            bar.style.width = width;
+            bar.style.backgroundColor = color;
+        }
+    </script>
+</body>
+</html>

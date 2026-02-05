@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math | QALQX</title>
+    <style>
+        body { background-color: #000; color: white; font-family: sans-serif; margin: 0; display: flex; flex-direction: column; height: 100vh; }
+        
+        /* HEADER */
+        .nav { padding: 15px; background: #111; display: flex; align-items: center; height: 50px; }
+        .back-btn { text-decoration: none; color: #888; font-size: 1.5rem; margin-right: 20px; }
+        
+        /* DISPLAY SCREEN */
+        .display {
+            flex-grow: 1; /* Takes up all available space */
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 20px;
+            text-align: right;
+        }
+        #history { color: #666; font-size: 1.2rem; margin-bottom: 5px; min-height: 1.5rem; }
+        #screen { color: #fff; font-size: 3.5rem; font-weight: bold; word-wrap: break-word; }
+
+        /* KEYPAD */
+        .keypad {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            height: 60%;
+            background: #111;
+            gap: 1px;
+        }
+        button {
+            background: #1A1A1A; border: none; color: #fff; font-size: 1.5rem;
+            display: flex; align-items: center; justify-content: center;
+        }
+        button:active { background: #333; }
+        
+        .op { color: #00E5FF; font-weight: bold; background: #161616; } /* Operators */
+        .eq { background: #00E5FF; color: #000; font-weight: bold; } /* Equal button */
+        .clear { color: #FF4500; } /* AC button */
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="../../index.html" class="back-btn">←</a>
+        <span style="color:#00E5FF; font-weight:bold;">PRIME CALC</span>
+    </div>
+
+    <div class="display">
+        <div id="history"></div>
+        <div id="screen">0</div>
+    </div>
+
+    <div class="keypad">
+        <button class="clear" onclick="clearScreen()">AC</button>
+        <button class="op" onclick="del()">⌫</button>
+        <button class="op" onclick="append('%')">%</button>
+        <button class="op" onclick="append('/')">÷</button>
+        
+        <button onclick="append('7')">7</button>
+        <button onclick="append('8')">8</button>
+        <button onclick="append('9')">9</button>
+        <button class="op" onclick="append('*')">×</button>
+        
+        <button onclick="append('4')">4</button>
+        <button onclick="append('5')">5</button>
+        <button onclick="append('6')">6</button>
+        <button class="op" onclick="append('-')">−</button>
+        
+        <button onclick="append('1')">1</button>
+        <button onclick="append('2')">2</button>
+        <button onclick="append('3')">3</button>
+        <button class="op" onclick="append('+')">+</button>
+        
+        <button onclick="append('00')">00</button>
+        <button onclick="append('0')">0</button>
+        <button onclick="append('.')">.</button>
+        <button class="eq" onclick="calculate()">=</button>
+    </div>
+
+    <script>
+        let currentInput = "";
+        let screen = document.getElementById('screen');
+        let history = document.getElementById('history');
+
+        function append(val) {
+            if (currentInput === "" && (val === "*" || val === "/" || val === "%")) return;
+            currentInput += val;
+            screen.innerText = currentInput;
+        }
+
+        function clearScreen() {
+            currentInput = "";
+            screen.innerText = "0";
+            history.innerText = "";
+        }
+
+        function del() {
+            currentInput = currentInput.slice(0, -1);
+            screen.innerText = currentInput || "0";
+        }
+
+        function calculate() {
+            try {
+                // Save history before calculating
+                history.innerText = currentInput;
+                // Evaluate (Caution: eval is dangerous in big apps, but okay for a simple calc)
+                let result = eval(currentInput); 
+                screen.innerText = result;
+                currentInput = result.toString();
+            } catch (e) {
+                screen.innerText = "Error";
+                currentInput = "";
+            }
+        }
+    </script>
+</body>
+</html>

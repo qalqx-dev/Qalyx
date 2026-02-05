@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Age | QALQX</title>
+    <style>
+        /* QALQX THEME v2 */
+        body {
+            background-color: #000000;
+            color: #E0E0E0;
+            font-family: sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .nav {
+            width: 100%;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            background: #111;
+            border-bottom: 1px solid #333;
+        }
+
+        .back-btn { text-decoration: none; color: #888; font-size: 1.5rem; margin-right: 20px; }
+        h2 { margin: 0; color: #00E5FF; text-transform: uppercase; font-size: 1.1rem; letter-spacing: 1px; }
+
+        .container {
+            width: 85%;
+            max-width: 500px;
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        label { color: #888; font-size: 0.9rem; }
+        
+        input {
+            background: #1A1A1A;
+            border: 1px solid #333;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            outline: none;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        button {
+            background: #00E5FF;
+            color: #000;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1rem;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        /* THE STATS GRID */
+        #resultArea { display: none; margin-top: 20px; width: 100%; padding-bottom: 50px; }
+
+        .main-age {
+            text-align: center;
+            font-size: 2.5rem;
+            color: #fff;
+            font-weight: bold;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 20px;
+        }
+        .main-age span { color: #00E5FF; }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            background: #111;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            border-left: 3px solid #333;
+        }
+
+        .stat-label { color: #888; font-size: 0.9rem; }
+        .stat-value { color: #fff; font-weight: bold; font-family: monospace; font-size: 1rem; }
+
+        .timestamp {
+            text-align: center;
+            color: #555;
+            font-size: 0.75rem;
+            margin-top: 20px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="nav">
+        <a href="../index.html" class="back-btn">←</a>
+        <h2>Age Detailed</h2>
+    </div>
+
+    <div class="container">
+        <div>
+            <label>Select Date of Birth:</label>
+            <input type="date" id="dob">
+        </div>
+        <button onclick="calculateDetailedAge()">CALCULATE</button>
+
+        <div id="resultArea">
+            <div class="main-age" id="mainAge"></div>
+
+            <div class="stat-row">
+                <span class="stat-label">Months</span>
+                <span class="stat-value" id="val-months"></span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Weeks</span>
+                <span class="stat-value" id="val-weeks"></span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Days</span>
+                <span class="stat-value" id="val-days"></span>
+            </div>
+            <div class="stat-row" style="border-left-color: #00E5FF;">
+                <span class="stat-label">Hours</span>
+                <span class="stat-value" id="val-hours"></span>
+            </div>
+            <div class="stat-row" style="border-left-color: #00E5FF;">
+                <span class="stat-label">Minutes</span>
+                <span class="stat-value" id="val-minutes"></span>
+            </div>
+            <div class="stat-row" style="border-left-color: #00E5FF;">
+                <span class="stat-label">Seconds</span>
+                <span class="stat-value" id="val-seconds"></span>
+            </div>
+
+            <div class="timestamp" id="timeRef"></div>
+        </div>
+    </div>
+
+    <script>
+        function calculateDetailedAge() {
+            let input = document.getElementById('dob').value;
+            if (!input) return;
+
+            let dob = new Date(input);
+            let now = new Date();
+            let diff = now - dob; // Difference in milliseconds
+
+            // Basic Units
+            const msPerDay = 1000 * 60 * 60 * 24;
+            const msPerYear = msPerDay * 365.25; // Accounting for leap years
+
+            // Calculations
+            let years = Math.floor(diff / msPerYear);
+            let totalSeconds = Math.floor(diff / 1000);
+            let totalMinutes = Math.floor(totalSeconds / 60);
+            let totalHours = Math.floor(totalMinutes / 60);
+            let totalDays = Math.floor(diff / msPerDay); // Full days
+            let totalWeeks = (totalDays / 7).toFixed(1); // One decimal for weeks
+            let totalMonths = Math.floor(years * 12) + (now.getMonth() - dob.getMonth());
+
+            // Display Logic
+            document.getElementById('resultArea').style.display = 'block';
+            
+            // Main Header
+            document.getElementById('mainAge').innerHTML = years + " <span>years</span>";
+
+            // Update List (Adding commas for readability)
+            document.getElementById('val-months').innerText = totalMonths.toLocaleString();
+            document.getElementById('val-weeks').innerText = Number(totalWeeks).toLocaleString();
+            document.getElementById('val-days').innerText = totalDays.toLocaleString();
+            document.getElementById('val-hours').innerText = totalHours.toLocaleString();
+            document.getElementById('val-minutes').innerText = totalMinutes.toLocaleString();
+            document.getElementById('val-seconds').innerText = totalSeconds.toLocaleString();
+
+            // As On...
+            document.getElementById('timeRef').innerText = "As on: " + now.toLocaleString();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetSpeed | QALQX</title>
+    <style>
+        body { background-color: #000; color: #E0E0E0; font-family: 'Courier New', monospace; display: flex; flex-direction: column; align-items: center; min-height: 100vh; margin: 0; }
+        .nav { width: 100%; padding: 20px; background: #111; border-bottom: 1px solid #333; display: flex; align-items: center; }
+        .back-btn { text-decoration: none; color: #888; font-size: 1.5rem; margin-right: 20px; }
+        h2 { margin: 0; color: #00E5FF; text-transform: uppercase; letter-spacing: 2px; }
+
+        .dashboard {
+            margin-top: 50px;
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            border: 4px solid #333;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.1);
+        }
+
+        .speed-val { font-size: 3.5rem; color: #fff; font-weight: bold; text-shadow: 0 0 10px #00E5FF; }
+        .unit { font-size: 1rem; color: #888; margin-top: 5px; }
+        
+        /* Status Ring Animation */
+        .ring {
+            position: absolute;
+            top: -4px; left: -4px; right: -4px; bottom: -4px;
+            border-radius: 50%;
+            border: 4px solid transparent;
+            border-top-color: #00E5FF;
+            animation: spin 1s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        button {
+            margin-top: 40px;
+            padding: 15px 40px;
+            background: transparent;
+            border: 2px solid #00E5FF;
+            color: #00E5FF;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            transition: 0.2s;
+        }
+
+        button:active { background: #00E5FF; color: #000; box-shadow: 0 0 20px #00E5FF; }
+        .status { margin-top: 20px; color: #666; font-size: 0.9rem; }
+
+    </style>
+</head>
+<body>
+
+    <div class="nav">
+        <a href="../../index.html" class="back-btn">←</a>
+        <h2>NET_SPEED</h2>
+    </div>
+
+    <div class="dashboard">
+        <div class="ring" id="loader"></div>
+        <div class="speed-val" id="speed">0.0</div>
+        <div class="unit">Mbps</div>
+    </div>
+
+    <div class="status" id="statusText">Ready to test</div>
+    <button onclick="startTest()">RUN TEST</button>
+
+    <script>
+        // Uses a 5MB image from a fast CDN to test download speed
+        const imageAddr = "https://upload.wikimedia.org/wikipedia/commons/2/2d/Snake_River_%285mb%29.jpg"; 
+        const downloadSize = 5245329; // bytes
+
+        function startTest() {
+            document.getElementById('statusText').innerText = "Testing download...";
+            document.getElementById('loader').style.display = 'block';
+            document.getElementById('speed').innerText = "---";
+            
+            const startTime = (new Date()).getTime();
+            const download = new Image();
+            
+            // Bypass cache to get real speed
+            download.src = imageAddr + "?n=" + Math.random();
+            
+            download.onload = function () {
+                const endTime = (new Date()).getTime();
+                const duration = (endTime - startTime) / 1000; // seconds
+                const bitsLoaded = downloadSize * 8;
+                const speedBps = bitsLoaded / duration;
+                const speedMbps = (speedBps / (1024 * 1024)).toFixed(2);
+                
+                showResult(speedMbps);
+            }
+
+            download.onerror = function () {
+                document.getElementById('statusText').innerText = "Error: Network blocked.";
+                document.getElementById('loader').style.display = 'none';
+            }
+        }
+
+        function showResult(mbps) {
+            document.getElementById('loader').style.display = 'none';
+            document.getElementById('statusText').innerText = "Test Complete";
+            
+            // Count up animation
+            let current = 0;
+            let increment = mbps / 20;
+            let timer = setInterval(() => {
+                current += increment;
+                if (current >= mbps) {
+                    current = mbps;
+                    clearInterval(timer);
+                }
+                document.getElementById('speed').innerText = parseFloat(current).toFixed(1);
+            }, 30);
+        }
+    </script>
+</body>
+</html>

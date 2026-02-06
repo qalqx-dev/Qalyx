@@ -3,108 +3,151 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#000000">
-    <title>Qalyx Mobile</title>
+    <title>QALQX | Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    
     <style>
-        /* THEME: DEEP ONYX & NEON CYAN */
+        /* DASHBOARD SPECIFIC STYLES */
+        /* We use the variables from style.css (var(--primary), var(--surface)) */
+        
         body {
-            background-color: #000000;
-            color: #ffffff;
-            font-family: sans-serif;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: 100vh;
+            justify-content: flex-start; /* Align to top */
+            padding: 20px;
+            box-sizing: border-box;
         }
 
-        /* HEADER AREA */
+        /* The Brand Header */
         .header {
-            margin-top: 40px;
-            text-align: center;
-            border-bottom: 2px solid #00E5FF;
-            padding-bottom: 10px;
-            width: 80%;
+            width: 100%;
+            max-width: 480px;
+            margin-top: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+            border-left: 4px solid var(--primary);
+            padding-left: 15px;
         }
+        h1 { margin: 0; font-size: 2.5rem; letter-spacing: -1px; text-transform: uppercase; color: #fff; }
+        .tagline { color: var(--primary); font-size: 0.9rem; font-weight: bold; letter-spacing: 2px; }
 
-        h1 { margin: 0; letter-spacing: 2px; font-size: 2.5rem; text-transform: uppercase; }
-        .sub { color: #00E5FF; font-size: 0.8rem; letter-spacing: 4px; }
+        /* Search Bar (Visual Only for now) */
+        .search-bar {
+            width: 100%;
+            max-width: 480px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 1rem;
+            outline: none;
+            margin-bottom: 25px;
+            box-sizing: border-box;
+        }
+        .search-bar:focus { border-color: var(--primary); box-shadow: 0 0 15px rgba(0, 229, 255, 0.1); }
 
-        /* THE MENU GRID */
+        /* The Grid */
         .grid {
             display: grid;
-            grid-template-columns: 1fr 1fr; /* 2 columns */
+            grid-template-columns: 1fr 1fr;
             gap: 15px;
-            width: 90%;
-            margin-top: 30px;
+            width: 100%;
+            max-width: 480px;
         }
 
-        .btn {
-            background: #111;
-            border: 1px solid #333;
-            border-radius: 12px;
-            height: 100px;
+        .card {
+            background: var(--surface);
+            padding: 20px;
+            border-radius: 16px;
+            text-decoration: none;
+            color: white;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            color: #eee;
-            text-decoration: none;
-            transition: 0.2s;
+            height: 110px;
+            border: 1px solid var(--border);
+            transition: transform 0.1s, border-color 0.2s;
+            position: relative;
+            overflow: hidden;
         }
 
-        /* ACTIVE STATE (When you tap) */
-        .btn:active {
-            background: #00E5FF;
+        /* Card Hover/Active Effects */
+        .card:active { transform: scale(0.96); border-color: var(--primary); background: #1a1a1a; }
+        
+        .card-icon { font-size: 2rem; margin-bottom: 10px; }
+        .card-name { font-size: 0.85rem; font-weight: 500; color: var(--text-main); letter-spacing: 0.5px; }
+
+        /* Utility Badge (New/Beta) */
+        .badge {
+            position: absolute;
+            top: 10px; right: 10px;
+            background: var(--primary);
             color: #000;
-            border-color: #00E5FF;
+            font-size: 0.6rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
         }
 
-        .icon { font-size: 2rem; margin-bottom: 5px; }
-        .label { font-size: 0.9rem; font-weight: bold; }
+        /* Footer Status */
+        .footer {
+            margin-top: 50px;
+            color: var(--text-dim);
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .dot { width: 8px; height: 8px; background: #00FF7F; border-radius: 50%; box-shadow: 0 0 10px #00FF7F; }
 
     </style>
 </head>
-<body> 
-    
+<body>
 
     <div class="header">
-        <h1>QalQx</h1>
-        <div class="sub">SUPREME UTILITY</div>
+        <h1>QALQX</h1>
+        <div class="tagline">SUPREME UTILITY v0.2</div>
     </div>
 
-        <div class="grid">
-        <a href="tools/age.html" class="btn">
+    <input type="text" class="search-bar" placeholder="Find tool...">
+
+    <div class="grid">
+        <a href="tools/age.html" class="card">
             <div class="card-icon">🎂</div>
             <div class="card-name">Age Detailed</div>
         </a>
 
-        <a href="tools/health/bmi.html" class="btn">
+        <a href="tools/health/bmi.html" class="card">
             <div class="card-icon">💪</div>
             <div class="card-name">BMI Index</div>
         </a>
 
-        <a href="tools/math/calc.html" class="btn">
+        <a href="tools/math/calc.html" class="card">
             <div class="card-icon">🧮</div>
             <div class="card-name">Prime Calc</div>
         </a>
-       
-        <a href="tools/utility/speed.html" class="btn">
+
+        <a href="tools/finance/emi.html" class="card" style="border-color: #333;">
+            <span class="badge">NEW</span>
+            <div class="card-icon">🏦</div>
+            <div class="card-name">EMI Finance</div>
+        </a>
+
+        <a href="tools/utility/speed.html" class="card">
             <div class="card-icon">⚡</div>
             <div class="card-name">Net Speed</div>
         </a>
 
-        <a href="tools/finance/emi.html" class="btn">
-            <div class="card-icon">🏦</div>
-            <div class="card-name">EMI Calc</div>
-        </a>
-
-        <div class="btn" style="opacity: 0.5;">
+        <div class="card" style="opacity: 0.3;">
             <div class="card-icon">🔒</div>
             <div class="card-name">Coming Soon</div>
         </div>
     </div>
 
+    <div class="footer">
+        <div class="dot"></div>
+        SYSTEM ONLINE • SERVERS ACTIVE
+    </div>
 
 </body>
 </html>

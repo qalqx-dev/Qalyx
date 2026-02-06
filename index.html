@@ -3,225 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>QALQX | Dashboard</title>
     <link rel="stylesheet" href="style.css">
-    
     <link rel="manifest" href="manifest.json">
-
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <style>
         /* DASHBOARD SPECIFIC STYLES */
-        /* We use the variables from style.css (var(--primary), var(--surface)) */
+        body { justify-content: flex-start; padding: 20px; box-sizing: border-box; }
         
-        body {
-            justify-content: flex-start; /* Align to top */
-            padding: 20px;
-            box-sizing: border-box;
-        }
-
-        /* The Brand Header */
-        .header {
-            width: 100%;
-            max-width: 480px;
-            margin-top: 20px;
-            margin-bottom: 30px;
-            text-align: left;
-            border-left: 4px solid var(--primary);
-            padding-left: 15px;
-        }
+        /* Header */
+        .header { width: 100%; max-width: 480px; margin-top: 20px; margin-bottom: 25px; text-align: left; border-left: 4px solid var(--primary); padding-left: 15px; }
         h1 { margin: 0; font-size: 2.5rem; letter-spacing: -1px; text-transform: uppercase; color: #fff; }
         .tagline { color: var(--primary); font-size: 0.9rem; font-weight: bold; letter-spacing: 2px; }
 
-        /* Search Bar (Visual Only for now) */
-        .search-bar {
-            width: 100%;
-            max-width: 480px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            color: white;
-            padding: 15px;
-            border-radius: 12px;
-            font-size: 1rem;
-            outline: none;
-            margin-bottom: 25px;
-            box-sizing: border-box;
-        }
-        .search-bar:focus { border-color: var(--primary); box-shadow: 0 0 15px rgba(0, 229, 255, 0.1); }
+        /* Search */
+        .search-bar { width: 100%; max-width: 480px; background: var(--surface); border: 1px solid var(--border); color: white; padding: 15px; border-radius: 12px; font-size: 1rem; outline: none; margin-bottom: 25px; box-sizing: border-box; position: sticky; top: 10px; z-index: 50; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+        .search-bar:focus { border-color: var(--primary); }
 
-        /* The Grid */
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            width: 100%;
-            max-width: 480px;
-        }
+        /* Grid */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; max-width: 480px; padding-bottom: 80px; }
 
-        .card {
-            background: var(--surface);
-            padding: 20px;
-            border-radius: 16px;
-            text-decoration: none;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 110px;
-            border: 1px solid var(--border);
-            transition: transform 0.1s, border-color 0.2s;
-            position: relative;
-            overflow: hidden;
-        }
+        .card { background: var(--surface); padding: 15px; border-radius: 16px; text-decoration: none; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100px; border: 1px solid var(--border); transition: transform 0.1s; position: relative; overflow: hidden; }
+        .card:active { transform: scale(0.96); background: #222; border-color: var(--primary); }
+        .card-icon { font-size: 2rem; margin-bottom: 8px; }
+        .card-name { font-size: 0.8rem; font-weight: 500; color: #ccc; letter-spacing: 0.5px; text-align: center; }
 
-        /* Card Hover/Active Effects */
-        .card:active { transform: scale(0.96); border-color: var(--primary); background: #1a1a1a; }
-        
-        .card-icon { font-size: 2rem; margin-bottom: 10px; }
-        .card-name { font-size: 0.85rem; font-weight: 500; color: var(--text-main); letter-spacing: 0.5px; }
+        /* New Badge */
+        .badge { position: absolute; top: 8px; right: 8px; background: var(--primary); color: #000; font-size: 0.55rem; padding: 2px 5px; border-radius: 4px; font-weight: bold; }
 
-        /* Utility Badge (New/Beta) */
-        .badge {
-            position: absolute;
-            top: 10px; right: 10px;
-            background: var(--primary);
-            color: #000;
-            font-size: 0.6rem;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-weight: bold;
-        }
-
-        /* Footer Status */
-        .footer {
-            margin-top: 50px;
-            color: var(--text-dim);
-            font-size: 0.75rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+        /* Footer */
+        .footer { margin-top: 30px; color: #666; font-size: 0.75rem; display: flex; align-items: center; gap: 8px; justify-content: center; width: 100%; }
         .dot { width: 8px; height: 8px; background: #00FF7F; border-radius: 50%; box-shadow: 0 0 10px #00FF7F; }
-
     </style>
 </head>
 <body>
 
     <div class="header">
         <h1>QALQX</h1>
-        <div class="tagline">SUPREME UTILITY v0.2</div>
+        <div class="tagline">OPERATING SYSTEM v1.0</div>
     </div>
 
-    <input type="text" class="search-bar" placeholder="Find tool...">
+    <input type="text" class="search-bar" placeholder="Search 30 tools...">
 
-       <div class="grid">
-        <a href="tools/age.html" class="card">
-            <div class="card-icon">🎂</div>
-            <div class="card-name">Age Detailed</div>
-        </a>
+    <div class="grid">
+        <a href="tools/age.html" class="card"><div class="card-icon">🎂</div><div class="card-name">Age Detailed</div></a>
+        <a href="tools/utility/system.html" class="card"><div class="card-icon">📱</div><div class="card-name">Sys Monitor</div></a>
+        <a href="tools/utility/speed.html" class="card"><div class="card-icon">⚡</div><div class="card-name">Net Speed</div></a>
+        <a href="tools/utility/converter.html" class="card"><div class="card-icon">⚖️</div><div class="card-name">Unit Master</div></a>
 
-        <a href="tools/health/bmi.html" class="card">
-            <div class="card-icon">💪</div>
-            <div class="card-name">BMI Index</div>
-        </a>
+        <a href="tools/finance/emi.html" class="card"><div class="card-icon">🏦</div><div class="card-name">EMI Finance</div></a>
+        <a href="tools/finance/discount.html" class="card"><div class="card-icon">🏷️</div><div class="card-name">Discount</div></a>
+        <a href="tools/finance/tip.html" class="card"><div class="card-icon">🍽️</div><div class="card-name">Tip Splitter</div></a>
 
-        <a href="tools/math/calc.html" class="card">
-            <div class="card-icon">🧮</div>
-            <div class="card-name">Prime Calc</div>
-        </a>
+        <a href="tools/productivity/focus.html" class="card"><div class="card-icon">🎯</div><div class="card-name">Focus Timer</div></a>
+        <a href="tools/productivity/todo.html" class="card"><div class="card-icon">✅</div><div class="card-name">Task Master</div></a>
+        <a href="tools/productivity/notes.html" class="card"><div class="card-icon">📝</div><div class="card-name">Quick Notes</div></a>
+        <a href="tools/student/grade.html" class="card"><div class="card-icon">🎓</div><div class="card-name">Grade Calc</div></a>
+        <a href="tools/student/geometry.html" class="card"><div class="card-icon">📐</div><div class="card-name">Geometry</div></a>
 
-        <a href="tools/finance/emi.html" class="card">
-            <div class="card-icon">🏦</div>
-            <div class="card-name">EMI Finance</div>
-        </a>
+        <a href="tools/dev/ip.html" class="card"><div class="card-icon">🌐</div><div class="card-name">IP Tracer</div></a>
+        <a href="tools/dev/qr.html" class="card"><div class="card-icon">🔳</div><div class="card-name">QR Gen</div></a>
+        <a href="tools/security/pass.html" class="card"><div class="card-icon">🔐</div><div class="card-name">Pass Gen</div></a>
+        <a href="tools/security/hash.html" class="card"><div class="card-icon">🛡️</div><div class="card-name">Secure Hash</div></a>
+        <a href="tools/dev/base64.html" class="card"><div class="card-icon">🧬</div><div class="card-name">Base64</div></a>
+        <a href="tools/dev/color.html" class="card"><div class="card-icon">🎨</div><div class="card-name">Color Lab</div></a>
+        <a href="tools/utility/aspect.html" class="card"><div class="card-icon">🖥️</div><div class="card-name">Aspect Ratio</div></a>
+        <a href="tools/dev/text.html" class="card"><div class="card-icon">abc</div><div class="card-name">Text Master</div></a>
+        <a href="tools/dev/lorem.html" class="card"><div class="card-icon">📄</div><div class="card-name">Lorem Ipsum</div></a>
 
-        <a href="tools/security/pass.html" class="card">
-            <div class="card-icon">🔐</div>
-            <div class="card-name">Pass Gen</div>
-        </a>
+        <a href="tools/math/calc.html" class="card"><div class="card-icon">🧮</div><div class="card-name">Prime Calc</div></a>
+        <a href="tools/time/stopwatch.html" class="card"><div class="card-icon">⏱️</div><div class="card-name">Chrono</div></a>
+        <a href="tools/time/datediff.html" class="card"><div class="card-icon">📅</div><div class="card-name">Date Diff</div></a>
 
-        <a href="tools/utility/converter.html" class="card">
-            <div class="card-icon">⚖️</div>
-            <div class="card-name">Unit Master</div>
-        </a>
-
-        <a href="tools/utility/speed.html" class="card">
-            <div class="card-icon">⚡</div>
-            <div class="card-name">Net Speed</div>
-        </a>
-
-        <a href="tools/time/stopwatch.html" class="card">
-            <div class="card-icon">⏱️</div>
-            <div class="card-name">Chrono</div>
-        </a>
-       
-        <a href="tools/utility/system.html" class="card">
-            <div class="card-icon">📱</div>
-            <div class="card-name">Sys Monitor</div>
-        </a>
-
-        <a href="tools/dev/qr.html" class="card">
-            <div class="card-icon">🔳</div>
-            <div class="card-name">QR Gen</div>
-        </a>
-
-        <a href="tools/dev/text.html" class="card">
-            <div class="card-icon">📝</div>
-            <div class="card-name">Text Master</div>
-        </a>
-
-        <a href="tools/finance/discount.html" class="card">
-            <div class="card-icon">🏷️</div>
-            <div class="card-name">Discount</div>
-        </a>
-
-<a href="tools/productivity/focus.html" class="card"><div class="card-icon">🎯</div><div class="card-name">Focus Timer</div></a>
-
-<a href="tools/productivity/notes.html" class="card"><div class="card-icon">📝</div><div class="card-name">Quick Notes</div></a>
-
-<a href="tools/productivity/todo.html" class="card"><div class="card-icon">✅</div><div class="card-name">Task Master</div></a>
-
-<a href="tools/student/geometry.html" class="card"><div class="card-icon">📐</div><div class="card-name">Geometry</div></a>
-
-<a href="tools/student/grade.html" class="card"><div class="card-icon">🎓</div><div class="card-name">Grade Calc</div></a>
-
-<a href="tools/utility/random.html" class="card"><div class="card-icon">🎲</div><div class="card-name">Rand Picker</div></a>
-<a href="tools/dev/ip.html" class="card"><div class="card-icon">🌐</div><div class="card-name">IP Tracer</div></a>
-<a href="tools/dev/base64.html" class="card"><div class="card-icon">🧬</div><div class="card-name">Base64</div></a>
-<a href="tools/dev/color.html" class="card"><div class="card-icon">🎨</div><div class="card-name">Color Lab</div></a>
-<a href="tools/security/hash.html" class="card"><div class="card-icon">🛡️</div><div class="card-name">Hash Gen</div></a>
-<a href="tools/utility/aspect.html" class="card"><div class="card-icon">🖥️</div><div class="card-name">Aspect Ratio</div></a>
-<a href="tools/dev/lorem.html" class="card"><div class="card-icon">📄</div><div class="card-name">Lorem Ipsum</div></a>
-
-         <div class="card" style="opacity: 0.3;">
+        <a href="tools/health/bmi.html" class="card"><div class="card-icon">💪</div><div class="card-name">BMI Index</div></a>
+        <a href="tools/health/breath.html" class="card"><div class="card-icon">🧘</div><div class="card-name">Breath Pacer</div></a>
+        <a href="tools/game/reaction.html" class="card"><div class="card-icon">⚡</div><div class="card-name">Reflex Test</div></a>
+        <a href="tools/utility/screen.html" class="card"><div class="card-icon">📺</div><div class="card-name">Screen Test</div></a>
+        <a href="tools/utility/tally.html" class="card"><div class="card-icon">🔢</div><div class="card-name">Tally Count</div></a>
+        <a href="tools/utility/random.html" class="card"><div class="card-icon">🎲</div><div class="card-name">Rand Picker</div></a>
+        
+        <div class="card" style="opacity: 0.3; border-style: dashed;">
             <div class="card-icon">🚀</div>
-            <div class="card-name">More Soon</div>
+            <div class="card-name">Batch 50 Soon</div>
         </div>
     </div>
 
-
     <div class="footer">
         <div class="dot"></div>
-        SYSTEM ONLINE • SERVERS ACTIVE
+        SYSTEM ONLINE • 30 MODULES ACTIVE
     </div>
 
     <script>
-        // 1. Get the Search Bar
+        // INSTANT SEARCH ENGINE
         const searchInput = document.querySelector('.search-bar');
-        
-        // 2. Get all the Cards
         const cards = document.querySelectorAll('.card');
 
-        // 3. Listen for typing
         searchInput.addEventListener('input', (e) => {
             const value = e.target.value.toLowerCase();
-
             cards.forEach(card => {
-                // Get the name of the tool inside the card
                 const name = card.querySelector('.card-name').innerText.toLowerCase();
-                
-                // If the name matches what you typed, show it. Otherwise, hide it.
                 if (name.includes(value)) {
                     card.style.display = 'flex';
                 } else {
@@ -230,6 +111,5 @@
             });
         });
     </script>
-
 </body>
 </html>

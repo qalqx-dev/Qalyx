@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMI | QALQX</title>
+    <style>
+        body { background-color: #000; color: #E0E0E0; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; min-height: 100vh; margin: 0; }
+        .nav { width: 100%; padding: 20px; background: #111; border-bottom: 1px solid #333; display: flex; align-items: center; }
+        .back-btn { text-decoration: none; color: #888; font-size: 1.5rem; margin-right: 20px; }
+        h2 { margin: 0; color: #00E5FF; text-transform: uppercase; letter-spacing: 1px; }
+
+        .container { width: 85%; max-width: 500px; margin-top: 30px; display: flex; flex-direction: column; gap: 15px; }
+        
+        /* INPUT GROUPS */
+        .input-group { display: flex; flex-direction: column; gap: 5px; }
+        label { color: #888; font-size: 0.85rem; margin-left: 2px; }
+        input { background: #1A1A1A; border: 1px solid #333; color: white; padding: 15px; border-radius: 8px; font-size: 1.1rem; outline: none; }
+        input:focus { border-color: #00E5FF; }
+
+        button { background: #00E5FF; color: #000; border: none; padding: 15px; border-radius: 8px; font-weight: bold; font-size: 1rem; margin-top: 10px; cursor: pointer; }
+        
+        /* RESULT CARD */
+        #result { display: none; margin-top: 30px; background: #111; padding: 25px; border-radius: 12px; border: 1px solid #333; align-items: center; flex-direction: column; }
+        
+        .emi-big { font-size: 2.5rem; color: #fff; font-weight: bold; margin-bottom: 5px; }
+        .emi-label { color: #00E5FF; font-size: 0.9rem; letter-spacing: 1px; margin-bottom: 20px; }
+
+        /* SUMMARY GRID */
+        .summary { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; border-top: 1px solid #222; padding-top: 20px; }
+        .s-item { display: flex; flex-direction: column; font-size: 0.9rem; }
+        .s-val { color: #fff; font-weight: bold; font-size: 1.1rem; margin-top: 5px; }
+        
+        /* PURE CSS PIE CHART */
+        .pie {
+            width: 150px; height: 150px; border-radius: 50%;
+            background: conic-gradient(#00E5FF 0% 10%, #333 10% 100%);
+            position: relative;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .pie::after { content: ""; position: absolute; width: 110px; height: 110px; background: #111; border-radius: 50%; }
+
+    </style>
+</head>
+<body>
+
+    <div class="nav">
+        <a href="../../index.html" class="back-btn">←</a>
+        <h2>Finance EMI</h2>
+    </div>
+
+    <div class="container">
+        <div class="input-group">
+            <label>Loan Amount (₹)</label>
+            <input type="number" id="amount" placeholder="e.g. 50000">
+        </div>
+        
+        <div class="input-group">
+            <label>Interest Rate (% p.a)</label>
+            <input type="number" id="rate" placeholder="e.g. 12.5">
+        </div>
+
+        <div class="input-group">
+            <label>Tenure (Months)</label>
+            <input type="number" id="months" placeholder="e.g. 12">
+        </div>
+
+        <button onclick="calcEMI()">CALCULATE LOAN</button>
+
+        <div id="result">
+            <div class="pie" id="chart"></div>
+            <div style="height: 20px;"></div>
+            <div class="emi-big" id="emiVal">₹0</div>
+            <div class="emi-label">MONTHLY EMI</div>
+
+            <div class="summary">
+                <div class="s-item">
+                    <span style="color:#888;">Principal</span>
+                    <span class="s-val" id="totalP">₹0</span>
+                </div>
+                <div class="s-item" style="text-align: right;">
+                    <span style="color:#00E5FF;">Total Interest</span>
+                    <span class="s-val" id="totalI">₹0</span>
+                </div>
+                <div class="s-item" style="grid-column: span 2; margin-top: 10px; border-top: 1px solid #222; padding-top:10px;">
+                    <span style="color:#888;">Total Payment</span>
+                    <span class="s-val" id="totalPay">₹0</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function calcEMI() {
+            let P = parseFloat(document.getElementById('amount').value);
+            let r = parseFloat(document.getElementById('rate').value);
+            let n = parseFloat(document.getElementById('months').value);
+
+            if (!P || !r || !n) { alert("Please fill all details"); return; }
+
+            // EMI Formula: E = P * r * (1+r)^n / ((1+r)^n - 1)
+            let monthlyRate = r / 12 / 100;
+            let emi = (P * monthlyRate * Math.pow(1 + monthlyRate, n)) / (Math.pow(1 + monthlyRate, n) - 1);
+            
+            let totalPay = emi * n;
+            let totalInterest = totalPay - P;
+
+            // Update Text
+            document.getElementById('result').style.display = 'flex';
+            document.getElementById('emiVal').innerText = "₹" + Math.round(emi).toLocaleString();
+            document.getElementById('totalP').innerText = "₹" + P.toLocaleString();
+            document.getElementById('totalI').innerText = "₹" + Math.round(totalInterest).toLocaleString();
+            document.getElementById('totalPay').innerText = "₹" + Math.round(totalPay).toLocaleString();
+
+            // Update Chart (The visual ring)
+            let interestPercent = (totalInterest / totalPay) * 100;
+            let chart = document.getElementById('chart');
+            // Principal is Grey (#333), Interest is Cyan (#00E5FF)
+            chart.style.background = `conic-gradient(#00E5FF 0% ${interestPercent}%, #333 ${interestPercent}% 100%)`;
+        }
+    </script>
+</body>
+</html>

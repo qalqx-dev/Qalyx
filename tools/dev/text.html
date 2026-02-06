@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text | QALQX</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        textarea { width: 100%; height: 150px; background: #1A1A1A; color: #fff; border: 1px solid #333; padding: 15px; border-radius: 8px; outline: none; font-family: sans-serif; resize: none; box-sizing: border-box;}
+        .stats { display: flex; justify-content: space-between; margin-top: 10px; color: #888; font-size: 0.9rem; }
+        .grid-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .grid-btns button { margin: 0; padding: 12px; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="../../index.html" class="back-btn">←</a>
+        <h2>TEXT MASTER</h2>
+    </div>
+    <div class="container">
+        <textarea id="txt" placeholder="Type or paste text here..." oninput="analyze()"></textarea>
+        <div class="stats">
+            <span id="chars">0 Chars</span>
+            <span id="words">0 Words</span>
+        </div>
+        <div class="grid-btns">
+            <button onclick="convert('up')">UPPERCASE</button>
+            <button onclick="convert('low')">lowercase</button>
+            <button onclick="convert('cap')">Capitalize</button>
+            <button onclick="copyTxt()" style="background:#333;">Copy All</button>
+        </div>
+    </div>
+    <script>
+        function analyze() {
+            let val = document.getElementById('txt').value;
+            document.getElementById('chars').innerText = val.length + " Chars";
+            document.getElementById('words').innerText = val.trim() === '' ? "0 Words" : val.trim().split(/\s+/).length + " Words";
+        }
+        function convert(mode) {
+            let el = document.getElementById('txt');
+            if (mode === 'up') el.value = el.value.toUpperCase();
+            if (mode === 'low') el.value = el.value.toLowerCase();
+            if (mode === 'cap') el.value = el.value.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+            analyze();
+        }
+        function copyTxt() {
+            navigator.clipboard.writeText(document.getElementById('txt').value);
+            alert("Copied!");
+        }
+    </script>
+</body>
+</html>

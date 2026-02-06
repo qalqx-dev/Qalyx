@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Focus | QALQX</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        .timer-circle {
+            width: 250px; height: 250px; border-radius: 50%; border: 6px solid #333;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            margin: 30px auto; position: relative;
+        }
+        .time-text { font-size: 4rem; font-weight: bold; color: #fff; }
+        .mode-text { font-size: 1rem; color: var(--primary); text-transform: uppercase; letter-spacing: 2px; }
+        .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; max-width: 300px; margin: 0 auto; }
+        .progress-ring { position: absolute; top: -6px; left: -6px; width: 250px; height: 250px; transform: rotate(-90deg); }
+        circle { fill: transparent; stroke: var(--primary); stroke-width: 6; stroke-dasharray: 785; stroke-dashoffset: 0; transition: 1s linear; }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="../../index.html" class="back-btn">←</a>
+        <h2>FOCUS FLOW</h2>
+    </div>
+    <div class="container" style="text-align:center;">
+        <div class="timer-circle">
+            <svg class="progress-ring"><circle cx="125" cy="125" r="125"></circle></svg>
+            <div class="time-text" id="time">25:00</div>
+            <div class="mode-text" id="mode">FOCUS</div>
+        </div>
+        <div class="controls">
+            <button onclick="startTimer()" id="btnStart">START</button>
+            <button onclick="resetTimer()" style="background:#333;">RESET</button>
+            <button onclick="setMode(25)" style="background:#111; border:1px solid #333; font-size:0.8rem;">Focus</button>
+            <button onclick="setMode(5)" style="background:#111; border:1px solid #333; font-size:0.8rem;">Break</button>
+        </div>
+    </div>
+    <script>
+        let timeLeft = 1500; let totalTime = 1500; let timerId = null;
+        const circle = document.querySelector('circle');
+        const radius = circle.r.baseVal.value;
+        const circumference = radius * 2 * Math.PI;
+        circle.style.strokeDasharray = `${circumference} ${circumference}`;
+
+        function setProgress(percent) {
+            const offset = circumference - (percent / 100) * circumference;
+            circle.style.strokeDashoffset = offset;
+        }
+
+        function updateDisplay() {
+            let m = Math.floor(timeLeft / 60);
+            let s = timeLeft % 60;
+            document.getElementById('time').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+            document.title = `(${m}:${s < 10 ? '0' : ''}${s}) Focus`;
+            setProgress((timeLeft / totalTime) * 100);
+        }
+
+        function startTimer() {
+            if (timerId) { clearInterval(timerId); timerId = null; document.getElementById('btnStart').innerText = "RESUME"; return; }
+            document.getElementById('btnStart').innerText = "PAUSE";
+            timerId = setInterval(() => {
+                if (timeLeft > 0) { timeLeft--; updateDisplay(); }
+                else { clearInterval(timerId); alert("Session Complete!"); }
+            }, 1000);
+        }
+
+        function resetTimer() { clearInterval(timerId); timerId = null; timeLeft = totalTime; updateDisplay(); document.getElementById('btnStart').innerText = "START"; }
+        function setMode(mins) { totalTime = mins * 60; timeLeft = totalTime; document.getElementById('mode').innerText = mins === 25 ? "FOCUS" : "BREAK"; resetTimer(); }
+    </script>
+</body>
+</html>

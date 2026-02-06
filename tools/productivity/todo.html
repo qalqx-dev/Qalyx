@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tasks | QALQX</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        .task-input { display: flex; gap: 10px; margin-bottom: 20px; }
+        .task-list { list-style: none; padding: 0; }
+        .task-item { background: #111; padding: 15px; border-bottom: 1px solid #222; display: flex; align-items: center; justify-content: space-between; }
+        .task-text { flex-grow: 1; margin-left: 10px; }
+        .done { text-decoration: line-through; color: #555; }
+        .del-btn { color: #FF4500; cursor: pointer; font-weight: bold; padding: 5px 10px; }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="../../index.html" class="back-btn">←</a>
+        <h2>TASK MASTER</h2>
+    </div>
+    <div class="container">
+        <div class="task-input">
+            <input type="text" id="newTodo" placeholder="New Mission...">
+            <button onclick="addTodo()" style="width: auto; margin: 0;">+</button>
+        </div>
+        <div class="task-list" id="list"></div>
+    </div>
+    <script>
+        let todos = JSON.parse(localStorage.getItem('qalqx_todos')) || [];
+
+        function render() {
+            const list = document.getElementById('list');
+            list.innerHTML = "";
+            todos.forEach((t, i) => {
+                let div = document.createElement('div');
+                div.className = 'task-item';
+                div.innerHTML = `
+                    <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggle(${i})">
+                    <span class="task-text ${t.done ? 'done' : ''}">${t.text}</span>
+                    <span class="del-btn" onclick="remove(${i})">✕</span>
+                `;
+                list.appendChild(div);
+            });
+            localStorage.setItem('qalqx_todos', JSON.stringify(todos));
+        }
+
+        function addTodo() {
+            let txt = document.getElementById('newTodo').value;
+            if(!txt) return;
+            todos.push({text: txt, done: false});
+            document.getElementById('newTodo').value = "";
+            render();
+        }
+
+        function toggle(i) { todos[i].done = !todos[i].done; render(); }
+        function remove(i) { todos.splice(i, 1); render(); }
+        render();
+    </script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geo | QALQX</title>
+    <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+    <div class="nav">
+        <a href="../../index.html" class="back-btn">←</a>
+        <h2>GEOMETRY</h2>
+    </div>
+    <div class="container">
+        <select id="shape" class="select-box" style="width:100%; padding:15px; background:#1A1A1A; color:#fff; border:1px solid #333; margin-bottom:15px;" onchange="ui()">
+            <option value="circle">Circle (Area)</option>
+            <option value="sphere">Sphere (Volume)</option>
+            <option value="cylinder">Cylinder (Volume)</option>
+            <option value="cone">Cone (Volume)</option>
+        </select>
+        
+        <div id="inputs"></div>
+        <button onclick="solve()">SOLVE</button>
+        <div class="result-box" id="res" style="display:none; font-size:2rem; font-weight:bold; color:var(--primary);"></div>
+    </div>
+    <script>
+        function ui() {
+            const s = document.getElementById('shape').value;
+            let html = '<label>Radius (r)</label><input type="number" id="r" placeholder="Radius">';
+            if(s === 'cylinder' || s === 'cone') html += '<label style="margin-top:10px;">Height (h)</label><input type="number" id="h" placeholder="Height">';
+            document.getElementById('inputs').innerHTML = html;
+            document.getElementById('res').style.display = 'none';
+        }
+        function solve() {
+            const s = document.getElementById('shape').value;
+            const r = parseFloat(document.getElementById('r').value);
+            const h = document.getElementById('h') ? parseFloat(document.getElementById('h').value) : 0;
+            if(!r) return;
+            let ans = 0;
+
+            if(s === 'circle') ans = Math.PI * r * r;
+            if(s === 'sphere') ans = (4/3) * Math.PI * Math.pow(r, 3);
+            if(s === 'cylinder') ans = Math.PI * r * r * h;
+            if(s === 'cone') ans = (1/3) * Math.PI * r * r * h;
+
+            document.getElementById('res').style.display = 'block';
+            document.getElementById('res').innerText = ans.toFixed(2);
+        }
+        ui();
+    </script>
+</body>
+</html>

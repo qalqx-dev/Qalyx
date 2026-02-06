@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discount | QALQX</title>
+    <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+    <div class="nav">
+        <a href="../../index.html" class="back-btn">←</a>
+        <h2>DISCOUNT</h2>
+    </div>
+    <div class="container">
+        <label>Original Price</label>
+        <input type="number" id="price" placeholder="e.g. 1500">
+        
+        <label>Discount %</label>
+        <input type="number" id="off" placeholder="e.g. 20">
+        
+        <button onclick="calc()">CALCULATE</button>
+
+        <div class="result-box" id="res" style="text-align:left; display:none;">
+            <div style="color:#888; font-size:0.9rem;">Final Price</div>
+            <div style="font-size:2.5rem; font-weight:bold; color:#fff;" id="final">0</div>
+            <div style="color:var(--primary); margin-top:5px;" id="save">You save: 0</div>
+        </div>
+    </div>
+    <script>
+        function calc() {
+            let p = parseFloat(document.getElementById('price').value);
+            let d = parseFloat(document.getElementById('off').value);
+            if(!p || !d) return;
+            let saved = p * (d / 100);
+            let final = p - saved;
+            document.getElementById('res').style.display = 'block';
+            document.getElementById('final').innerText = "₹" + final.toFixed(2);
+            document.getElementById('save').innerText = "You save: ₹" + saved.toFixed(2);
+        }
+    </script>
+</body>
+</html>

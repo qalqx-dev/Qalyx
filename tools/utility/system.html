@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SysInfo | QALQX</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        .hud-grid {
+            display: grid; grid-template-columns: 1fr; gap: 15px; width: 100%;
+        }
+        .hud-card {
+            background: #111; border: 1px solid #333; padding: 15px;
+            border-radius: 8px; position: relative; overflow: hidden;
+        }
+        .hud-card::before {
+            content: ""; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+            background: var(--primary);
+        }
+        .hud-label { color: #888; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
+        .hud-val { color: #fff; font-size: 1.5rem; font-family: monospace; font-weight: bold; margin-top: 5px; }
+        
+        /* Battery Visual */
+        .batt-container {
+            width: 100%; height: 20px; background: #222; margin-top: 10px;
+            border-radius: 4px; overflow: hidden; position: relative;
+        }
+        .batt-fill { height: 100%; background: var(--primary); width: 0%; transition: width 1s; }
+        .batt-bolt {
+            position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            color: #000; font-weight: bold; font-size: 0.9rem; display: none;
+        }
+
+        .status-online { color: #00FF7F; text-shadow: 0 0 10px #00FF7F; }
+        .status-offline { color: #FF4500; }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="../../index.html" class="back-btn">←</a>
+        <h2>SYSTEM_HUD</h2>
+    </div>
+
+    <div class="container">
+        <div class="hud-grid">
+            
+            <div class="hud-card">
+                <div class="hud-label">Power Core</div>
+                <div class="hud-val" id="battLevel">Scanning...</div>
+                <div class="batt-container">
+                    <div class="batt-fill" id="battBar"></div>
+                    <div class="batt-bolt" id="chargeIcon">⚡ CHARGING</div>
+                </div>
+            </div>
+
+            <div class="hud-card" style="border-left-color: #00FF7F;">
+                <div class="hud-label">Network Status</div>
+                <div class="hud-val" id="netStatus">Checking...</div>
+                <div style="font-size: 0.9rem; color:#666; margin-top:5px;" id="netType">Type: Unknown</div>
+            </div>
+
+            <div class="hud-card" style="border-left-color: #FFD700;">
+                <div class="hud-label">Hardware Specs</div>
+                <div style="display:flex; justify-content:space-between; margin-top:10px;">
+                    <div>
+                        <div class="hud-label">CPU Cores</div>
+                        <div class="hud-val" id="cpuVal">-</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div class="hud-label">RAM (Est)</div>
+                        <div class="hud-val" id="ramVal">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hud-card" style="border-left-color: #FF4500;">
+                <div class="hud-label">Display Matrix</div>
+                <div class="hud-val" id="resVal">-</div>
+                <div style="font-size: 0.9rem; color:#666;" id="pixelRatio">Density: -</div>
+            </div>
+
+             <div class="hud-card" style="border-left-color: #9932CC;">
+                <div class="hud-label">OS Platform</div>
+                <div class="hud-val" id="osVal" style="font-size:1rem;">-</div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // 1. BATTERY API
+        function initBattery() {
+            if ('getBattery' in navigator) {
+                navigator.getBattery().then(batt => {
+                    updateBatt(batt);
+                    batt.addEventListener('levelchange', () => updateBatt(batt));
+                    batt.addEventListener('chargingchange', () => updateBatt(batt));
+                });
+            } else {
+                document.getElementById('battLevel').innerText = "Not Supported";
+            }
+        }
+
+        function updateBatt(batt) {
+            let level = Math.round(batt.level * 100);
+            document.getElementById('battLevel').innerText = level + "%";
+            document.getElementById('battBar').style.width = level + "%";
+            
+            let isCharging = batt.charging;
+            document.getElementById('chargeIcon').style.display = isCharging ? "block" : "none";
+            
+            // Color Logic
+            let bar = document.getElementById('battBar');
+            if(isCharging) bar.style.background = "#00FF7F"; // Green if charging
+            else if(level < 20) bar.style.background = "#FF4500"; // Red if low
+            else bar.style.background = "var(--primary)"; // Cyan normal
+        }
+
+        // 2. NETWORK INFO
+        function updateNet() {
+            let status = navigator.onLine ? "ONLINE" : "OFFLINE";
+            let el = document.getElementById('netStatus');
+            el.innerText = status;
+            el.className = navigator.onLine ? "hud-val status-online" : "hud-val status-offline";
+
+            // Advanced Network Info (Chrome/Android only)
+            if (navigator.connection) {
+                let type = navigator.connection.effectiveType || "Unknown"; // 4g, 3g etc
+                let down = navigator.connection.downlink || 0; // Speed estimate
+                document.getElementById('netType').innerText = `Type: ${type.toUpperCase()} | Bandwidth: ~${down} Mbps`;
+            }
+        }
+        window.addEventListener('online', updateNet);
+        window.addEventListener('offline', updateNet);
+
+        // 3. HARDWARE & DISPLAY
+        function initHardware() {
+            // CPU
+            document.getElementById('cpuVal').innerText = (navigator.hardwareConcurrency || "?") + " Logical";
+            
+            // RAM (Only works on secure contexts in Chrome)
+            if (navigator.deviceMemory) {
+                document.getElementById('ramVal').innerText = "~" + navigator.deviceMemory + " GB";
+            } else {
+                document.getElementById('ramVal').innerText = "N/A";
+            }
+
+            // Screen
+            let w = window.screen.width;
+            let h = window.screen.height;
+            document.getElementById('resVal').innerText = `${w} x ${h} px`;
+            document.getElementById('pixelRatio').innerText = `Density: ${window.devicePixelRatio}x`;
+
+            // OS Info
+            let agent = navigator.userAgent;
+            let os = "Unknown";
+            if(agent.indexOf("Android") > -1) os = "Android System";
+            else if(agent.indexOf("Linux") > -1) os = "Linux Base";
+            else if(agent.indexOf("iPhone") > -1) os = "iOS";
+            else if(agent.indexOf("Windows") > -1) os = "Windows NT";
+            
+            document.getElementById('osVal').innerText = os;
+        }
+
+        // START
+        initBattery();
+        updateNet();
+        initHardware();
+    </script>
+</body>
+</html>

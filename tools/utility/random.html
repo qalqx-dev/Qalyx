@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Picker | QALQX</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        .winner { font-size: 2.5rem; font-weight: bold; color: var(--primary); text-align: center; margin-top: 20px; animation: pop 0.3s; }
+        @keyframes pop { from { transform: scale(0.5); } to { transform: scale(1); } }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="../../index.html" class="back-btn">←</a>
+        <h2>DECISION MAKER</h2>
+    </div>
+    <div class="container">
+        <label>Enter options (comma separated)</label>
+        <textarea id="opts" style="width:100%; height:100px; background:#1A1A1A; border:1px solid #333; color:#fff; padding:10px; border-radius:8px;" placeholder="GTA V, Cyberpunk, Minecraft"></textarea>
+        <button onclick="pick()">CHOOSE FOR ME</button>
+        <div id="res" class="winner"></div>
+    </div>
+    <script>
+        function pick() {
+            let txt = document.getElementById('opts').value;
+            if(!txt) return;
+            let arr = txt.split(',').map(s => s.trim()).filter(s => s !== "");
+            if(arr.length === 0) return;
+            
+            // Animation effect
+            let i = 0;
+            let el = document.getElementById('res');
+            let interval = setInterval(() => {
+                el.innerText = arr[Math.floor(Math.random() * arr.length)];
+                i++;
+                if(i > 10) {
+                    clearInterval(interval);
+                    el.innerText = arr[Math.floor(Math.random() * arr.length)];
+                    el.style.color = "#00FF7F";
+                }
+            }, 100);
+        }
+    </script>
+</body>
+</html>

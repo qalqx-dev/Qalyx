@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Gen | QALQX</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        .qr-box { background: #fff; padding: 20px; border-radius: 8px; display: inline-block; margin-top: 20px; }
+        img { display: block; width: 100%; max-width: 200px; height: auto; }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="../../index.html" class="back-btn">←</a>
+        <h2>QR_CODE</h2>
+    </div>
+    <div class="container" style="text-align:center;">
+        <input type="text" id="text" placeholder="Enter link or text..." style="margin-bottom:15px;">
+        <button onclick="genQR()">GENERATE CODE</button>
+        <div class="qr-box" id="qrArea" style="display:none;">
+            <img id="qrImg" src="" alt="QR Code">
+        </div>
+    </div>
+    <script>
+        function genQR() {
+            let txt = document.getElementById('text').value;
+            if(!txt) return;
+            let url = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(txt)}`;
+            document.getElementById('qrImg').src = url;
+            document.getElementById('qrArea').style.display = "inline-block";
+        }
+    </script>
+</body>
+</html>

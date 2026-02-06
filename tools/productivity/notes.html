@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes | QALQX</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        textarea { width: 100%; height: 60vh; background: #111; border: 1px solid #333; color: #ddd; padding: 20px; font-size: 1.1rem; border-radius: 8px; resize: none; outline: none; line-height: 1.5; }
+        .status { font-size: 0.8rem; color: #666; margin-top: 5px; text-align: right; }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="../../index.html" class="back-btn">←</a>
+        <h2>LOCAL NOTES</h2>
+    </div>
+    <div class="container">
+        <textarea id="noteArea" placeholder="Start typing... everything is auto-saved."></textarea>
+        <div class="status" id="status">Synced to Storage</div>
+        <button onclick="clearNotes()" style="background:#333; margin-top:10px;">CLEAR ALL</button>
+    </div>
+    <script>
+        const noteArea = document.getElementById('noteArea');
+        // Load saved note
+        noteArea.value = localStorage.getItem('qalqx_note') || "";
+
+        // Auto-save on input
+        noteArea.addEventListener('input', () => {
+            localStorage.setItem('qalqx_note', noteArea.value);
+            document.getElementById('status').innerText = "Saved " + new Date().toLocaleTimeString();
+        });
+
+        function clearNotes() {
+            if(confirm("Delete everything?")) {
+                noteArea.value = "";
+                localStorage.removeItem('qalqx_note');
+            }
+        }
+    </script>
+</body>
+</html>

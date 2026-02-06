@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DateDiff | QALQX</title>
+    <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+    <div class="nav">
+        <a href="../../index.html" class="back-btn">←</a>
+        <h2>DATE DIFF</h2>
+    </div>
+    <div class="container">
+        <label>Start Date</label>
+        <input type="date" id="d1">
+        
+        <label style="margin-top:15px;">End Date</label>
+        <input type="date" id="d2">
+        
+        <button onclick="calc()">CALCULATE</button>
+
+        <div class="result-box" id="res" style="display:none;">
+            <div style="font-size:3rem; font-weight:bold; color:#fff;" id="days">0</div>
+            <div style="color:var(--primary);">Days</div>
+            <div style="margin-top:10px; font-size:0.9rem; color:#888;" id="weeks">-</div>
+        </div>
+    </div>
+    <script>
+        // Set today as default
+        document.getElementById('d1').valueAsDate = new Date();
+
+        function calc() {
+            let start = new Date(document.getElementById('d1').value);
+            let end = new Date(document.getElementById('d2').value);
+            if(!start || !end) return;
+            
+            let diff = Math.abs(end - start);
+            let days = Math.ceil(diff / (1000 * 60 * 60 * 24)); 
+            let weeks = (days / 7).toFixed(1);
+
+            document.getElementById('res').style.display = 'block';
+            document.getElementById('days').innerText = days;
+            document.getElementById('weeks').innerText = `Approx ${weeks} Weeks`;
+        }
+    </script>
+</body>
+</html>

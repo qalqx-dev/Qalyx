@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base64 | QALQX</title>
+    <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+    <div class="nav">
+        <a href="../../index.html" class="back-btn">←</a>
+        <h2>BASE64 CRYPT</h2>
+    </div>
+    <div class="container">
+        <label>Input Text</label>
+        <textarea id="input" style="width:100%; height:100px; background:#1A1A1A; border:1px solid #333; color:#fff; padding:10px; border-radius:8px; margin-bottom:15px;"></textarea>
+        
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+            <button onclick="process('enc')">ENCODE</button>
+            <button onclick="process('dec')" style="background:#333;">DECODE</button>
+        </div>
+
+        <label style="margin-top:20px;">Result</label>
+        <textarea id="output" readonly style="width:100%; height:100px; background:#111; border:1px solid var(--primary); color:var(--primary); padding:10px; border-radius:8px;"></textarea>
+    </div>
+    <script>
+        function process(mode) {
+            let val = document.getElementById('input').value;
+            let res = "";
+            try {
+                if(mode === 'enc') res = btoa(val);
+                else res = atob(val);
+            } catch(e) { res = "Error: Invalid Input"; }
+            document.getElementById('output').value = res;
+        }
+    </script>
+</body>
+</html>

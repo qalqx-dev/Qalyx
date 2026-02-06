@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lorem | QALQX</title>
+    <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+    <div class="nav">
+        <a href="../../index.html" class="back-btn">←</a>
+        <h2>LOREM IPSUM</h2>
+    </div>
+    <div class="container">
+        <label>Paragraphs</label>
+        <input type="range" id="count" min="1" max="10" value="1" oninput="gen()">
+        <span id="val" style="color:var(--primary); font-weight:bold;">1</span>
+        
+        <textarea id="out" readonly style="width:100%; height:300px; margin-top:20px; background:#111; border:1px solid #333; color:#aaa; padding:15px; border-radius:8px; line-height:1.6;"></textarea>
+        <button onclick="copy()" style="margin-top:10px;">COPY TEXT</button>
+    </div>
+    <script>
+        const txt = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+        
+        function gen() {
+            let c = document.getElementById('count').value;
+            document.getElementById('val').innerText = c;
+            let res = "";
+            for(let i=0; i<c; i++) res += txt + "\n\n";
+            document.getElementById('out').value = res.trim();
+        }
+        function copy() {
+            navigator.clipboard.writeText(document.getElementById('out').value);
+            alert("Copied!");
+        }
+        gen();
+    </script>
+</body>
+</html>

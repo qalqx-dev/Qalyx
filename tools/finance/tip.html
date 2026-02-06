@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tip | QALQX</title>
+    <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+    <div class="nav">
+        <a href="../../index.html" class="back-btn">←</a>
+        <h2>BILL SPLIT</h2>
+    </div>
+    <div class="container">
+        <label>Total Bill</label>
+        <input type="number" id="bill" placeholder="0.00" oninput="calc()">
+        
+        <div style="display:flex; gap:10px; margin-top:10px;">
+            <div style="flex:1;">
+                <label>Tip %</label>
+                <input type="number" id="tip" value="10" oninput="calc()">
+            </div>
+            <div style="flex:1;">
+                <label>People</label>
+                <input type="number" id="ppl" value="2" oninput="calc()">
+            </div>
+        </div>
+
+        <div class="result-box" id="res" style="display:block; margin-top:20px;">
+            <div style="color:#888;">Per Person</div>
+            <div style="font-size:2.5rem; font-weight:bold; color:var(--primary);" id="perPerson">0</div>
+            <div style="margin-top:10px; font-size:0.9rem;">
+                Tip Amount: <span id="tipAmt">0</span><br>
+                Grand Total: <span id="total">0</span>
+            </div>
+        </div>
+    </div>
+    <script>
+        function calc() {
+            let bill = parseFloat(document.getElementById('bill').value) || 0;
+            let tipP = parseFloat(document.getElementById('tip').value) || 0;
+            let ppl = parseFloat(document.getElementById('ppl').value) || 1;
+            
+            let tipAmt = bill * (tipP / 100);
+            let total = bill + tipAmt;
+            let per = total / ppl;
+            
+            document.getElementById('perPerson').innerText = per.toFixed(2);
+            document.getElementById('tipAmt').innerText = tipAmt.toFixed(2);
+            document.getElementById('total').innerText = total.toFixed(2);
+        }
+    </script>
+</body>
+</html>

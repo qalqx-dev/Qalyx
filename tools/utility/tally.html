@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tally | QALQX</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        .counter-disp { font-size: 6rem; font-weight: bold; color: #fff; text-align: center; margin: 30px 0; font-family: monospace; }
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .btn-big { height: 100px; font-size: 2rem; }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="../../index.html" class="back-btn">←</a>
+        <h2>TALLY COUNTER</h2>
+    </div>
+    <div class="container">
+        <div class="counter-disp" id="val">0</div>
+        
+        <div class="btn-grid">
+            <button class="btn-big" style="background:#333;" onclick="mod(-1)">-</button>
+            <button class="btn-big" onclick="mod(1)">+</button>
+        </div>
+        <button onclick="reset()" style="background:transparent; color:#FF4500; border:1px solid #FF4500; margin-top:20px;">RESET ZERO</button>
+    </div>
+    <script>
+        let count = parseInt(localStorage.getItem('qalqx_tally')) || 0;
+        const disp = document.getElementById('val');
+        disp.innerText = count;
+
+        function mod(n) {
+            count += n;
+            if(count < 0) count = 0;
+            disp.innerText = count;
+            localStorage.setItem('qalqx_tally', count);
+        }
+        function reset() { count = 0; mod(0); }
+    </script>
+</body>
+</html>

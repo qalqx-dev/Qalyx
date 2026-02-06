@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aspect | QALQX</title>
+    <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+    <div class="nav">
+        <a href="../../index.html" class="back-btn">←</a>
+        <h2>ASPECT RATIO</h2>
+    </div>
+    <div class="container">
+        <div style="display:flex; gap:10px; margin-bottom:20px;">
+            <div style="flex:1;">
+                <label>Ratio W</label>
+                <input type="number" id="rw" value="16" oninput="calc()">
+            </div>
+            <div style="flex:1;">
+                <label>Ratio H</label>
+                <input type="number" id="rh" value="9" oninput="calc()">
+            </div>
+        </div>
+
+        <div style="background:#111; padding:20px; border-radius:8px; border:1px solid #333;">
+            <label>Known Width</label>
+            <input type="number" id="w" placeholder="e.g. 1920" oninput="solve('w')">
+            
+            <label style="margin-top:15px;">Calculated Height</label>
+            <input type="number" id="h" placeholder="Result" oninput="solve('h')" style="border-color:var(--primary); color:var(--primary);">
+        </div>
+    </div>
+    <script>
+        function solve(source) {
+            let rw = parseFloat(document.getElementById('rw').value);
+            let rh = parseFloat(document.getElementById('rh').value);
+            
+            if(source === 'w') {
+                let w = parseFloat(document.getElementById('w').value);
+                if(w) document.getElementById('h').value = Math.round(w * (rh / rw));
+            } else {
+                let h = parseFloat(document.getElementById('h').value);
+                if(h) document.getElementById('w').value = Math.round(h * (rw / rh));
+            }
+        }
+    </script>
+</body>
+</html>

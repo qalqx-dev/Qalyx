@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reaction | QALQX</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        .game-area {
+            width: 100%; height: 60vh; border-radius: 12px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            font-size: 1.5rem; font-weight: bold; text-align: center; padding: 20px;
+            cursor: pointer; user-select: none; transition: background 0.1s;
+        }
+        .waiting { background: #CE2029; color: #fff; } /* Red */
+        .ready { background: #00FF7F; color: #000; } /* Green */
+        .result { background: #111; border: 2px solid var(--primary); color: #fff; }
+        .sub-text { font-size: 1rem; font-weight: normal; margin-top: 10px; opacity: 0.8; }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="../../index.html" class="back-btn">←</a>
+        <h2>REFLEX TEST</h2>
+    </div>
+    <div class="container">
+        <div id="box" class="game-area result" onmousedown="handleClick()">
+            Tap to Start
+            <div class="sub-text">Wait for Green, then Click!</div>
+        </div>
+        <div style="margin-top:20px; text-align:center; color:#888;">Best: <span id="best" style="color:var(--primary)">-</span></div>
+    </div>
+    <script>
+        let state = 'start'; // start, waiting, ready, result
+        let startTime, timer;
+        const box = document.getElementById('box');
+        
+        function handleClick() {
+            if (state === 'start' || state === 'result') {
+                state = 'waiting';
+                box.className = 'game-area waiting';
+                box.innerHTML = 'Wait for Green...';
+                let randomTime = 2000 + Math.random() * 3000; // 2-5 seconds
+                timer = setTimeout(() => {
+                    state = 'ready';
+                    box.className = 'game-area ready';
+                    box.innerHTML = 'CLICK NOW!';
+                    startTime = Date.now();
+                }, randomTime);
+            } else if (state === 'waiting') {
+                clearTimeout(timer);
+                state = 'result';
+                box.className = 'game-area result';
+                box.innerHTML = 'Too Early! <div class="sub-text">Tap to try again</div>';
+            } else if (state === 'ready') {
+                let ms = Date.now() - startTime;
+                state = 'result';
+                box.className = 'game-area result';
+                box.innerHTML = `${ms} ms <div class="sub-text">Tap to try again</div>`;
+                
+                // Update Best
+                let currentBest = localStorage.getItem('qalqx_reflex') || 10000;
+                if (ms < currentBest) {
+                    localStorage.setItem('qalqx_reflex', ms);
+                    document.getElementById('best').innerText = ms + " ms";
+                }
+            }
+        }
+        document.getElementById('best').innerText = (localStorage.getItem('qalqx_reflex') || "-") + " ms";
+    </script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Screen | QALQX</title>
+    <style>
+        body { margin: 0; height: 100vh; display: flex; justify-content: center; align-items: center; cursor: pointer; font-family: sans-serif; }
+        .msg { background: rgba(0,0,0,0.5); color: #fff; padding: 20px; border-radius: 8px; text-align: center; pointer-events: none; }
+    </style>
+</head>
+<body onclick="cycle()">
+    <div class="msg" id="msg">
+        <h1>DEAD PIXEL TEST</h1>
+        <p>Tap anywhere to cycle colors.</p>
+        <p>White -> Red -> Green -> Blue -> Black</p>
+    </div>
+    <script>
+        const colors = ['#FFFFFF', '#FF0000', '#00FF00', '#0000FF', '#000000'];
+        let idx = -1;
+        
+        function cycle() {
+            document.getElementById('msg').style.display = 'none';
+            // Request Fullscreen on first click
+            if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(e=>{});
+            
+            idx = (idx + 1) % colors.length;
+            document.body.style.backgroundColor = colors[idx];
+            
+            // Exit if loop finishes
+            if(idx === 4) setTimeout(() => document.getElementById('msg').style.display = 'block', 1000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP Info | QALQX</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        .ip-card { background: #111; border: 1px solid var(--primary); padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 20px; }
+        .big-ip { font-size: 2rem; font-weight: bold; color: #fff; margin-bottom: 5px; font-family: monospace; }
+        .data-row { display: flex; justify-content: space-between; border-bottom: 1px solid #222; padding: 10px 0; font-size: 0.9rem; }
+        .data-val { color: #fff; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="../../index.html" class="back-btn">←</a>
+        <h2>IP TRACER</h2>
+    </div>
+    <div class="container">
+        <div class="ip-card">
+            <div style="color:var(--primary); font-size:0.8rem; letter-spacing:1px;">PUBLIC IP ADDRESS</div>
+            <div class="big-ip" id="ip">Scanning...</div>
+        </div>
+        
+        <div id="details">
+            <div class="data-row"><span>Provider (ISP)</span> <span class="data-val" id="isp">-</span></div>
+            <div class="data-row"><span>City</span> <span class="data-val" id="city">-</span></div>
+            <div class="data-row"><span>Region</span> <span class="data-val" id="region">-</span></div>
+            <div class="data-row"><span>Country</span> <span class="data-val" id="country">-</span></div>
+            <div class="data-row"><span>Timezone</span> <span class="data-val" id="tz">-</span></div>
+        </div>
+        <button onclick="fetchIP()" style="margin-top:20px;">REFRESH DATA</button>
+    </div>
+    <script>
+        function fetchIP() {
+            document.getElementById('ip').innerText = "Scanning...";
+            fetch('https://ipapi.co/json/')
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('ip').innerText = data.ip;
+                    document.getElementById('isp').innerText = data.org;
+                    document.getElementById('city').innerText = data.city;
+                    document.getElementById('region').innerText = data.region;
+                    document.getElementById('country').innerText = data.country_name;
+                    document.getElementById('tz').innerText = data.timezone;
+                })
+                .catch(() => document.getElementById('ip').innerText = "Network Error");
+        }
+        fetchIP();
+    </script>
+</body>
+</html>

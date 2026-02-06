@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metro | QALQX</title>
+    <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+    <div class="nav"><a href="../../index.html" class="back-btn">←</a><h2>METRONOME</h2></div>
+    <div class="container" style="text-align:center;">
+        <div id="bpmVal" style="font-size:5rem; font-weight:bold; color:#fff;">100</div>
+        <div style="color:var(--primary); letter-spacing:2px; margin-bottom:30px;">BPM</div>
+        
+        <input type="range" id="bpm" min="40" max="200" value="100" style="width:100%; margin-bottom:30px;" oninput="update()">
+        
+        <div id="dot" style="width:30px; height:30px; background:#222; border-radius:50%; margin:0 auto 30px auto; transition:0.1s;"></div>
+        <button id="btn" onclick="toggle()">START</button>
+    </div>
+    <script>
+        let timer, isRunning = false;
+        let ctx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function update() {
+            document.getElementById('bpmVal').innerText = document.getElementById('bpm').value;
+            if(isRunning) { toggle(); toggle(); } 
+        }
+
+        function beep() {
+            let osc = ctx.createOscillator();
+            let gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.frequency.value = 1000;
+            osc.start();
+            gain.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + 0.1);
+            osc.stop(ctx.currentTime + 0.1);
+        }
+
+        function toggle() {
+            if(isRunning) {
+                clearInterval(timer); isRunning = false;
+                document.getElementById('btn').innerText = "START";
+            } else {
+                let ms = 60000 / document.getElementById('bpm').value;
+                timer = setInterval(() => {
+                    beep();
+                    let d = document.getElementById('dot');
+                    d.style.background = "var(--primary)";
+                    d.style.boxShadow = "0 0 15px var(--primary)";
+                    setTimeout(() => { d.style.background = "#222"; d.style.boxShadow = "none"; }, 100);
+                }, ms);
+                isRunning = true;
+                document.getElementById('btn').innerText = "STOP";
+            }
+        }
+    </script>
+</body>
+</html>

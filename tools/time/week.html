@@ -1,0 +1,7 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Week | QALQX</title><link rel="stylesheet" href="../../style.css"></head><body>
+<div class="nav"><a href="../../index.html" class="back-btn">←</a><h2>WEEK NUMBER</h2></div>
+<div class="container" style="text-align:center;"><div style="font-size:8rem; font-weight:bold; color:#fff;" id="wk">0</div><div style="color:#888;">Current Week of Year</div></div>
+<script>
+let d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()+3-(d.getDay()+6)%7);let w1=new Date(d.getFullYear(),0,4);
+let wk=1+Math.round(((d.getTime()-w1.getTime())/86400000-3+(w1.getDay()+6)%7)/7);document.getElementById('wk').innerText=wk;
+</script></body></html>

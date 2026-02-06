@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strength | QALQX</title>
+    <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+    <div class="nav"><a href="../../index.html" class="back-btn">←</a><h2>PASS CHECK</h2></div>
+    <div class="container">
+        <input type="text" id="pass" placeholder="Type password..." style="width:100%; padding:15px; background:#1A1A1A; border:1px solid #333; color:#fff; border-radius:8px;" oninput="chk()">
+        
+        <div style="background:#222; height:10px; width:100%; margin-top:15px; border-radius:5px; overflow:hidden;">
+            <div id="bar" style="height:100%; width:0%; background:red; transition:0.3s;"></div>
+        </div>
+        <div id="lbl" style="margin-top:10px; text-align:right; font-size:0.9rem; color:#888;">Strength</div>
+    </div>
+    <script>
+        function chk() {
+            let p = document.getElementById('pass').value;
+            let s = 0;
+            if(p.length > 7) s++;
+            if(/[A-Z]/.test(p)) s++;
+            if(/[0-9]/.test(p)) s++;
+            if(/[^A-Za-z0-9]/.test(p)) s++; // Symbols
+            
+            let cols = ["#333", "#FF4500", "#FFD700", "#00E5FF", "#00FF7F"];
+            let txts = ["Too Short", "Weak", "Medium", "Strong", "Unbreakable"];
+            
+            document.getElementById('bar').style.width = (s * 25) + "%";
+            document.getElementById('bar').style.background = cols[s];
+            document.getElementById('lbl').innerText = txts[s];
+            document.getElementById('lbl').style.color = cols[s];
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPS | QALQX</title>
+    <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+    <div class="nav"><a href="../../index.html" class="back-btn">←</a><h2>RPS DUEL</h2></div>
+    <div class="container" style="text-align:center;">
+        <div style="font-size:3rem; margin:20px 0;" id="battle">✊ vs 🤖</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">
+            <button onclick="play('✊')">✊</button>
+            <button onclick="play('✋')">✋</button>
+            <button onclick="play('✌️')">✌️</button>
+        </div>
+        <div class="result-box" id="res" style="display:none; margin-top:20px; padding:20px; background:#111; border-radius:8px;">
+            <div id="outcome" style="font-size:1.5rem; font-weight:bold;"></div>
+        </div>
+    </div>
+    <script>
+        function play(user) {
+            const opts = ['✊', '✋', '✌️'];
+            const cpu = opts[Math.floor(Math.random() * 3)];
+            let res = "DRAW";
+            if ((user=='✊' && cpu=='✌️') || (user=='✋' && cpu=='✊') || (user=='✌️' && cpu=='✋')) res = "YOU WIN";
+            else if (user !== cpu) res = "YOU LOSE";
+            
+            document.getElementById('battle').innerText = `${user} vs ${cpu}`;
+            const rDiv = document.getElementById('res');
+            const oDiv = document.getElementById('outcome');
+            rDiv.style.display = 'block';
+            oDiv.innerText = res;
+            oDiv.style.color = res === "YOU WIN" ? "#00FF7F" : (res === "DRAW" ? "#fff" : "#FF4500");
+        }
+    </script>
+</body>
+</html>

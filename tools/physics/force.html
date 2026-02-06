@@ -1,0 +1,12 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Force | QALQX</title><link rel="stylesheet" href="../../style.css"></head><body>
+<div class="nav"><a href="../../index.html" class="back-btn">←</a><h2>FORCE (Newton)</h2></div>
+<div class="container">
+    <label>Mass (kg)</label><input type="number" id="m" oninput="calc()">
+    <label>Acceleration (m/s²)</label><input type="number" id="a" oninput="calc()">
+    <div class="result-box" style="display:block; margin-top:20px;">
+        <div style="color:#888;">Force (N)</div>
+        <div id="res" style="font-size:3rem; color:var(--primary); font-weight:bold;">0 N</div>
+    </div>
+</div>
+<script>function calc(){let m=document.getElementById('m').value;let a=document.getElementById('a').value;document.getElementById('res').innerText=(m*a).toFixed(2)+" N";}</script>
+</body></html>

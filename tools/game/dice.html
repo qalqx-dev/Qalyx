@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dice | QALQX</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        .dice { font-size: 8rem; color: #fff; text-shadow: 0 0 20px var(--primary); margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <div class="nav"><a href="../../index.html" class="back-btn">←</a><h2>DICE ROLL</h2></div>
+    <div class="container" style="text-align:center;">
+        <div id="dice" class="dice">⚀</div>
+        <button onclick="roll()">ROLL DICE</button>
+    </div>
+    <script>
+        const faces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+        function roll() {
+            const el = document.getElementById('dice');
+            let i = 0;
+            // Animate rapid changing
+            let timer = setInterval(() => {
+                el.innerText = faces[Math.floor(Math.random() * 6)];
+                i++;
+                if(i > 10) {
+                    clearInterval(timer);
+                    // Final result
+                    el.innerText = faces[Math.floor(Math.random() * 6)];
+                }
+            }, 50);
+        }
+    </script>
+</body>
+</html>

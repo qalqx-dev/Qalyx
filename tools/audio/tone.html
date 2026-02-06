@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tone | QALQX</title>
+    <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+    <div class="nav"><a href="../../index.html" class="back-btn">←</a><h2>TONE GEN</h2></div>
+    <div class="container" style="text-align:center;">
+        <div id="val" style="font-size:3rem; font-weight:bold; color:var(--primary); margin:20px 0;">440 Hz</div>
+        <input type="range" id="freq" min="20" max="20000" value="440" style="width:100%;" oninput="update()">
+        <p style="color:#666; font-size:0.8rem;">Warning: Lower volume before playing.</p>
+        <button id="btn" onclick="toggle()" style="margin-top:20px;">PLAY TONE</button>
+    </div>
+    <script>
+        let ctx, osc;
+        function update() {
+            let f = document.getElementById('freq').value;
+            document.getElementById('val').innerText = f + " Hz";
+            if(osc) osc.frequency.value = f;
+        }
+        function toggle() {
+            if(osc) {
+                osc.stop(); osc = null;
+                document.getElementById('btn').innerText = "PLAY TONE";
+                document.getElementById('btn').style.background = "var(--primary)";
+                document.getElementById('btn').style.color = "#000";
+            } else {
+                ctx = new (window.AudioContext || window.webkitAudioContext)();
+                osc = ctx.createOscillator();
+                osc.type = 'sine';
+                osc.frequency.value = document.getElementById('freq').value;
+                osc.connect(ctx.destination);
+                osc.start();
+                document.getElementById('btn').innerText = "STOP TONE";
+                document.getElementById('btn').style.background = "#FF4500";
+                document.getElementById('btn').style.color = "#fff";
+            }
+        }
+    </script>
+</body>
+</html>

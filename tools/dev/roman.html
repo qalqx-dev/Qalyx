@@ -1,0 +1,8 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Roman | QALQX</title><link rel="stylesheet" href="../../style.css"></head><body>
+<div class="nav"><a href="../../index.html" class="back-btn">←</a><h2>ROMAN NUMERAL</h2></div>
+<div class="container"><label>Number</label><input type="number" id="num" oninput="convert()"><div id="res" style="font-size:3rem; color:var(--primary); text-align:center; margin-top:20px; font-family:serif;">-</div></div>
+<script>
+function convert(){let num=document.getElementById('num').value;if(num>3999){document.getElementById('res').innerText="Max 3999";return;}
+const val=[1000,900,500,400,100,90,50,40,10,9,5,4,1];const sym=["M","CM","D","CD","C","XC","L","XL","X","IX","V","IV","I"];let roman="";
+for(let i=0;i<val.length;i++){while(num>=val[i]){num-=val[i];roman+=sym[i];}}document.getElementById('res').innerText=roman;}
+</script></body></html>

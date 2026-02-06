@@ -1,0 +1,12 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Ohms | QALQX</title><link rel="stylesheet" href="../../style.css"></head><body>
+<div class="nav"><a href="../../index.html" class="back-btn">←</a><h2>OHM'S LAW</h2></div>
+<div class="container">
+    <label>Current (I) Amps</label><input type="number" id="i" oninput="calc()">
+    <label>Resistance (R) Ohms</label><input type="number" id="r" oninput="calc()">
+    <div class="result-box" style="display:block; margin-top:20px;">
+        <div style="color:#888;">Voltage (V)</div>
+        <div id="res" style="font-size:3rem; color:var(--primary); font-weight:bold;">0 V</div>
+    </div>
+</div>
+<script>function calc(){let i=document.getElementById('i').value;let r=document.getElementById('r').value;document.getElementById('res').innerText=(i*r).toFixed(2)+" V";}</script>
+</body></html>

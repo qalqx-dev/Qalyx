@@ -1,0 +1,5 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Fact | QALQX</title><link rel="stylesheet" href="../../style.css"></head><body>
+<div class="nav"><a href="../../index.html" class="back-btn">←</a><h2>FACTORIAL</h2></div>
+<div class="container"><input type="number" id="n" placeholder="Number (e.g. 5)" oninput="calc()"><div id="res" style="font-size:2rem; color:var(--primary); text-align:center; margin-top:20px; word-break:break-all;">-</div></div>
+<script>function calc(){let n=parseInt(document.getElementById('n').value);if(n>170){document.getElementById('res').innerText="Infinity";return;}let f=1;for(let i=1;i<=n;i++)f*=i;document.getElementById('res').innerText=f;}</script>
+</body></html>

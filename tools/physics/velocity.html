@@ -1,0 +1,12 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Velocity | QALQX</title><link rel="stylesheet" href="../../style.css"></head><body>
+<div class="nav"><a href="../../index.html" class="back-btn">←</a><h2>VELOCITY</h2></div>
+<div class="container">
+    <label>Distance (m)</label><input type="number" id="d" oninput="calc()">
+    <label>Time (s)</label><input type="number" id="t" oninput="calc()">
+    <div class="result-box" style="display:block; margin-top:20px;">
+        <div style="color:#888;">Velocity (m/s)</div>
+        <div id="res" style="font-size:3rem; color:var(--primary); font-weight:bold;">0 m/s</div>
+    </div>
+</div>
+<script>function calc(){let d=document.getElementById('d').value;let t=document.getElementById('t').value;if(t!=0)document.getElementById('res').innerText=(d/t).toFixed(2)+" m/s";}</script>
+</body></html>

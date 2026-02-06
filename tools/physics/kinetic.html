@@ -1,0 +1,12 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>K.E. | QALQX</title><link rel="stylesheet" href="../../style.css"></head><body>
+<div class="nav"><a href="../../index.html" class="back-btn">←</a><h2>KINETIC ENERGY</h2></div>
+<div class="container">
+    <label>Mass (kg)</label><input type="number" id="m" oninput="calc()">
+    <label>Velocity (m/s)</label><input type="number" id="v" oninput="calc()">
+    <div class="result-box" style="display:block; margin-top:20px;">
+        <div style="color:#888;">Energy (Joules)</div>
+        <div id="res" style="font-size:3rem; color:var(--primary); font-weight:bold;">0 J</div>
+    </div>
+</div>
+<script>function calc(){let m=document.getElementById('m').value;let v=document.getElementById('v').value;document.getElementById('res').innerText=(0.5*m*v*v).toFixed(2)+" J";}</script>
+</body></html>

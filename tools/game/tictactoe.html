@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TTT | QALQX</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        .board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; margin-top: 20px; }
+        .cell { background: #1A1A1A; height: 90px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; cursor: pointer; border-radius: 4px; }
+        .cell:active { background: #222; }
+        .x { color: var(--primary); } .o { color: #FF4500; }
+    </style>
+</head>
+<body>
+    <div class="nav"><a href="../../index.html" class="back-btn">←</a><h2>TIC TAC TOE</h2></div>
+    <div class="container">
+        <div id="status" style="text-align:center; color:#888;">Player X Turn</div>
+        <div class="board" id="board"></div>
+        <button onclick="reset()" style="margin-top:20px;">RESET GAME</button>
+    </div>
+    <script>
+        let cells = Array(9).fill(null);
+        let turn = 'X';
+        const board = document.getElementById('board');
+        
+        function init() {
+            board.innerHTML = "";
+            cells.forEach((c, i) => {
+                let div = document.createElement('div');
+                div.className = `cell ${c === 'X' ? 'x' : (c === 'O' ? 'o' : '')}`;
+                div.innerText = c || "";
+                div.onclick = () => move(i);
+                board.appendChild(div);
+            });
+        }
+        function move(i) {
+            if(cells[i] || checkWin()) return;
+            cells[i] = turn;
+            if(checkWin()) {
+                document.getElementById('status').innerText = `WINNER: ${turn}`;
+                document.getElementById('status').style.color = turn === 'X' ? 'var(--primary)' : '#FF4500';
+            } else {
+                turn = turn === 'X' ? 'O' : 'X';
+                document.getElementById('status').innerText = `Player ${turn} Turn`;
+            }
+            init();
+        }
+        function checkWin() {
+            const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+            for(let w of wins) {
+                if(cells[w[0]] && cells[w[0]] === cells[w[1]] && cells[w[0]] === cells[w[2]]) return cells[w[0]];
+            }
+            return null;
+        }
+        function reset() { 
+            cells.fill(null); turn='X'; 
+            document.getElementById('status').innerText="Player X Turn"; 
+            document.getElementById('status').style.color="#888";
+            init(); 
+        }
+        init();
+    </script>
+</body>
+</html>

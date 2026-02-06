@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chrono | QALQX</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        .timer-display { font-size: 4rem; font-weight: bold; font-family: monospace; color: #fff; text-shadow: 0 0 10px var(--primary); margin: 30px 0; }
+        .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
+        .lap-list { width: 100%; margin-top: 20px; max-height: 300px; overflow-y: auto; }
+        .lap-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #222; color: #888; font-family: monospace; }
+        .lap-item:first-child { color: var(--primary); font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="../../index.html" class="back-btn">←</a>
+        <h2>CHRONO</h2>
+    </div>
+
+    <div class="container" style="text-align:center;">
+        <div class="timer-display" id="display">00:00.00</div>
+        
+        <div class="controls">
+            <button onclick="toggleStart()" id="startBtn">START</button>
+            <button onclick="lap()" style="background:#333; border:1px solid #555;">LAP</button>
+        </div>
+        <button onclick="reset()" style="background:transparent; border:1px solid #FF4500; color:#FF4500; margin-top:10px;">RESET SYSTEM</button>
+
+        <div class="lap-list" id="laps"></div>
+    </div>
+
+    <script>
+        let startTime, updatedTime, difference, tInterval, running = false;
+        let lapsContainer = document.getElementById('laps');
+
+        function toggleStart() {
+            if (!running) {
+                startTime = new Date().getTime() - (difference || 0);
+                tInterval = setInterval(getShowTime, 10);
+                running = true;
+                document.getElementById('startBtn').innerText = "PAUSE";
+                document.getElementById('startBtn').style.background = "#FFD700"; // Gold color for pause
+                document.getElementById('startBtn').style.color = "#000";
+            } else {
+                clearInterval(tInterval);
+                running = false;
+                document.getElementById('startBtn').innerText = "RESUME";
+                document.getElementById('startBtn').style.background = "var(--primary)";
+            }
+        }
+
+        function reset() {
+            clearInterval(tInterval);
+            running = false;
+            difference = 0;
+            document.getElementById('display').innerText = "00:00.00";
+            document.getElementById('startBtn').innerText = "START";
+            lapsContainer.innerHTML = "";
+        }
+
+        function lap() {
+            if (running) {
+                let li = document.createElement('div');
+                li.className = 'lap-item';
+                li.innerHTML = `<span>Lap ${lapsContainer.childElementCount + 1}</span> <span>${document.getElementById('display').innerText}</span>`;
+                lapsContainer.prepend(li);
+            }
+        }
+
+        function getShowTime() {
+            updatedTime = new Date().getTime();
+            difference = updatedTime - startTime;
+            
+            let hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            let minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+            let seconds = Math.floor((difference % (1000 * 60)) / 1000);
+            let ms = Math.floor((difference % 1000) / 10);
+
+            minutes = (minutes < 10) ? "0" + minutes : minutes;
+            seconds = (seconds < 10) ? "0" + seconds : seconds;
+            ms = (ms < 10) ? "0" + ms : ms;
+            
+            document.getElementById('display').innerText = minutes + ':' + seconds + '.' + ms;
+        }
+    </script>
+</body>
+</html>

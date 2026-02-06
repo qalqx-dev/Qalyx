@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pass Gen | QALQX</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        .pass-box {
+            background: #111; padding: 20px; border: 1px solid var(--primary);
+            border-radius: 8px; font-family: monospace; font-size: 1.5rem;
+            text-align: center; color: #fff; margin-bottom: 20px; word-break: break-all;
+        }
+        .options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: left; }
+        .opt-row { display: flex; align-items: center; justify-content: space-between; background: #1A1A1A; padding: 10px; border-radius: 6px; }
+        input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--primary); }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="../../index.html" class="back-btn">←</a>
+        <h2>SECURE_KEY</h2>
+    </div>
+
+    <div class="container">
+        <div class="pass-box" id="display">CLICK GENERATE</div>
+        
+        <div>
+            <label>Length: <span id="lenVal" style="color:var(--primary)">16</span></label>
+            <input type="range" id="length" min="8" max="32" value="16" oninput="updateLen()">
+        </div>
+
+        <div class="options">
+            <div class="opt-row"><span>Uppercase</span> <input type="checkbox" id="upper" checked></div>
+            <div class="opt-row"><span>Lowercase</span> <input type="checkbox" id="lower" checked></div>
+            <div class="opt-row"><span>Numbers</span> <input type="checkbox" id="nums" checked></div>
+            <div class="opt-row"><span>Symbols</span> <input type="checkbox" id="syms" checked></div>
+        </div>
+
+        <button onclick="generate()">GENERATE KEY</button>
+        <button onclick="copyPass()" style="background: #333; color: #fff; margin-top:10px;">COPY TO CLIPBOARD</button>
+    </div>
+
+    <script>
+        function updateLen() { document.getElementById('lenVal').innerText = document.getElementById('length').value; }
+        
+        function generate() {
+            const len = document.getElementById('length').value;
+            const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const lower = "abcdefghijklmnopqrstuvwxyz";
+            const nums = "0123456789";
+            const syms = "!@#$%^&*()_+~`|}{[]:;?><,./-=";
+            
+            let chars = "";
+            if (document.getElementById('upper').checked) chars += upper;
+            if (document.getElementById('lower').checked) chars += lower;
+            if (document.getElementById('nums').checked) chars += nums;
+            if (document.getElementById('syms').checked) chars += syms;
+
+            if (chars === "") { alert("Select at least one option!"); return; }
+
+            let password = "";
+            for (let i = 0; i < len; i++) {
+                password += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            document.getElementById('display').innerText = password;
+        }
+
+        function copyPass() {
+            const text = document.getElementById('display').innerText;
+            if(text === "CLICK GENERATE") return;
+            navigator.clipboard.writeText(text);
+            alert("Copied to clipboard!");
+        }
+    </script>
+</body>
+</html>

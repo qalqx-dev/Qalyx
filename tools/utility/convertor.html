@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Convert | QALQX</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        /* Custom layout for the Converter */
+        .select-box {
+            width: 100%; padding: 15px; background: #1A1A1A; color: #fff;
+            border: 1px solid #333; border-radius: 8px; margin-bottom: 20px;
+            font-size: 1rem; outline: none; cursor: pointer;
+        }
+        .select-box:focus { border-color: var(--primary); }
+
+        .conv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        
+        .io-box { display: flex; flex-direction: column; gap: 8px; }
+        .unit-select {
+            width: 100%; padding: 12px; background: #111; color: #aaa;
+            border: 1px solid #333; border-radius: 6px; font-size: 0.9rem; outline: none;
+        }
+
+        /* Result highlighting */
+        #valResult {
+            color: var(--primary); font-weight: bold; font-family: monospace;
+            font-size: 1.1rem; border-color: var(--primary);
+            background: rgba(0, 229, 255, 0.05);
+            overflow-x: auto; white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="../../index.html" class="back-btn">←</a>
+        <h2>UNIT MASTER</h2>
+    </div>
+
+    <div class="container">
+        <label>Select Category</label>
+        <select id="cat" class="select-box" onchange="updateUnits()">
+            <optgroup label="Common">
+                <option value="len">Length & Distance</option>
+                <option value="mass">Weight & Mass</option>
+                <option value="temp">Temperature</option>
+                <option value="time">Time</option>
+            </optgroup>
+            <optgroup label="Physics & Engineering">
+                <option value="speed">Speed</option>
+                <option value="pressure">Pressure (PSI/Bar)</option>
+                <option value="energy">Energy (J/kWh)</option>
+                <option value="power">Power (Watt/HP)</option>
+                <option value="force">Force (Newton)</option>
+            </optgroup>
+            <optgroup label="Math & Computing">
+                <option value="data">Data Storage</option>
+                <option value="area">Area</option>
+                <option value="vol">Volume</option>
+                <option value="angle">Angle (Deg/Rad)</option>
+            </optgroup>
+        </select>
+
+        <div class="conv-grid">
+            <div class="io-box">
+                <label>From</label>
+                <input type="number" id="valInput" placeholder="0" oninput="convert()">
+                <select id="unitFrom" class="unit-select" onchange="convert()"></select>
+            </div>
+            
+            <div class="io-box">
+                <label>To</label>
+                <div id="valResult" style="padding:15px; border:1px solid; border-radius:8px; min-height:22px; display:flex; align-items:center;">0</div>
+                <select id="unitTo" class="unit-select" onchange="convert()"></select>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // FACTOR TABLES: All values relative to the standard SI Unit
+        const factors = {
+            // Base: Meter
+            len: { "Meter (m)": 1, "Kilometer (km)": 1000, "Centimeter (cm)": 0.01, "Millimeter (mm)": 0.001, "Micrometer (µm)": 1e-6, "Nanometer (nm)": 1e-9, "Mile (mi)": 1609.34, "Yard (yd)": 0.9144, "Foot (ft)": 0.3048, "Inch (in)": 0.0254, "Nautical Mile": 1852, "Light Year": 9.461e15 },
+            
+            // Base: Gram
+            mass: { "Gram (g)": 1, "Kilogram (kg)": 1000, "Milligram (mg)": 0.001, "Metric Ton (t)": 1e6, "Pound (lb)": 453.592, "Ounce (oz)": 28.3495, "Stone": 6350.29, "Carat": 0.2 },
+            
+            // Base: Second
+            time: { "Second (s)": 1, "Millisecond (ms)": 0.001, "Microsecond (µs)": 1e-6, "Minute (min)": 60, "Hour (hr)": 3600, "Day": 86400, "Week": 604800, "Year": 3.154e7 },
+            
+            // Base: m/s
+            speed: { "Meter/Sec (m/s)": 1, "Km/Hour (km/h)": 0.277778, "Mile/Hour (mph)": 0.44704, "Knot": 0.514444, "Mach": 343, "Speed of Light (c)": 299792458 },
+            
+            // Base: Pascal
+            pressure: { "Pascal (Pa)": 1, "Kilopascal (kPa)": 1000, "Bar": 100000, "PSI": 6894.76, "Atmosphere (atm)": 101325, "Torr (mmHg)": 133.322 },
+            
+            // Base: Joule
+            energy: { "Joule (J)": 1, "Kilojoule (kJ)": 1000, "Calorie (cal)": 4.184, "Kilocalorie (kcal)": 4184, "Watt-hour (Wh)": 3600, "Kilowatt-hour (kWh)": 3.6e6, "Electronvolt (eV)": 1.602e-19, "BTU": 1055.06 },
+            
+            // Base: Watt
+            power: { "Watt (W)": 1, "Kilowatt (kW)": 1000, "Horsepower (Mech)": 745.7, "Horsepower (Metric)": 735.5 },
+            
+            // Base: Newton
+            force: { "Newton (N)": 1, "Kilonewton (kN)": 1000, "Dyne": 1e-5, "Pound-force (lbf)": 4.44822 },
+            
+            // Base: Square Meter
+            area: { "Sq Meter": 1, "Sq Kilometer": 1e6, "Sq Foot": 0.092903, "Sq Mile": 2.59e6, "Acre": 4046.86, "Hectare": 10000 },
+            
+            // Base: Liter
+            vol: { "Liter (L)": 1, "Milliliter (mL)": 0.001, "Cubic Meter": 1000, "Gallon (US)": 3.78541, "Quart": 0.9463, "Pint": 0.4731, "Cup": 0.24, "Fluid Oz": 0.02957 },
+            
+            // Base: Degree
+            angle: { "Degree (deg)": 1, "Radian (rad)": 57.2958, "Gradian": 0.9 },
+            
+            // Base: Bit
+            data: { "Bit (b)": 1, "Byte (B)": 8, "Kilobyte (KB)": 8192, "Megabyte (MB)": 8.389e6, "Gigabyte (GB)": 8.59e9, "Terabyte (TB)": 8.8e12, "Petabyte (PB)": 9.007e15 },
+
+            // Temp is special
+            temp: { "Celsius": "C", "Fahrenheit": "F", "Kelvin": "K" }
+        };
+
+        function updateUnits() {
+            const cat = document.getElementById('cat').value;
+            const unitList = Object.keys(factors[cat]);
+            const from = document.getElementById('unitFrom');
+            const to = document.getElementById('unitTo');
+            
+            // Try to keep previous selection if it exists in new category (rare but safe)
+            const oldFrom = from.value;
+            const oldTo = to.value;
+
+            from.innerHTML = ""; to.innerHTML = "";
+
+            unitList.forEach(u => {
+                from.add(new Option(u, u));
+                to.add(new Option(u, u));
+            });
+            
+            // Smart Defaults
+            if (unitList.includes(oldFrom)) from.value = oldFrom; else from.selectedIndex = 0;
+            if (unitList.includes(oldTo)) to.value = oldTo; else to.selectedIndex = (unitList.length > 1) ? 1 : 0;
+
+            convert();
+        }
+
+        function convert() {
+            const cat = document.getElementById('cat').value;
+            let val = parseFloat(document.getElementById('valInput').value);
+            const uFrom = document.getElementById('unitFrom').value;
+            const uTo = document.getElementById('unitTo').value;
+            const resBox = document.getElementById('valResult');
+
+            if (isNaN(val)) { resBox.innerText = "0"; return; }
+
+            // Temperature Handling
+            if (cat === "temp") {
+                resBox.innerText = convertTemp(val, uFrom, uTo);
+                return;
+            }
+
+            // Standard Conversion
+            const factorFrom = factors[cat][uFrom];
+            const factorTo = factors[cat][uTo];
+            
+            let result = (val * factorFrom) / factorTo;
+
+            // Smart Formatting for Physics/Science
+            if (result === 0) {
+                resBox.innerText = "0";
+            } else if (Math.abs(result) < 0.0001 || Math.abs(result) > 1000000) {
+                resBox.innerText = result.toExponential(4); // Scientific for huge/tiny nums
+            } else {
+                // Remove trailing zeros, max 6 decimals
+                resBox.innerText = parseFloat(result.toFixed(6));
+            }
+        }
+
+        function convertTemp(val, from, to) {
+            let c = val;
+            if (from === "Fahrenheit") c = (val - 32) * 5/9;
+            if (from === "Kelvin") c = val - 273.15;
+
+            if (to === "Celsius") return parseFloat(c.toFixed(2));
+            if (to === "Fahrenheit") return parseFloat(((c * 9/5) + 32).toFixed(2));
+            if (to === "Kelvin") return parseFloat((c + 273.15).toFixed(2));
+        }
+
+        // Init
+        updateUnits();
+    </script>
+</body>
+</html>

@@ -114,7 +114,7 @@
     <div class="grid">
         <a href="tools/age.html" class="card">
             <div class="card-icon">🎂</div>
-            <div class="card-name">Age Detailed</div>
+            <div class="card-name">Age</div>
         </a>
 
         <a href="tools/health/bmi.html" class="card">
@@ -148,6 +148,31 @@
         <div class="dot"></div>
         SYSTEM ONLINE • SERVERS ACTIVE
     </div>
+
+    <script>
+        // 1. Get the Search Bar
+        const searchInput = document.querySelector('.search-bar');
+        
+        // 2. Get all the Cards
+        const cards = document.querySelectorAll('.card');
+
+        // 3. Listen for typing
+        searchInput.addEventListener('input', (e) => {
+            const value = e.target.value.toLowerCase();
+
+            cards.forEach(card => {
+                // Get the name of the tool inside the card
+                const name = card.querySelector('.card-name').innerText.toLowerCase();
+                
+                // If the name matches what you typed, show it. Otherwise, hide it.
+                if (name.includes(value)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    </script>
 
 </body>
 </html>

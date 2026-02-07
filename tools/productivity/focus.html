@@ -3,41 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Focus | QALQX</title>
+    <title>Focus | QALQX Supreme</title>
     <link rel="stylesheet" href="../../style.css">
+    <script src="../../app.js" defer></script>
     <style>
-        .timer-circle {
-            width: 250px; height: 250px; border-radius: 50%; border: 6px solid #333;
+        .zen-circle {
+            width: 260px; height: 260px; border-radius: 50%;
+            border: 4px solid #333; margin: 20px auto;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            margin: 30px auto; position: relative;
+            position: relative; transition: box-shadow 1s, border-color 1s;
         }
-        .time-text { font-size: 4rem; font-weight: bold; color: #fff; }
-        .mode-text { font-size: 1rem; color: var(--primary); text-transform: uppercase; letter-spacing: 2px; }
-        .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; max-width: 300px; margin: 0 auto; }
-        .progress-ring { position: absolute; top: -6px; left: -6px; width: 250px; height: 250px; transform: rotate(-90deg); }
-        circle { fill: transparent; stroke: var(--primary); stroke-width: 6; stroke-dasharray: 785; stroke-dashoffset: 0; transition: 1s linear; }
+        .zen-circle.active { 
+            box-shadow: 0 0 50px rgba(0, 229, 255, 0.2); 
+            border-color: var(--primary); 
+        }
+        .time-display { font-size: 4.5rem; font-weight: bold; color: #fff; font-family: monospace; z-index: 2; }
+        .task-lbl { color: #888; font-size: 0.9rem; margin-top: 10px; z-index: 2; text-transform: uppercase; letter-spacing: 2px; }
+        
+        .progress-ring { 
+            position: absolute; top: -4px; left: -4px; 
+            width: 260px; height: 260px; transform: rotate(-90deg); pointer-events: none; 
+        }
+        circle { 
+            fill: transparent; stroke: var(--primary); stroke-width: 4; 
+            stroke-dasharray: 816; stroke-dashoffset: 0; transition: 1s linear; 
+        }
+
+        /* CONTROLS */
+        .slider-container { width: 80%; margin: 0 auto 20px auto; text-align: center; }
+        input[type=range] { 
+            width: 100%; height: 6px; background: #333; 
+            border-radius: 5px; outline: none; padding: 0; margin: 10px 0;
+            -webkit-appearance: none;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 20px; height: 20px;
+            background: var(--primary); border-radius: 50%; cursor: pointer;
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        .presets { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; }
+        .chip { 
+            padding: 8px 15px; background: #222; border: 1px solid #444; 
+            border-radius: 20px; font-size: 0.8rem; color: #aaa; cursor: pointer; 
+        }
+        .chip.active { background: var(--primary); color: #000; border-color: var(--primary); }
     </style>
 </head>
 <body>
-    <div class="nav">
-        <a href="../../index.html" class="back-btn">←</a>
-        <h2>FOCUS FLOW</h2>
-    </div>
+    <div class="nav"><a href="../../index.html" class="back-btn">←</a><h2>DEEP FOCUS</h2></div>
     <div class="container" style="text-align:center;">
-        <div class="timer-circle">
-            <svg class="progress-ring"><circle cx="125" cy="125" r="125"></circle></svg>
-            <div class="time-text" id="time">25:00</div>
-            <div class="mode-text" id="mode">FOCUS</div>
+        
+        <input type="text" id="taskInput" placeholder="Enter Task..." style="text-align:center; border:none; background:transparent; font-size:1.2rem; border-bottom:1px solid #333; border-radius:0; color:#fff;">
+
+        <div class="zen-circle" id="dial">
+            <svg class="progress-ring"><circle cx="130" cy="130" r="130"></circle></svg>
+            <div class="time-display" id="time">25:00</div>
+            <div class="task-lbl" id="status">READY</div>
         </div>
-        <div class="controls">
-            <button onclick="startTimer()" id="btnStart">START</button>
-            <button onclick="resetTimer()" style="background:#333;">RESET</button>
-            <button onclick="setMode(25)" style="background:#111; border:1px solid #333; font-size:0.8rem;">Focus</button>
-            <button onclick="setMode(5)" style="background:#111; border:1px solid #333; font-size:0.8rem;">Break</button>
+
+        <div class="slider-container" id="timeControls">
+            <div class="presets">
+                <div class="chip active" onclick="setPreset(25, this)">Focus 25m</div>
+                <div class="chip" onclick="setPreset(50, this)">Deep 50m</div>
+                <div class="chip" onclick="setPreset(5, this)">Break 5m</div>
+            </div>
+            <input type="range" id="timeSlider" min="1" max="120" value="25" oninput="slideTime()">
+            <div style="font-size:0.8rem; color:#666;">Drag to adjust minutes</div>
         </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; max-width:300px; margin:0 auto;">
+            <button onclick="toggle()" id="btnMain">START</button>
+            <button onclick="reset()" style="background:#222; color:#fff;">RESET</button>
+        </div>
+
+        <div style="margin-top:20px; color:#666; font-size:0.8rem;">
+            Sessions Completed: <span id="count" style="color:#fff;">0</span>
+        </div>
+
     </div>
+
     <script>
-        let timeLeft = 1500; let totalTime = 1500; let timerId = null;
+        let timeLeft = 1500; // seconds
+        let totalTime = 1500;
+        let timerId = null;
+        let sessions = 0;
+
+        // SVG Setup
         const circle = document.querySelector('circle');
         const radius = circle.r.baseVal.value;
         const circumference = radius * 2 * Math.PI;
@@ -52,21 +104,95 @@
             let m = Math.floor(timeLeft / 60);
             let s = timeLeft % 60;
             document.getElementById('time').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
-            document.title = `(${m}:${s < 10 ? '0' : ''}${s}) Focus`;
-            setProgress((timeLeft / totalTime) * 100);
+            
+            // Calculate progress inverse (fill up ring or empty it)
+            // Here we empty it as time goes down
+            let p = (timeLeft / totalTime) * 100;
+            // Invert logic for SVG dashoffset if we want it to shrink
+            const offset = circumference - ((100 - p) / 100) * circumference;
+            circle.style.strokeDashoffset = offset;
         }
 
-        function startTimer() {
-            if (timerId) { clearInterval(timerId); timerId = null; document.getElementById('btnStart').innerText = "RESUME"; return; }
-            document.getElementById('btnStart').innerText = "PAUSE";
-            timerId = setInterval(() => {
-                if (timeLeft > 0) { timeLeft--; updateDisplay(); }
-                else { clearInterval(timerId); alert("Session Complete!"); }
-            }, 1000);
+        function slideTime() {
+            if (timerId) return; // Lock if running
+            let val = document.getElementById('timeSlider').value;
+            timeLeft = val * 60;
+            totalTime = timeLeft;
+            
+            // Update display immediately
+            let m = Math.floor(timeLeft / 60);
+            let s = timeLeft % 60;
+            document.getElementById('time').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+            
+            // Remove active chips since manual slide
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
         }
 
-        function resetTimer() { clearInterval(timerId); timerId = null; timeLeft = totalTime; updateDisplay(); document.getElementById('btnStart').innerText = "START"; }
-        function setMode(mins) { totalTime = mins * 60; timeLeft = totalTime; document.getElementById('mode').innerText = mins === 25 ? "FOCUS" : "BREAK"; resetTimer(); }
+        function setPreset(min, el) {
+            if (timerId) return;
+            document.getElementById('timeSlider').value = min;
+            slideTime();
+            // Highlight chip
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function toggle() {
+            const btn = document.getElementById('btnMain');
+            const dial = document.getElementById('dial');
+            const slider = document.getElementById('timeSlider');
+
+            if (timerId) {
+                // PAUSE
+                clearInterval(timerId); timerId = null;
+                btn.innerText = "RESUME";
+                dial.classList.remove('active');
+                document.getElementById('status').innerText = "PAUSED";
+                slider.disabled = false;
+            } else {
+                // START
+                btn.innerText = "PAUSE";
+                dial.classList.add('active');
+                document.getElementById('status').innerText = "FOCUSING";
+                slider.disabled = true; // Lock slider
+                
+                timerId = setInterval(() => {
+                    if (timeLeft > 0) {
+                        timeLeft--;
+                        updateDisplay();
+                    } else {
+                        // FINISH
+                        clearInterval(timerId);
+                        timerId = null;
+                        sessions++;
+                        document.getElementById('count').innerText = sessions;
+                        
+                        // Haptic feedback if available
+                        if(navigator.vibrate) navigator.vibrate([200, 100, 200]);
+                        alert("Session Complete!");
+                        
+                        reset();
+                    }
+                }, 1000);
+            }
+        }
+
+        function reset() {
+            clearInterval(timerId); timerId = null;
+            // Reset to current slider value
+            slideTime(); 
+            
+            document.getElementById('btnMain').innerText = "START";
+            document.getElementById('dial').classList.remove('active');
+            document.getElementById('status').innerText = "READY";
+            document.getElementById('timeSlider').disabled = false;
+            
+            // Reset Ring visual
+            circle.style.strokeDashoffset = 0;
+        }
+        
+        // Init ring state
+        circle.style.strokeDashoffset = 0;
     </script>
 </body>
 </html>

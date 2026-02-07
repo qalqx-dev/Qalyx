@@ -1,12 +1,125 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Ohms | QALQX</title><link rel="stylesheet" href="../../style.css"></head><body>
-<div class="nav"><a href="../../index.html" class="back-btn">←</a><h2>OHM'S LAW</h2></div>
-<div class="container">
-    <label>Current (I) Amps</label><input type="number" id="i" oninput="calc()">
-    <label>Resistance (R) Ohms</label><input type="number" id="r" oninput="calc()">
-    <div class="result-box" style="display:block; margin-top:20px;">
-        <div style="color:#888;">Voltage (V)</div>
-        <div id="res" style="font-size:3rem; color:var(--primary); font-weight:bold;">0 V</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ohm's Law | QALQX Supreme</title>
+    <link rel="stylesheet" href="../../style.css">
+    <script src="../../app.js" defer></script> <style>
+        .circuit-viz {
+            width: 100%; height: 120px; background: rgba(0,0,0,0.3);
+            border-radius: 12px; margin-bottom: 20px; position: relative;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .wire { height: 4px; background: #444; width: 80%; position: absolute; }
+        .resistor { 
+            width: 60px; height: 20px; background: #222; border: 2px solid var(--primary);
+            position: absolute; z-index: 2; border-radius: 4px;
+            box-shadow: 0 0 15px var(--primary); transition: 0.3s;
+        }
+        .flow-dots {
+            width: 8px; height: 8px; background: #fff; border-radius: 50%;
+            position: absolute; animation: flow 1s linear infinite; z-index: 3;
+            box-shadow: 0 0 10px #fff;
+        }
+        @keyframes flow { 0% { left: 10%; opacity:0; } 20% { opacity:1; } 80% { opacity:1; } 100% { left: 90%; opacity:0; } }
+        
+        .mode-select { display: flex; gap: 10px; margin-bottom: 20px; }
+        .mode-btn { padding: 10px; font-size: 0.8rem; background: #222; border: 1px solid #444; color: #888; flex:1; }
+        .mode-btn.active { background: var(--primary); color: #000; border-color: var(--primary); box-shadow: 0 0 10px var(--primary); }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="../../index.html" class="back-btn">←</a>
+        <h2>OHM'S LAW</h2>
     </div>
-</div>
-<script>function calc(){let i=document.getElementById('i').value;let r=document.getElementById('r').value;document.getElementById('res').innerText=(i*r).toFixed(2)+" V";}</script>
-</body></html>
+
+    <div class="container">
+        <div class="circuit-viz">
+            <div class="wire"></div>
+            <div class="resistor" id="resViz"></div>
+            <div class="flow-dots" id="electron"></div>
+        </div>
+
+        <div class="mode-select">
+            <button class="mode-btn active" onclick="setMode('v')">Find V</button>
+            <button class="mode-btn" onclick="setMode('i')">Find I</button>
+            <button class="mode-btn" onclick="setMode('r')">Find R</button>
+        </div>
+
+        <div id="inputs">
+            </div>
+
+        <div class="result-box">
+            <div style="font-size:3.5rem; font-weight:bold; color:var(--primary);" id="result">0</div>
+            <div style="color:#aaa; letter-spacing:1px; font-size:0.9rem;" id="unit">VOLTS</div>
+        </div>
+        
+        <div style="margin-top:20px; font-size:0.8rem; color:#666; text-align:center;">
+            Formula: <span id="formula" style="color:#fff;">V = I × R</span>
+        </div>
+    </div>
+
+    <script>
+        let mode = 'v';
+        
+        function setMode(m) {
+            mode = m;
+            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            renderUI();
+            calc();
+        }
+
+        function renderUI() {
+            const container = document.getElementById('inputs');
+            let html = '';
+            
+            if(mode === 'v') {
+                html = `<label>Current (Amps)</label><input type="number" id="val1" placeholder="I" oninput="calc()">
+                        <label>Resistance (Ohms)</label><input type="number" id="val2" placeholder="R" oninput="calc()">`;
+                document.getElementById('unit').innerText = "VOLTS";
+                document.getElementById('formula').innerText = "V = I × R";
+            } else if(mode === 'i') {
+                html = `<label>Voltage (Volts)</label><input type="number" id="val1" placeholder="V" oninput="calc()">
+                        <label>Resistance (Ohms)</label><input type="number" id="val2" placeholder="R" oninput="calc()">`;
+                document.getElementById('unit').innerText = "AMPS";
+                document.getElementById('formula').innerText = "I = V / R";
+            } else {
+                html = `<label>Voltage (Volts)</label><input type="number" id="val1" placeholder="V" oninput="calc()">
+                        <label>Current (Amps)</label><input type="number" id="val2" placeholder="I" oninput="calc()">`;
+                document.getElementById('unit').innerText = "OHMS";
+                document.getElementById('formula').innerText = "R = V / I";
+            }
+            container.innerHTML = html;
+        }
+
+        function calc() {
+            let v1 = parseFloat(document.getElementById('val1').value) || 0;
+            let v2 = parseFloat(document.getElementById('val2').value) || 0;
+            let res = 0;
+
+            if(mode === 'v') res = v1 * v2;
+            else if(v2 !== 0) res = v1 / v2;
+
+            document.getElementById('result').innerText = parseFloat(res.toFixed(2));
+            
+            // ANIMATE VISUALIZER
+            // If Amps (Current) is high, speed up the dots
+            let speed = 2; // default
+            if(mode === 'v') speed = 2 / (v1 || 1); // v1 is Amps
+            if(mode === 'i') speed = 2 / (res || 1); // res is Amps
+            if(mode === 'r') speed = 2 / (v2 || 1); // v2 is Amps
+            
+            if(speed < 0.2) speed = 0.2; // Cap max speed
+            if(speed > 5) speed = 5; // Cap min speed
+            
+            document.getElementById('electron').style.animationDuration = speed + 's';
+        }
+
+        // Init
+        renderUI();
+    </script>
+</body>
+</html>

@@ -3,38 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IP Info | QALQX</title>
+    <title>IP | QALQX Supreme</title>
     <link rel="stylesheet" href="../../style.css">
+    <script src="../../app.js" defer></script>
     <style>
-        .ip-card { background: #111; border: 1px solid var(--primary); padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 20px; }
-        .big-ip { font-size: 2rem; font-weight: bold; color: #fff; margin-bottom: 5px; font-family: monospace; }
-        .data-row { display: flex; justify-content: space-between; border-bottom: 1px solid #222; padding: 10px 0; font-size: 0.9rem; }
+        .intel-card {
+            background: rgba(0, 229, 255, 0.05); border: 1px solid var(--primary);
+            padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 20px;
+        }
+        .ip-big { font-size: 2.2rem; font-family: monospace; font-weight: bold; color: #fff; text-shadow: 0 0 10px var(--primary); margin: 10px 0; word-break: break-all; }
+        
+        .data-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+        .data-row { 
+            background: #111; padding: 12px; border-radius: 8px; border-left: 2px solid #333;
+            display: flex; justify-content: space-between; font-size: 0.9rem;
+        }
+        .data-label { color: #888; }
         .data-val { color: #fff; font-weight: bold; }
     </style>
 </head>
 <body>
-    <div class="nav">
-        <a href="../../index.html" class="back-btn">←</a>
-        <h2>IP TRACER</h2>
-    </div>
+    <div class="nav"><a href="../../index.html" class="back-btn">←</a><h2>NETWORK INTEL</h2></div>
     <div class="container">
-        <div class="ip-card">
-            <div style="color:var(--primary); font-size:0.8rem; letter-spacing:1px;">PUBLIC IP ADDRESS</div>
-            <div class="big-ip" id="ip">Scanning...</div>
-        </div>
         
-        <div id="details">
-            <div class="data-row"><span>Provider (ISP)</span> <span class="data-val" id="isp">-</span></div>
-            <div class="data-row"><span>City</span> <span class="data-val" id="city">-</span></div>
-            <div class="data-row"><span>Region</span> <span class="data-val" id="region">-</span></div>
-            <div class="data-row"><span>Country</span> <span class="data-val" id="country">-</span></div>
-            <div class="data-row"><span>Timezone</span> <span class="data-val" id="tz">-</span></div>
+        <div class="intel-card">
+            <div style="font-size:0.7rem; color:var(--primary); letter-spacing:2px;">PUBLIC IDENTIFIER</div>
+            <div class="ip-big" id="ip">Scanning...</div>
+            <div id="status" style="color:#00FF7F; font-size:0.8rem;">● ONLINE</div>
         </div>
-        <button onclick="fetchIP()" style="margin-top:20px;">REFRESH DATA</button>
+
+        <div class="data-grid">
+            <div class="data-row"><span class="data-label">ISP</span> <span class="data-val" id="isp">-</span></div>
+            <div class="data-row"><span class="data-label">City</span> <span class="data-val" id="city">-</span></div>
+            <div class="data-row"><span class="data-label">Region</span> <span class="data-val" id="region">-</span></div>
+            <div class="data-row"><span class="data-label">Country</span> <span class="data-val" id="country">-</span></div>
+            <div class="data-row"><span class="data-label">Platform</span> <span class="data-val" id="os">-</span></div>
+            <div class="data-row"><span class="data-label">Screen</span> <span class="data-val" id="screen">-</span></div>
+        </div>
+
+        <button onclick="openMap()" style="background:#222; border:1px solid var(--primary); color:var(--primary); margin-top:20px;">OPEN MAP LOCATION</button>
+        <button onclick="fetchIP()">REFRESH DATA</button>
+
     </div>
+
     <script>
+        let lat = 0, lon = 0;
+
         function fetchIP() {
             document.getElementById('ip').innerText = "Scanning...";
+            
+            // Device Fingerprinting
+            document.getElementById('os').innerText = navigator.platform;
+            document.getElementById('screen').innerText = `${window.screen.width}x${window.screen.height}`;
+
+            // Network Fetch
             fetch('https://ipapi.co/json/')
                 .then(res => res.json())
                 .then(data => {
@@ -43,10 +65,25 @@
                     document.getElementById('city').innerText = data.city;
                     document.getElementById('region').innerText = data.region;
                     document.getElementById('country').innerText = data.country_name;
-                    document.getElementById('tz').innerText = data.timezone;
+                    
+                    lat = data.latitude;
+                    lon = data.longitude;
                 })
-                .catch(() => document.getElementById('ip').innerText = "Network Error");
+                .catch(() => {
+                    document.getElementById('ip').innerText = "Connection Failed";
+                    document.getElementById('status').innerText = "● OFFLINE";
+                    document.getElementById('status').style.color = "red";
+                });
         }
+
+        function openMap() {
+            if(lat && lon) {
+                window.open(`https://www.google.com/maps/search/?api=1&query=${lat},${lon}`, '_blank');
+            } else {
+                alert("Location not found yet.");
+            }
+        }
+
         fetchIP();
     </script>
 </body>

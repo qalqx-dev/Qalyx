@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings | QALQX</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="app.js" defer></script>
+    <style>
+        .setting-group { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+        .setting-title { font-size: 0.9rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; }
+        
+        .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .theme-btn { 
+            height: 50px; border-radius: 8px; border: 2px solid transparent; cursor: pointer; 
+            display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem;
+            transition: transform 0.2s;
+        }
+        .theme-btn:active { transform: scale(0.95); }
+        
+        /* Preview Colors */
+        .t-default { background: #000; border-color: #00E5FF; color: #00E5FF; }
+        .t-green { background: #051105; border-color: #00FF00; color: #00FF00; }
+        .t-gold { background: #110f05; border-color: #FFD700; color: #FFD700; }
+        .t-red { background: #110505; border-color: #FF0055; color: #FF0055; }
+        .t-light { background: #fff; border-color: #007BFF; color: #000; }
+
+        .toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
+        .toggle-row:last-child { border-bottom: none; }
+    </style>
+</head>
+<body>
+    <div class="nav"><a href="index.html" class="back-btn">←</a><h2>SYSTEM CONFIG</h2></div>
+    <div class="container">
+        
+        <div class="setting-group">
+            <div class="setting-title">Interface Theme</div>
+            <div class="theme-grid">
+                <div class="theme-btn t-default" onclick="saveTheme('default')">CYBER CYAN</div>
+                <div class="theme-btn t-green" onclick="saveTheme('theme-green')">MATRIX</div>
+                <div class="theme-btn t-gold" onclick="saveTheme('theme-gold')">ROYAL GOLD</div>
+                <div class="theme-btn t-red" onclick="saveTheme('theme-red')">CRIMSON</div>
+                <div class="theme-btn t-light" onclick="saveTheme('theme-light')" style="grid-column: span 2;">LIGHT MODE (PAPER)</div>
+            </div>
+        </div>
+
+        <div class="setting-group">
+            <div class="setting-title">Preferences</div>
+            <div class="toggle-row">
+                <span>Haptic Vibration</span>
+                <input type="checkbox" id="hapticToggle" checked onchange="toggleHaptics()">
+            </div>
+            <div class="toggle-row">
+                <span>Sound Effects</span>
+                <input type="checkbox" disabled><span style="font-size:0.7rem; color:#666;">COMING SOON</span>
+            </div>
+        </div>
+
+        <div class="setting-group">
+            <div class="setting-title">Data Management</div>
+            <button onclick="clearData()" style="background:rgba(255, 69, 0, 0.2); color:#FF4500; border:1px solid #FF4500;">RESET ALL APP DATA</button>
+            <div style="font-size:0.7rem; color:#666; margin-top:10px; text-align:center;">
+                QALQX OS v1.0 • Build 2026.02.08
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Init Toggles
+        if(localStorage.getItem('qalqx-haptics') === 'off') {
+            document.getElementById('hapticToggle').checked = false;
+        }
+
+        function toggleHaptics() {
+            const isOn = document.getElementById('hapticToggle').checked;
+            localStorage.setItem('qalqx-haptics', isOn ? 'on' : 'off');
+        }
+
+        function clearData() {
+            if(confirm("Factory Reset: This will clear all saved themes, notes, and settings. Continue?")) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+    </script>
+</body>
+</html>

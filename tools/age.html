@@ -3,83 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Age | QALQX</title>
-    <link rel="stylesheet" href="../style.css">
+    <title>Age | QALQX Supreme</title>
+    <link rel="stylesheet" href="../../style.css">
+    <script src="../../app.js" defer></script>
     <style>
-        .main-age { text-align: center; font-size: 2.5rem; color: #fff; font-weight: bold; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 20px; }
-        .main-age span { color: var(--primary); }
-
-        .stat-row {
-            display: flex; justify-content: space-between; background: #111;
-            padding: 12px 15px; margin-bottom: 8px; border-radius: 6px;
-            border-left: 3px solid #333;
+        .hero-stat {
+            text-align: center; padding: 30px; 
+            border: 1px solid var(--primary); border-radius: 20px; 
+            background: rgba(0, 229, 255, 0.05); margin-bottom: 20px;
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.1);
         }
-        .stat-label { color: #888; font-size: 0.9rem; }
-        .stat-value { color: #fff; font-weight: bold; font-family: monospace; font-size: 1rem; }
-        .timestamp { text-align: center; color: #555; font-size: 0.75rem; margin-top: 20px; font-style: italic; }
+        .grid-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .stat-card { 
+            background: var(--surface); padding: 15px; 
+            border-radius: 12px; border: 1px solid var(--border);
+            display: flex; flex-direction: column; justify-content: center;
+        }
+        .stat-label { font-size: 0.7rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+        .stat-val { font-size: 1.1rem; color: #fff; font-weight: bold; font-family: monospace; }
+        
+        .identity-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 20px; }
+        .id-card { 
+            background: #111; border: 1px solid #333; padding: 10px; 
+            border-radius: 10px; text-align: center;
+        }
+        .id-icon { font-size: 1.5rem; margin-bottom: 5px; }
+        .id-val { font-size: 0.9rem; font-weight: bold; color: #fff; }
     </style>
 </head>
 <body>
-    <div class="nav">
-        <a href="../index.html" class="back-btn">←</a>
-        <h2>Age Detailed</h2>
-    </div>
-
+    <div class="nav"><a href="../../index.html" class="back-btn">←</a><h2>CHRONO MASTER</h2></div>
     <div class="container">
-        <div>
-            <label>Date of Birth</label>
-            <input type="date" id="dob">
-        </div>
-        <button onclick="calculateDetailedAge()">CALCULATE</button>
+        
+        <label>Date of Birth</label>
+        <input type="date" id="dob" onchange="startClock()">
 
-        <div class="result-box" id="resultArea">
-            <div class="main-age" id="mainAge"></div>
-            <div id="statsList"></div>
-            <div class="timestamp" id="timeRef"></div>
+        <div class="hero-stat">
+            <div style="font-size:0.8rem; color:var(--primary); letter-spacing:2px; margin-bottom:10px;">TOTAL TIME ALIVE</div>
+            <div id="liveSeconds" style="font-size:2.5rem; font-weight:bold; color:#fff; font-family:monospace;">0</div>
+            <div style="color:#666; font-size:0.8rem; margin-top:5px;">seconds lived</div>
         </div>
+
+        <div class="grid-stats">
+            <div class="stat-card">
+                <div class="stat-label">Years</div>
+                <div class="stat-val" id="years">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Months</div>
+                <div class="stat-val" id="months">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Weeks</div>
+                <div class="stat-val" id="weeks">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Days</div>
+                <div class="stat-val" id="days">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Hours</div>
+                <div class="stat-val" id="hours">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Minutes</div>
+                <div class="stat-val" id="minutes">-</div>
+            </div>
+        </div>
+
+        <div class="identity-grid">
+            <div class="id-card">
+                <div class="id-icon" id="zodiacIcon">🌟</div>
+                <div class="stat-label">Zodiac</div>
+                <div class="id-val" id="zodiac">-</div>
+            </div>
+            <div class="id-card">
+                <div class="id-icon" id="genIcon">🧬</div>
+                <div class="stat-label">Gen</div>
+                <div class="id-val" id="gen" style="color:#FFD700">-</div>
+            </div>
+            <div class="id-card">
+                <div class="id-icon">🎂</div>
+                <div class="stat-label">Next B-Day</div>
+                <div class="id-val" id="nextB" style="color:var(--primary)">-</div>
+            </div>
+        </div>
+
     </div>
 
     <script>
-        function calculateDetailedAge() {
-            let input = document.getElementById('dob').value;
-            if (!input) return;
-            let dob = new Date(input);
-            let now = new Date();
-            let diff = now - dob;
-
-            const msPerDay = 1000 * 60 * 60 * 24;
-            const msPerYear = msPerDay * 365.25;
-
-            let years = Math.floor(diff / msPerYear);
-            let totalSeconds = Math.floor(diff / 1000);
-            let totalMinutes = Math.floor(totalSeconds / 60);
-            let totalHours = Math.floor(totalMinutes / 60);
-            let totalDays = Math.floor(diff / msPerDay);
-            let totalWeeks = (totalDays / 7).toFixed(1);
-            let totalMonths = Math.floor(years * 12) + (now.getMonth() - dob.getMonth());
-
-            document.getElementById('resultArea').style.display = 'block';
-            document.getElementById('mainAge').innerHTML = years + " <span>years</span>";
-
-            let statsHtml = `
-                ${buildRow('Months', totalMonths.toLocaleString())}
-                ${buildRow('Weeks', Number(totalWeeks).toLocaleString())}
-                ${buildRow('Days', totalDays.toLocaleString())}
-                ${buildRow('Hours', totalHours.toLocaleString(), true)}
-                ${buildRow('Minutes', totalMinutes.toLocaleString(), true)}
-                ${buildRow('Seconds', totalSeconds.toLocaleString(), true)}
-            `;
-            document.getElementById('statsList').innerHTML = statsHtml;
-            document.getElementById('timeRef').innerText = "As on: " + now.toLocaleString();
+        let timer;
+        function startClock() {
+            if(timer) clearInterval(timer);
+            update();
+            timer = setInterval(update, 1000);
         }
 
-        function buildRow(label, value, highlight=false) {
-            let color = highlight ? 'border-left-color: var(--primary);' : '';
-            return `<div class="stat-row" style="${color}">
-                <span class="stat-label">${label}</span>
-                <span class="stat-value">${value}</span>
-            </div>`;
-        }
-    </script>
-</body>
-</html>
+        function update() {
+            const dobInput = document.getElementById('dob').value;
+            if(!dobInput) return;
+
+            const dob = new Date(dobInput);
+            const now = new Date();
+            const diff = now - dob;
+
+            // Live Seconds
+            document.getElementById('liveSeconds').innerText = Math.floor(diff / 1000).toLocaleString();
+
+            // BREAKDOWN
+            // Rough approximations for display speed
+            document.getElementById('years').innerText = (diff / (1000 * 60 * 60 * 24 * 365.25)).toFixed(2);
+            document.getElementById('months').innerText = Math.floor(diff / (1000 * 60 * 60 * 24 * 30.44)).toLocaleString();
+            document.getElementById('weeks').innerText = Math.floor(diff / (1000 * 60 * 60 * 24 * 7)).toLocaleString();
+            document.getElementById('days').innerText = Math.floor(diff / (1000 * 60 * 60 * 24)).toLocaleString();
+            document.getElementById('hours').innerText = Math.floor(diff / (1000 * 60 * 60)).toLocaleString();
+            document.getElementById('minutes').innerText = Math.floor(diff / (1000 * 60)).toLocaleString();
+
+            // Next Birthday Logic
+            const nextB = new Date(now.getFullYear(), dob.getMonth(), dob.getDate());
+            if(now > nextB) nextB.setFullYear(now.getFullYear() + 1);
+            const daysTo = Math.ceil((nextB - now) / (1000 * 60 * 60 * 24));
+            document.

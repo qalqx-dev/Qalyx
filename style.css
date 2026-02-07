@@ -1,89 +1,147 @@
-/* QALQX MASTER THEME v1.0 */
+/* QALQX MASTER STYLE v2.0 (Glassmorphism Engine) */
 :root {
-    --bg: #000000;
-    --surface: #111111;
-    --input-bg: #1A1A1A;
-    --primary: #00E5FF;  /* The Neon Cyan */
-    --text-main: #E0E0E0;
-    --text-dim: #888888;
-    --border: #333333;
+    --bg: #050505;
+    --surface: rgba(30, 30, 30, 0.6);
+    --border: rgba(255, 255, 255, 0.1);
+    --primary: #00E5FF; /* Cyan Neon */
+    --accent: #FF0055;  /* Glitch Red */
+    --text-main: #ffffff;
+    --text-muted: #888888;
+    --font-stack: 'Inter', system-ui, -apple-system, sans-serif;
+    --mono-stack: 'JetBrains Mono', 'Courier New', monospace;
 }
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
 body {
     background-color: var(--bg);
+    background-image: radial-gradient(circle at 50% 0%, #1a1a2e 0%, #000 70%);
     color: var(--text-main);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    font-family: var(--font-stack);
+    margin: 0; padding: 0;
     min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center;
 }
 
-/* HEADER */
+/* NAVIGATION */
 .nav {
-    width: 100%;
+    width: 100%; max-width: 480px;
     padding: 20px;
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    box-sizing: border-box;
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    backdrop-filter: blur(10px);
+    position: sticky; top: 0; z-index: 100;
 }
-
-.back-btn { text-decoration: none; color: var(--text-dim); font-size: 1.5rem; margin-right: 20px; font-weight: bold; }
-h2 { margin: 0; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; font-size: 1.1rem; }
-
-/* CONTAINERS */
-.container { width: 85%; max-width: 500px; margin-top: 30px; display: flex; flex-direction: column; gap: 15px; padding-bottom: 50px; }
-
-/* INPUTS */
-label { color: var(--text-dim); font-size: 0.85rem; margin-left: 2px; margin-bottom: 5px; display: block; }
-input {
-    background: var(--input-bg);
-    border: 1px solid var(--border);
-    color: var(--text-main);
-    padding: 15px;
-    border-radius: 8px;
-    font-size: 1.1rem;
-    width: 100%;
-    box-sizing: border-box;
-    outline: none;
-    transition: 0.2s;
+.back-btn {
+    text-decoration: none; font-size: 1.5rem; color: var(--text-muted);
+    transition: 0.2s; padding: 5px 10px; border-radius: 8px;
 }
-input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(0, 229, 255, 0.1); }
+.back-btn:active { color: var(--primary); background: rgba(0,229,255,0.1); }
+h2 { margin: 0; font-size: 1.2rem; letter-spacing: 2px; text-transform: uppercase; color: var(--text-main); text-shadow: 0 0 10px rgba(0,229,255,0.3); }
 
-/* BUTTONS */
-button {
-    background: var(--primary);
-    color: #000;
-    border: none;
-    padding: 16px;
-    border-radius: 8px;
-    font-weight: 700;
-    font-size: 1rem;
-    margin-top: 15px;
-    cursor: pointer;
-    width: 100%;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    transition: transform 0.1s;
-}
-button:active { transform: scale(0.98); background: #00b8cc; }
-
-/* RESULTS */
-.result-box {
-    display: none;
-    margin-top: 25px;
-    background: var(--surface);
-    padding: 25px;
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    text-align: center;
-    animation: fadeIn 0.3s ease;
+/* MAIN CONTAINER */
+.container {
+    width: 100%; max-width: 480px; padding: 20px;
+    animation: fadeIn 0.4s ease-out;
 }
 
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* CARDS & INPUTS */
+.card, .container > div {
+    /* Glass Effect */
+}
+
+input, select, textarea {
+    width: 100%; padding: 16px; margin-bottom: 15px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: #fff; font-size: 1rem; outline: none;
+    transition: all 0.2s;
+    backdrop-filter: blur(5px);
+}
+input:focus, select:focus, textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 15px rgba(0, 229, 255, 0.1);
+    transform: scale(1.01);
+}
+
+/* BUTTONS */
+button {
+    width: 100%; padding: 18px;
+    background: linear-gradient(135deg, var(--primary) 0%, #00B8D4 100%);
+    color: #000; font-weight: 800; font-size: 1rem;
+    border: none; border-radius: 12px;
+    cursor: pointer; letter-spacing: 1px;
+    box-shadow: 0 4px 15px rgba(0, 229, 255, 0.3);
+    transition: transform 0.1s, box-shadow 0.1s;
+    margin-top: 10px; text-transform: uppercase;
+}
+button:active { transform: scale(0.96); box-shadow: 0 2px 5px rgba(0, 229, 255, 0.2); }
+
+/* RESULT BOXES */
+.result-box {
+    background: rgba(0, 255, 127, 0.05);
+    border: 1px solid rgba(0, 255, 127, 0.2);
+    border-radius: 12px;
+    padding: 20px; text-align: center;
+    margin-top: 20px;
+}
+
+/* GRID LAYOUT (For Dashboard) */
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding-bottom: 50px; }
+.card {
+    background: var(--surface); padding: 15px; border-radius: 16px;
+    text-decoration: none; color: white;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    height: 110px; border: 1px solid var(--border);
+    transition: transform 0.1s, border-color 0.2s;
+}
+.card:active { transform: scale(0.95); background: rgba(255,255,255,0.05); border-color: var(--primary); }
+.card-icon { font-size: 2.2rem; margin-bottom: 8px; filter: drop-shadow(0 0 5px rgba(255,255,255,0.2)); }
+/* --- THEME ENGINE v1.0 --- */
+
+/* 1. HACKER GREEN (Matrix) */
+body.theme-green {
+    --primary: #00FF00;
+    --accent: #008F11;
+    --bg: #051105;
+    background-image: radial-gradient(circle at 50% 0%, #0a1f0a 0%, #000 70%);
+}
+
+/* 2. ROYAL GOLD (Luxury) */
+body.theme-gold {
+    --primary: #FFD700;
+    --accent: #DAA520;
+    --bg: #110f05;
+    background-image: radial-gradient(circle at 50% 0%, #2e2a10 0%, #000 70%);
+}
+
+/* 3. CRIMSON RED (Warning/Sith) */
+body.theme-red {
+    --primary: #FF0055;
+    --accent: #800020;
+    --bg: #110505;
+    background-image: radial-gradient(circle at 50% 0%, #2e0a10 0%, #000 70%);
+}
+
+/* 4. LIGHT MODE (Paper) */
+body.theme-light {
+    --bg: #f0f2f5;
+    --surface: rgba(255, 255, 255, 0.9);
+    --border: #ccc;
+    --primary: #007BFF; /* Pro Blue */
+    --accent: #FF4500;
+    --text-main: #111;
+    --text-muted: #555;
+    background-image: none;
+}
+/* Fix Light Mode inputs to be visible */
+body.theme-light input, body.theme-light select, body.theme-light textarea {
+    background: #fff; color: #000; border-color: #ddd;
+}
+body.theme-light .card {
+    background: #fff; color: #000; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+body.theme-light .back-btn { color: #333; }
+body.theme-light .card-name { color: #555; }

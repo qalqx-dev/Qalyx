@@ -3,40 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tally | QALQX</title>
+    <title>Tally | QALQX Supreme</title>
     <link rel="stylesheet" href="../../style.css">
+    <script src="../../app.js" defer></script>
     <style>
-        .counter-disp { font-size: 6rem; font-weight: bold; color: #fff; text-align: center; margin: 30px 0; font-family: monospace; }
-        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .btn-big { height: 100px; font-size: 2rem; }
+        .counter-zone {
+            width: 100%; height: 400px; background: #111; border: 2px solid #333;
+            border-radius: 20px; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; cursor: pointer;
+            user-select: none; transition: background 0.1s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .counter-zone:active { background: #222; border-color: var(--primary); }
+        .count-val { font-size: 8rem; font-weight: bold; color: #fff; font-family: monospace; }
+        .reset-btn { position: absolute; top: 20px; right: 20px; background: #333; width: 40px; height: 40px; border-radius: 50%; color: #FF4500; border: none; font-weight: bold; z-index: 10; cursor: pointer; }
     </style>
 </head>
 <body>
-    <div class="nav">
-        <a href="../../index.html" class="back-btn">←</a>
-        <h2>TALLY COUNTER</h2>
-    </div>
-    <div class="container">
-        <div class="counter-disp" id="val">0</div>
+    <div class="nav"><a href="../../index.html" class="back-btn">←</a><h2>TALLY COUNT</h2></div>
+    <div class="container" style="position:relative;">
         
-        <div class="btn-grid">
-            <button class="btn-big" style="background:#333;" onclick="mod(-1)">-</button>
-            <button class="btn-big" onclick="mod(1)">+</button>
+        <button class="reset-btn" onclick="reset()">↺</button>
+        
+        <div class="counter-zone" onclick="count(1)">
+            <div style="color:#666; text-transform:uppercase; letter-spacing:2px; margin-bottom:10px;">TAP TO COUNT</div>
+            <div class="count-val" id="val">0</div>
         </div>
-        <button onclick="reset()" style="background:transparent; color:#FF4500; border:1px solid #FF4500; margin-top:20px;">RESET ZERO</button>
-    </div>
-    <script>
-        let count = parseInt(localStorage.getItem('qalqx_tally')) || 0;
-        const disp = document.getElementById('val');
-        disp.innerText = count;
 
-        function mod(n) {
-            count += n;
-            if(count < 0) count = 0;
-            disp.innerText = count;
-            localStorage.setItem('qalqx_tally', count);
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:20px;">
+            <button onclick="count(-1)" style="background:#333;">- DECREASE</button>
+            <button onclick="count(1)">+ INCREASE</button>
+        </div>
+
+    </div>
+
+    <script>
+        let c = parseInt(localStorage.getItem('qalqx-tally')) || 0;
+        document.getElementById('val').innerText = c;
+
+        function count(n) {
+            c += n;
+            if(c < 0) c = 0;
+            document.getElementById('val').innerText = c;
+            localStorage.setItem('qalqx-tally', c);
+            
+            // Haptic
+            if(navigator.vibrate) navigator.vibrate(15);
         }
-        function reset() { count = 0; mod(0); }
+
+        function reset() {
+            if(confirm("Reset counter to 0?")) {
+                c = 0;
+                document.getElementById('val').innerText = 0;
+                localStorage.setItem('qalqx-tally', 0);
+            }
+        }
     </script>
 </body>
 </html>

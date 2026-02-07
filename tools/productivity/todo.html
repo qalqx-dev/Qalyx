@@ -3,59 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tasks | QALQX</title>
+    <title>Tasks | QALQX Supreme</title>
     <link rel="stylesheet" href="../../style.css">
+    <script src="../../app.js" defer></script>
     <style>
-        .task-input { display: flex; gap: 10px; margin-bottom: 20px; }
-        .task-list { list-style: none; padding: 0; }
-        .task-item { background: #111; padding: 15px; border-bottom: 1px solid #222; display: flex; align-items: center; justify-content: space-between; }
-        .task-text { flex-grow: 1; margin-left: 10px; }
-        .done { text-decoration: line-through; color: #555; }
-        .del-btn { color: #FF4500; cursor: pointer; font-weight: bold; padding: 5px 10px; }
+        .input-row { display: flex; gap: 10px; margin-bottom: 20px; }
+        .add-btn { width: 60px; font-size: 1.5rem; padding: 0; margin: 0; }
+        
+        .task-list { list-style: none; padding: 0; margin: 0; }
+        .task-item {
+            background: #111; padding: 15px; margin-bottom: 8px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: space-between;
+            border: 1px solid #222; transition: all 0.2s;
+        }
+        .task-item.done { opacity: 0.5; border-color: #333; }
+        .task-item.done span { text-decoration: line-through; color: #666; }
+        
+        .del-x { color: #FF4500; font-weight: bold; padding: 10px; cursor: pointer; }
+        
+        .progress-bar { width: 100%; height: 6px; background: #222; border-radius: 3px; margin-bottom: 20px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--primary); width: 0%; transition: width 0.3s; }
     </style>
 </head>
 <body>
-    <div class="nav">
-        <a href="../../index.html" class="back-btn">←</a>
-        <h2>TASK MASTER</h2>
-    </div>
+    <div class="nav"><a href="../../index.html" class="back-btn">←</a><h2>TASK MASTER</h2></div>
     <div class="container">
-        <div class="task-input">
-            <input type="text" id="newTodo" placeholder="New Mission...">
-            <button onclick="addTodo()" style="width: auto; margin: 0;">+</button>
+        
+        <div style="display:flex; justify-content:space-between; color:#888; font-size:0.8rem; margin-bottom:5px;">
+            <span id="taskCount">0 Tasks</span>
+            <span id="doneCount">0 Done</span>
         </div>
-        <div class="task-list" id="list"></div>
+        <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+
+        <div class="input-row">
+            <input type="text" id="inp" placeholder="New Mission..." style="margin:0;" onkeypress="if(event.key==='Enter') add()">
+            <button class="add-btn" onclick="add()">+</button>
+        </div>
+
+        <ul class="task-list" id="list">
+            </ul>
+
     </div>
+
     <script>
-        let todos = JSON.parse(localStorage.getItem('qalqx_todos')) || [];
+        let tasks = JSON.parse(localStorage.getItem('qalqx-todo')) || [];
 
         function render() {
             const list = document.getElementById('list');
             list.innerHTML = "";
-            todos.forEach((t, i) => {
-                let div = document.createElement('div');
-                div.className = 'task-item';
-                div.innerHTML = `
-                    <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggle(${i})">
-                    <span class="task-text ${t.done ? 'done' : ''}">${t.text}</span>
-                    <span class="del-btn" onclick="remove(${i})">✕</span>
+            let done = 0;
+
+            tasks.forEach((t, i) => {
+                if(t.done) done++;
+                const li = document.createElement('li');
+                li.className = `task-item ${t.done ? 'done' : ''}`;
+                li.innerHTML = `
+                    <span onclick="toggle(${i})" style="flex:1; cursor:pointer;">${t.text}</span>
+                    <div class="del-x" onclick="del(${i})">×</div>
                 `;
-                list.appendChild(div);
+                list.appendChild(li);
             });
-            localStorage.setItem('qalqx_todos', JSON.stringify(todos));
+
+            // Update Stats
+            document.getElementById('taskCount').innerText = tasks.length + " Tasks";
+            document.getElementById('doneCount').innerText = done + " Done";
+            const percent = tasks.length ? (done / tasks.length) * 100 : 0;
+            document.getElementById('prog').style.width = percent + "%";
+            
+            // SAVE
+            localStorage.setItem('qalqx-todo', JSON.stringify(tasks));
         }
 
-        function addTodo() {
-            let txt = document.getElementById('newTodo').value;
+        function add() {
+            const txt = document.getElementById('inp').value.trim();
             if(!txt) return;
-            todos.push({text: txt, done: false});
-            document.getElementById('newTodo').value = "";
+            tasks.push({ text: txt, done: false });
+            document.getElementById('inp').value = "";
             render();
         }
 
-        function toggle(i) { todos[i].done = !todos[i].done; render(); }
-        function remove(i) { todos.splice(i, 1); render(); }
-        render();
+        function toggle(i) {
+            tasks[i].done = !tasks[i].done;
+            render();
+        }
+
+        function del(i) {
+            tasks.splice(i, 1);
+            render();
+        }
+
+        render(); // Init
     </script>
 </body>
 </html>

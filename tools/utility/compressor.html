@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compress | QALQX Supreme</title>
+    <link rel="stylesheet" href="../../style.css">
+    <script src="../../app.js" defer></script>
+    <style>
+        .upload-zone {
+            border: 2px dashed #444; padding: 30px; border-radius: 12px;
+            text-align: center; cursor: pointer; transition: 0.2s;
+            margin-bottom: 20px;
+        }
+        .upload-zone:hover { border-color: var(--primary); background: rgba(0,229,255,0.05); }
+        
+        .preview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .img-card { background: #111; padding: 10px; border-radius: 8px; text-align: center; }
+        .img-card img { max-width: 100%; border-radius: 4px; height: 100px; object-fit: contain; }
+        .size-tag { font-size: 0.8rem; color: var(--primary); margin-top: 5px; }
+        
+        input[type="range"] { margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <div class="nav"><a href="../../index.html" class="back-btn">←</a><h2>IMG COMPRESSOR</h2></div>
+    <div class="container">
+        
+        <div class="upload-zone" onclick="document.getElementById('fileIn').click()">
+            <div style="font-size:2rem; margin-bottom:10px;">📸</div>
+            <div style="color:#888;">Tap to Select Image</div>
+            <input type="file" id="fileIn" accept="image/*" style="display:none;" onchange="loadFile()">
+        </div>
+
+        <div id="editor" style="display:none;">
+            <div class="preview-grid">
+                <div class="img-card">
+                    <div style="font-size:0.7rem; color:#666;">ORIGINAL</div>
+                    <img id="origImg">
+                    <div class="size-tag" id="origSize">0 KB</div>
+                </div>
+                <div class="img-card">
+                    <div style="font-size:0.7rem; color:#666;">COMPRESSED</div>
+                    <img id="compImg">
+                    <div class="size-tag" id="compSize">0 KB</div>
+                </div>
+            </div>
+
+            <label>Quality Level: <span id="qVal" style="color:var(--primary);">80%</span></label>
+            <input type="range" id="quality" min="1" max="100" value="80" oninput="compress()">
+
+            <a id="downloadBtn" download="compressed.jpg">
+                <button>DOWNLOAD IMAGE ⬇️</button>
+            </a>
+        </div>
+
+    </div>
+
+    <script>
+        let originalFile = null;
+
+        function loadFile() {
+            const file = document.getElementById('fileIn').files[0];
+            if(!file) return;
+            originalFile = file;
+
+            // Show Editor
+            document.getElementById('editor').style.display = 'block';
+            
+            // Show Original
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                document.getElementById('origImg').src = e.target.result;
+                document.getElementById('origSize').innerText = formatBytes(file.size);
+                compress(); // Initial compression
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function compress() {
+            if(!originalFile) return;
+
+            const q = document.getElementById('quality').value;
+            document.getElementById('qVal').innerText = q + "%";
+            
+            const img = new Image();
+            img.src = document.getElementById('origImg').src;
+            
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                // Keep original dimensions
+                canvas.width = img.width;
+                canvas.height = img.height;
+                
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                
+                // Compress (JPEG quality 0.0 - 1.0)
+                const qualityDecimal = q / 100;
+                const dataUrl = canvas.toDataURL('image/jpeg', qualityDecimal);
+                
+                // Update Preview
+                document.getElementById('compImg').src = dataUrl;
+                
+                // Calculate New Size
+                const head = 'data:image/jpeg;base64,';
+                const size = Math.round((dataUrl.length - head.length) * 3/4);
+                document.getElementById('compSize').innerText = formatBytes(size);
+
+                // Setup Download
+                document.getElementById('downloadBtn').href = dataUrl;
+            };
+        }
+
+        function formatBytes(bytes) {
+            if(bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+    </script>
+</body>
+</html>

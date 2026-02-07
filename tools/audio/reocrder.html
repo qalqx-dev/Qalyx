@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice | QALQX Supreme</title>
+    <link rel="stylesheet" href="../../style.css">
+    <script src="../../app.js" defer></script>
+    <style>
+        .mic-circle {
+            width: 120px; height: 120px; border-radius: 50%;
+            background: #222; border: 2px solid #444; margin: 30px auto;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 3rem; cursor: pointer; transition: 0.3s;
+            position: relative;
+        }
+        .mic-circle.recording { 
+            background: #FF0055; border-color: #FF0055; 
+            box-shadow: 0 0 30px rgba(255, 0, 85, 0.4); 
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        
+        .timer { font-size: 2.5rem; font-family: monospace; font-weight: bold; text-align: center; margin-bottom: 20px; }
+        .status { text-align: center; color: #888; font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; }
+
+        .playlist { margin-top: 30px; }
+        .audio-item { 
+            background: #111; padding: 15px; border-radius: 8px; margin-bottom: 10px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        audio { height: 30px; width: 100%; outline: none; }
+    </style>
+</head>
+<body>
+    <div class="nav"><a href="../../index.html" class="back-btn">←</a><h2>VOICE MEMO</h2></div>
+    <div class="container">
+        
+        <div class="timer" id="timeDisp">00:00</div>
+        <div class="status" id="status">TAP TO RECORD</div>
+
+        <div class="mic-circle" id="micBtn" onclick="toggleRec()">
+            🎤
+        </div>
+
+        <div class="playlist" id="list">
+            </div>
+
+    </div>
+
+    <script>
+        let mediaRecorder;
+        let chunks = [];
+        let isRecording = false;
+        let startTime;
+        let timerInt;
+
+        async function toggleRec() {
+            if (!isRecording) {
+                // START
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorder = new MediaRecorder(stream);
+                    
+                    mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
+                    mediaRecorder.onstop = saveRecording;
+                    
+                    mediaRecorder.start();
+                    isRecording = true;
+                    
+                    // UI
+                    document.getElementById('micBtn').classList.add('recording');
+                    document.getElementById('status').innerText = "RECORDING LIVE";
+                    startTime = Date.now();
+                    timerInt = setInterval(updateTimer, 1000);
+                    
+                } catch (err) {
+                    alert("Microphone access denied. Check settings.");
+                }
+            } else {
+                // STOP
+                mediaRecorder.stop();
+                isRecording = false;
+                
+                // UI
+                document.getElementById('micBtn').classList.remove('recording');
+                document.getElementById('status').innerText = "SAVED";
+                clearInterval(timerInt);
+                document.getElementById('timeDisp').innerText = "00:00";
+            }
+        }
+
+        function updateTimer() {
+            let diff = Math.floor((Date.now() - startTime) / 1000);
+            let m = Math.floor(diff / 60);
+            let s = diff % 60;
+            document.getElementById('timeDisp').innerText = 
+                `${m<10?'0'+m:m}:${s<10?'0'+s:s}`;
+        }
+
+        function saveRecording() {
+            const blob = new Blob(chunks, { 'type' : 'audio/ogg; codecs=opus' });
+            chunks = []; // Reset
+            
+            const audioURL = window.URL.createObjectURL(blob);
+            const date = new Date().toLocaleTimeString();
+
+            // Create UI Element
+            const div = document.createElement('div');
+            div.className = 'audio-item';
+            div.innerHTML = `
+                <div style="width:100%">
+                    <div style="font-size:0.7rem; color:#aaa; margin-bottom:5px;">Rec at ${date}</div>
+                    <audio controls src="${audioURL}"></audio>
+                    <a href="${audioURL}" download="recording_${Date.now()}.ogg" style="font-size:0.7rem; color:var(--primary); text-decoration:none;">Download ↓</a>
+                </div>
+            `;
+            document.getElementById('list').prepend(div);
+        }
+    </script>
+</body>
+</html>

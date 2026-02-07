@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#000000">
     
     <meta property="og:title" content="QALQX | Supreme Utility">
-    <meta property="og:description" content="Access 30+ Pro Tools: Coding, Physics, Finance, and Hacking utilities in one OS.">
+    <meta property="og:description" content="Access 52+ Pro Tools: Coding, Physics, Finance, and Hacking utilities in one OS.">
     <meta property="og:image" content="https://img.icons8.com/fluency/512/00E5FF/imac-settings.png"> <meta property="og:url" content="https://qalqx-dev.github.io/Qalyx/"> <meta property="og:type" content="website">
 
     <title>QALQX | Dashboard</title>
@@ -55,7 +55,7 @@
     </div>
 
 
-    <input type="text" class="search-bar" placeholder="Search 50 tools...">
+    <input type="text" class="search-bar" placeholder="Search 52 tools...">
 
     <div class="grid">
         <a href="tools/age.html" class="card"><div class="card-icon">🎂</div><div class="card-name">Age Detailed</div></a>
@@ -79,6 +79,11 @@
         <a href="tools/security/hash.html" class="card"><div class="card-icon">🛡️</div><div class="card-name">Secure Hash</div></a>
         <a href="tools/dev/base64.html" class="card"><div class="card-icon">🧬</div><div class="card-name">Base64</div></a>
         <a href="tools/dev/color.html" class="card"><div class="card-icon">🎨</div><div class="card-name">Color Lab</div></a>
+        <a href="tools/utility/compressor.html" class="card">
+    <div class="card-icon">📉</div>
+    <div class="card-name">Img Shrink</div>
+</a>
+
         <a href="tools/utility/aspect.html" class="card"><div class="card-icon">🖥️</div><div class="card-name">Aspect Ratio</div></a>
         <a href="tools/dev/text.html" class="card"><div class="card-icon">abc</div><div class="card-name">Text Master</div></a>
         <a href="tools/dev/lorem.html" class="card"><div class="card-icon">📄</div><div class="card-name">Lorem Ipsum</div></a>
@@ -98,6 +103,11 @@
         <a href="tools/game/8ball.html" class="card"><div class="card-icon">🎱</div><div class="card-name">Magic Ball</div></a>
         <a href="tools/game/rps.html" class="card"><div class="card-icon">✊</div><div class="card-name">RPS Duel</div></a>
         <a href="tools/game/tictactoe.html" class="card"><div class="card-icon">❌</div><div class="card-name">Tic Tac Toe</div></a>
+        <a href="tools/audio/recorder.html" class="card">
+    <div class="card-icon">🎙️</div>
+    <div class="card-name">Voice Memo</div>
+</a>
+
         <a href="tools/audio/tone.html" class="card"><div class="card-icon">🔊</div><div class="card-name">Tone Gen</div></a>
         <a href="tools/audio/metro.html" class="card"><div class="card-icon">🥁</div><div class="card-name">Metronome</div></a>
         <a href="tools/audio/tts.html" class="card"><div class="card-icon">🤖</div><div class="card-name">Robo Voice</div></a>
@@ -123,7 +133,7 @@
 
     <div class="footer">
         <div class="dot"></div>
-        SYSTEM ONLINE • 50 MODULES ACTIVE
+        SYSTEM ONLINE • 52 MODULES ACTIVE
     </div>
 
     <script>
@@ -144,5 +154,14 @@
         });
     </script>
     <script src="app.js"></script>
+    <script>
+        // REGISTER IRON SHIELD (Service Worker)
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+            .then(() => console.log('Iron Shield: ACTIVE'))
+            .catch(() => console.log('Iron Shield: FAILED'));
+        }
+    </script>
+
 </body>
 </html>

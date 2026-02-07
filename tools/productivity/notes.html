@@ -3,38 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notes | QALQX</title>
+    <title>Notes | QALQX Supreme</title>
     <link rel="stylesheet" href="../../style.css">
-    <style>
-        textarea { width: 100%; height: 60vh; background: #111; border: 1px solid #333; color: #ddd; padding: 20px; font-size: 1.1rem; border-radius: 8px; resize: none; outline: none; line-height: 1.5; }
-        .status { font-size: 0.8rem; color: #666; margin-top: 5px; text-align: right; }
-    </style>
+    <script src="../../app.js" defer></script>
 </head>
 <body>
-    <div class="nav">
-        <a href="../../index.html" class="back-btn">←</a>
-        <h2>LOCAL NOTES</h2>
-    </div>
+    <div class="nav"><a href="../../index.html" class="back-btn">←</a><h2>QUICK NOTES</h2></div>
     <div class="container">
-        <textarea id="noteArea" placeholder="Start typing... everything is auto-saved."></textarea>
-        <div class="status" id="status">Synced to Storage</div>
-        <button onclick="clearNotes()" style="background:#333; margin-top:10px;">CLEAR ALL</button>
+        
+        <div style="font-size:0.7rem; color:#666; margin-bottom:10px; display:flex; justify-content:space-between;">
+            <span id="status">Ready to write...</span>
+            <span id="charCount">0 chars</span>
+        </div>
+
+        <textarea id="noteArea" placeholder="Start typing... Data saves automatically." 
+            style="width:100%; height:60vh; background:#111; border:1px solid #333; color:#ddd; padding:20px; border-radius:12px; font-family:sans-serif; line-height:1.6; resize:none;"
+            oninput="saveNote()"></textarea>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:15px;">
+            <button onclick="copyNote()">COPY TEXT</button>
+            <button onclick="clearNote()" style="background:#333; color:#FF4500;">CLEAR ALL</button>
+        </div>
+
     </div>
+
     <script>
-        const noteArea = document.getElementById('noteArea');
-        // Load saved note
-        noteArea.value = localStorage.getItem('qalqx_note') || "";
+        const area = document.getElementById('noteArea');
+        const status = document.getElementById('status');
+        const count = document.getElementById('charCount');
 
-        // Auto-save on input
-        noteArea.addEventListener('input', () => {
-            localStorage.setItem('qalqx_note', noteArea.value);
-            document.getElementById('status').innerText = "Saved " + new Date().toLocaleTimeString();
-        });
+        // LOAD ON START
+        window.onload = () => {
+            const saved = localStorage.getItem('qalqx-notes');
+            if(saved) {
+                area.value = saved;
+                count.innerText = saved.length + " chars";
+                status.innerText = "Loaded from Memory";
+            }
+        };
 
-        function clearNotes() {
-            if(confirm("Delete everything?")) {
-                noteArea.value = "";
-                localStorage.removeItem('qalqx_note');
+        function saveNote() {
+            const txt = area.value;
+            localStorage.setItem('qalqx-notes', txt);
+            
+            // UI Feedback
+            status.innerText = "Saving...";
+            count.innerText = txt.length + " chars";
+            setTimeout(() => status.innerText = "Saved to Memory", 500);
+        }
+
+        function copyNote() {
+            area.select();
+            document.execCommand('copy');
+            alert("Copied to Clipboard!");
+        }
+
+        function clearNote() {
+            if(confirm("Delete everything? This cannot be undone.")) {
+                area.value = "";
+                localStorage.removeItem('qalqx-notes');
+                saveNote();
             }
         }
     </script>

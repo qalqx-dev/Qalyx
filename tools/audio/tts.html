@@ -3,23 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TTS | QALQX</title>
+    <title>TTS | QALQX Supreme</title>
     <link rel="stylesheet" href="../../style.css">
+    <script src="../../app.js" defer></script>
 </head>
 <body>
-    <div class="nav"><a href="../../index.html" class="back-btn">←</a><h2>TEXT TO SPEECH</h2></div>
+    <div class="nav"><a href="../../index.html" class="back-btn">←</a><h2>ROBO VOICE</h2></div>
     <div class="container">
-        <textarea id="txt" placeholder="Type something for the robot to say..." style="width:100%; height:150px; background:#1A1A1A; border:1px solid #333; color:#fff; padding:15px; border-radius:8px; font-size:1.1rem; outline:none;"></textarea>
-        <button onclick="speak()" style="margin-top:20px;">SPEAK ALOUD</button>
+        
+        <div id="statusLog" style="font-size:0.7rem; color:#FFD700; margin-bottom:10px; font-family:monospace;">Initializing Audio Engine...</div>
+
+        <textarea id="txt" placeholder="Type here..." 
+            style="height:120px; font-size:1.2rem; background:#111; color:#fff; border:1px solid #333; border-radius:12px; padding:15px; width:100%; resize:none;"></textarea>
+
+        <label>Voice Selection</label>
+        <select id="voiceSelect" style="margin-bottom:20px; background:#222; color:#fff; padding:10px; border:1px solid #444; width:100%; border-radius:8px;">
+            <option value="">Searching for voices...</option>
+        </select>
+
+        <div style="display:grid; grid-template-columns: 2fr 1fr; gap:10px; margin-top:20px;">
+            <button onclick="speak()" id="btnSpeak">🔊 SPEAK</button>
+            <button onclick="cancel()" style="background:#333; color:#FF4500;">STOP</button>
+        </div>
+
     </div>
+
     <script>
+        const synth = window.speechSynthesis;
+        const voiceSelect = document.getElementById('voiceSelect');
+        const log = document.getElementById('statusLog');
+        let voices = [];
+        let loadAttempts = 0;
+
+        function updateLog(msg) {
+            log.innerText = msg;
+            console.log(msg);
+        }
+
+        function populateVoiceList() {
+            voices = synth.getVoices();
+            
+            if (voices.length > 0) {
+                updateLog("✅ Audio Engine Ready: " + voices.length + " Voices Found.");
+                voiceSelect.innerHTML = '';
+                
+                voices.forEach((voice) => {
+                    const option = document.createElement('option');
+                    option.textContent = `${voice.name} (${voice.lang})`;
+                    option.setAttribute('data-lang', voice.lang);
+                    option.setAttribute('data-name', voice.name);
+                    voiceSelect.appendChild(option);
+                });
+            } else {
+                updateLog("⚠️ Voices list empty. Retrying...");
+            }
+        }
+
+        // 1. FORCE LOAD LOOP (The Fix)
+        // Browsers are lazy. We keep asking until they give us the voices.
+        populateVoiceList();
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = populateVoiceList;
+        }
+        
+        // Backup timer: check every 100ms for 5 seconds
+        const timer = setInterval(() => {
+            if(voices.length === 0) {
+                populateVoiceList();
+                loadAttempts++;
+                if(loadAttempts > 50) { 
+                    clearInterval(timer); 
+                    updateLog("❌ Browser refused to list voices. Trying default.");
+                    voiceSelect.innerHTML = "<option>System Default</option>";
+                }
+            } else {
+                clearInterval(timer);
+            }
+        }, 100);
+
         function speak() {
-            let txt = document.getElementById('txt').value;
-            if(!txt) return;
-            let msg = new SpeechSynthesisUtterance(txt);
-            msg.rate = 1; 
-            msg.pitch = 1;
-            window.speechSynthesis.speak(msg);
+            if (synth.speaking) {
+                console.error('speechSynthesis.speaking');
+                return;
+            }
+            
+            const txt = document.getElementById('txt').value;
+            if (txt !== '') {
+                const utterThis = new SpeechSynthesisUtterance(txt);
+                
+                // Only try to set voice if we actually found them
+                if (voices.length > 0) {
+                    const selectedOption = voiceSelect.selectedOptions[0].getAttribute('data-name');
+                    for (let i = 0; i < voices.length; i++) {
+                        if (voices[i].name === selectedOption) {
+                            utterThis.voice = voices[i];
+                            break;
+                        }
+                    }
+                }
+                
+                // EVENT HANDLERS
+                utterThis.onstart = () => {
+                    document.getElementById('btnSpeak').innerText = "Speaking...";
+                    updateLog("🔊 Outputting Audio...");
+                };
+                
+                utterThis.onend = () => {
+                    document.getElementById('btnSpeak').innerText = "🔊 SPEAK";
+                    updateLog("✅ Finished.");
+                };
+                
+                utterThis.onerror = (e) => {
+                    console.error("Speech Error:", e);
+                    updateLog("❌ Error: " + e.error);
+                    document.getElementById('btnSpeak').innerText = "🔊 SPEAK";
+                };
+
+                synth.speak(utterThis);
+            }
+        }
+
+        function cancel() {
+            synth.cancel();
+            document.getElementById('btnSpeak').innerText = "🔊 SPEAK";
+            updateLog("⏹️ Stopped.");
         }
     </script>
 </body>

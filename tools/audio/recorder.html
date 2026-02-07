@@ -27,9 +27,9 @@
         .playlist { margin-top: 30px; }
         .audio-item { 
             background: #111; padding: 15px; border-radius: 8px; margin-bottom: 10px;
-            display: flex; justify-content: space-between; align-items: center;
+            display: flex; flex-direction: column; gap: 10px; border: 1px solid #333;
         }
-        audio { height: 30px; width: 100%; outline: none; }
+        audio { width: 100%; height: 40px; outline: none; }
     </style>
 </head>
 <body>
@@ -40,11 +40,10 @@
         <div class="status" id="status">TAP TO RECORD</div>
 
         <div class="mic-circle" id="micBtn" onclick="toggleRec()">
-            🎤
+            🎙️
         </div>
 
-        <div class="playlist" id="list">
-            </div>
+        <div class="playlist" id="list"></div>
 
     </div>
 
@@ -54,35 +53,51 @@
         let isRecording = false;
         let startTime;
         let timerInt;
+        let stream;
 
         async function toggleRec() {
             if (!isRecording) {
                 // START
                 try {
-                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    mediaRecorder = new MediaRecorder(stream);
+                    stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                     
-                    mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
-                    mediaRecorder.onstop = saveRecording;
+                    // SMART MIME DETECTION
+                    let options = { mimeType: 'audio/webm' };
+                    if (MediaRecorder.isTypeSupported('audio/mp4')) {
+                        options = { mimeType: 'audio/mp4' }; // iOS Fix
+                    } else if (MediaRecorder.isTypeSupported('audio/ogg')) {
+                        options = { mimeType: 'audio/ogg' };
+                    }
+                    
+                    console.log("Recorder using:", options.mimeType);
+
+                    mediaRecorder = new MediaRecorder(stream, options);
+                    
+                    mediaRecorder.ondataavailable = (e) => {
+                        if(e.data.size > 0) chunks.push(e.data);
+                    };
+                    
+                    mediaRecorder.onstop = () => {
+                        saveRecording(options.mimeType);
+                    };
                     
                     mediaRecorder.start();
                     isRecording = true;
                     
-                    // UI
                     document.getElementById('micBtn').classList.add('recording');
                     document.getElementById('status').innerText = "RECORDING LIVE";
                     startTime = Date.now();
                     timerInt = setInterval(updateTimer, 1000);
                     
                 } catch (err) {
-                    alert("Microphone access denied. Check settings.");
+                    alert("Microphone Error: " + err.message + "\nMake sure you are on HTTPS.");
                 }
             } else {
                 // STOP
                 mediaRecorder.stop();
+                stream.getTracks().forEach(track => track.stop()); // Stop Mic light
                 isRecording = false;
                 
-                // UI
                 document.getElementById('micBtn').classList.remove('recording');
                 document.getElementById('status').innerText = "SAVED";
                 clearInterval(timerInt);
@@ -98,21 +113,23 @@
                 `${m<10?'0'+m:m}:${s<10?'0'+s:s}`;
         }
 
-        function saveRecording() {
-            const blob = new Blob(chunks, { 'type' : 'audio/ogg; codecs=opus' });
-            chunks = []; // Reset
+        function saveRecording(mimeType) {
+            const blob = new Blob(chunks, { type: mimeType });
+            chunks = [];
             
             const audioURL = window.URL.createObjectURL(blob);
             const date = new Date().toLocaleTimeString();
+            
+            // Get extension from mime (e.g., audio/mp4 -> mp4)
+            const ext = mimeType.split('/')[1].split(';')[0];
 
-            // Create UI Element
             const div = document.createElement('div');
             div.className = 'audio-item';
             div.innerHTML = `
-                <div style="width:100%">
-                    <div style="font-size:0.7rem; color:#aaa; margin-bottom:5px;">Rec at ${date}</div>
-                    <audio controls src="${audioURL}"></audio>
-                    <a href="${audioURL}" download="recording_${Date.now()}.ogg" style="font-size:0.7rem; color:var(--primary); text-decoration:none;">Download ↓</a>
+                <div style="font-size:0.7rem; color:#aaa;">Recorded at ${date}</div>
+                <audio controls src="${audioURL}"></audio>
+                <div style="text-align:right;">
+                    <a href="${audioURL}" download="memo.${ext}" style="font-size:0.8rem; color:var(--primary);">Download ⬇️</a>
                 </div>
             `;
             document.getElementById('list').prepend(div);

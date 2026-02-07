@@ -81,7 +81,8 @@
             </div>
             <a href="settings.html" style="text-decoration:none; font-size:1.4rem; padding:5px;">⚙️</a>
         </div>
-        
+        <div id="installBtn" style="display:none; cursor:pointer; font-size:1.4rem; padding:5px;" onclick="installPWA()">⬇️</div>
+
         <div class="search-wrapper">
             <input type="text" id="search" placeholder="Search 52 Tools... (/)" onkeyup="filterTools()">
             <div class="search-icon" id="sIcon">🔍</div>
@@ -158,63 +159,50 @@
             <a href="tools/utility/random.html" class="card"><div class="card-icon">🎲</div><div class="card-name">Picker</div></a>
         </div>
 
-        <div class="footer">
-            SYSTEM ONLINE • 52 MODULES ACTIVE
-        </div>
-    </div>
+       <div class="footer">
+    SYSTEM ONLINE • 52 MODULES ACTIVE<br>
+    <span style="color:#666; font-size:0.6rem;">Data is processed locally. No external servers used.</span>
+</div>
+
 
     <script>
-        // SHORTCUT: Press '/' to focus search
-        document.addEventListener('keydown', (e) => {
-            if(e.key === '/' && document.activeElement.tagName !== 'INPUT') {
-                e.preventDefault();
-                document.getElementById('search').focus();
-            }
+        // 1. REGISTER SERVICE WORKER (With correct Scope)
+        if ('serviceWorker' in navigator) {
+            // Explicitly register for the /Qalyx/ scope
+            navigator.serviceWorker.register('/Qalyx/sw.js', { scope: '/Qalyx/' })
+            .then(() => console.log('Iron Shield: ACTIVE'))
+            .catch((err) => console.log('Iron Shield: FAILED', err));
+        }
+
+        // 2. INSTALL PROMPT LOGIC
+        let deferredPrompt;
+        const installBtn = document.getElementById('installBtn');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Prevent Chrome 67 and earlier from automatically showing the prompt
+            e.preventDefault();
+            // Stash the event so it can be triggered later.
+            deferredPrompt = e;
+            // Update UI to notify the user they can add to home screen
+            installBtn.style.display = 'block';
         });
 
-        function filterTools() {
-            const input = document.getElementById('search').value.toLowerCase();
-            const cards = document.getElementsByClassName('card');
-            const headers = document.getElementsByClassName('cat-header');
-            const noRes = document.getElementById('noResults');
-            
-            let visibleCount = 0;
-
-            // 1. Toggle Clear Icon
-            document.getElementById('cIcon').style.display = input.length > 0 ? 'block' : 'none';
-            document.getElementById('sIcon').style.display = input.length > 0 ? 'none' : 'block';
-
-            // 2. Filter Cards
-            for (let i = 0; i < cards.length; i++) {
-                const name = cards[i].innerText.toLowerCase();
-                if (name.includes(input)) {
-                    cards[i].style.display = "flex";
-                    visibleCount++;
+        function installPWA() {
+            if(!deferredPrompt) return;
+            // Show the prompt
+            deferredPrompt.prompt();
+            // Wait for the user to respond to the prompt
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    console.log('User accepted the A2HS prompt');
                 } else {
-                    cards[i].style.display = "none";
+                    console.log('User dismissed the A2HS prompt');
                 }
-            }
-
-            // 3. Hide Headers if Searching
-            for (let h of headers) {
-                h.style.display = input.length > 0 ? 'none' : 'flex';
-            }
-
-            // 4. Show/Hide Empty State
-            noRes.style.display = (visibleCount === 0 && input.length > 0) ? 'block' : 'none';
-        }
-
-        function clearSearch() {
-            const s = document.getElementById('search');
-            s.value = "";
-            filterTools();
-            s.focus();
-        }
-
-        // REGISTER SHIELD
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js').catch(() => {});
+                deferredPrompt = null;
+                installBtn.style.display = 'none';
+            });
         }
     </script>
+
 </body>
 </html>

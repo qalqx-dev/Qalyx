@@ -1,22 +1,24 @@
-// QALQX IRON SHIELD v1.0 (Service Worker)
-const CACHE_NAME = 'qalqx-v2-supreme';
+// QALQX IRON SHIELD v3.0 (Subpath Compatible)
+const CACHE_NAME = 'qalqx-v3-supreme';
+
+// We explicitly use the repository name '/Qalyx/' for GitHub Pages
+const GH_PATH = '/Qalyx';
+
 const ASSETS = [
-    './',
-    './index.html',
-    './style.css',
-    './app.js',
-    './manifest.json',
-    './settings.html',
-    // We cache critical tools first. The rest load on demand and then stay cached.
-    './tools/age.html',
-    './tools/math/calc.html',
-    './tools/productivity/notes.html',
-    './tools/productivity/todo.html',
-    './tools/utility/speed.html',
-    './tools/utility/system.html'
+    `${GH_PATH}/`,
+    `${GH_PATH}/index.html`,
+    `${GH_PATH}/style.css`,
+    `${GH_PATH}/app.js`,
+    `${GH_PATH}/manifest.json`,
+    `${GH_PATH}/settings.html`,
+    // Core Tools (Add more as needed, but these are the essentials)
+    `${GH_PATH}/tools/productivity/notes.html`,
+    `${GH_PATH}/tools/productivity/todo.html`,
+    `${GH_PATH}/tools/math/calc.html`,
+    `${GH_PATH}/tools/utility/converter.html`
 ];
 
-// 1. INSTALL: Cache Core Files
+// 1. INSTALL
 self.addEventListener('install', (e) => {
     console.log('[SW] Installing Iron Shield...');
     e.waitUntil(
@@ -26,13 +28,11 @@ self.addEventListener('install', (e) => {
     );
 });
 
-// 2. FETCH: Intercept Requests
+// 2. FETCH
 self.addEventListener('fetch', (e) => {
     e.respondWith(
         caches.match(e.request).then((res) => {
-            // Return cached file if found, else fetch from network
             return res || fetch(e.request).then((response) => {
-                // Dynamic Caching: If we fetch a new tool, cache it for next time
                 return caches.open(CACHE_NAME).then((cache) => {
                     cache.put(e.request, response.clone());
                     return response;
@@ -42,7 +42,7 @@ self.addEventListener('fetch', (e) => {
     );
 });
 
-// 3. ACTIVATE: Cleanup Old Caches
+// 3. ACTIVATE (Clear old caches)
 self.addEventListener('activate', (e) => {
     e.waitUntil(
         caches.keys().then((keys) => {

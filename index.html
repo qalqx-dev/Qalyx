@@ -110,6 +110,8 @@
 
         <div class="cat-header">Developer Suite</div>
         <div class="grid">
+           <a href="tools/dev/json.html" class="card"><div class="card-icon">✨</div><div class="card-name">JSON Format</div></a>
+
             <a href="tools/dev/base64.html" class="card"><div class="card-icon">🧬</div><div class="card-name">Base64</div></a>
             <a href="tools/dev/color.html" class="card"><div class="card-icon">🎨</div><div class="card-name">Color Lab</div></a>
             <a href="tools/dev/ip.html" class="card"><div class="card-icon">🌐</div><div class="card-name">IP Tracer</div></a>
@@ -122,8 +124,9 @@
             <a href="tools/dev/lorem.html" class="card"><div class="card-icon">📄</div><div class="card-name">Lorem Ipsum</div></a>
         </div>
 
-        <div class="cat-header">Physics & Math</div>
+        <div class="cat-header">Science & Math</div>
         <div class="grid">
+              <a href="tools/science/periodic.html." class="card"><div class="card-icon">🧪</div><div class="card-name">Periodic Table</div></a>
             <a href="tools/physics/ohms.html" class="card"><div class="card-icon">⚡</div><div class="card-name">Ohm's Law</div></a>
             <a href="tools/physics/kinetic.html" class="card"><div class="card-icon">🌠</div><div class="card-name">Kinetic</div></a>
             <a href="tools/physics/force.html" class="card"><div class="card-icon">🚀</div><div class="card-name">Force Calc</div></a>
@@ -147,6 +150,9 @@
 
         <div class="cat-header">Arcade & Media</div>
         <div class="grid">
+            <a href="tools/dev/meme.html" class="card"><div class="card-icon">🐸</div><div class="card-name">Meme Gen</div></a>
+<a href="tools/utility/sketch.html" class="card"><div class="card-icon">🎨</div><div class="card-name">Sketch Pad</div></a>
+
             <a href="tools/audio/recorder.html" class="card"><div class="card-icon">🎙️</div><div class="card-name">Voice Memo</div></a>
             <a href="tools/audio/tone.html" class="card"><div class="card-icon">🔊</div><div class="card-name">Tone Gen</div></a>
             <a href="tools/audio/metro.html" class="card"><div class="card-icon">🥁</div><div class="card-name">Metronome</div></a>
@@ -166,7 +172,31 @@
 
 
     <script>
-        // 1. REGISTER SERVICE WORKER (With correct Scope)
+      
+     function filterTools() {
+    const input = document.getElementById('search').value.toLowerCase();
+
+    // --- EASTER EGG LOGIC ---
+    if(input === 'matrix') {
+        document.body.classList.remove('theme-gold', 'theme-red', 'theme-light');
+        document.body.classList.add('theme-green');
+        localStorage.setItem('qalqx-theme', 'theme-green');
+        document.getElementById('search').value = ""; // Clear code
+        alert("ACCESS GRANTED: MATRIX MODE");
+        return;
+    }
+    if(input === 'gold') {
+        document.body.classList.remove('theme-green', 'theme-red', 'theme-light');
+        document.body.classList.add('theme-gold');
+        localStorage.setItem('qalqx-theme', 'theme-gold');
+        document.getElementById('search').value = "";
+        alert("ACCESS GRANTED: ROYAL MODE");
+        return;
+    }
+    // ------------------------
+
+    // ... (rest of your search code)
+  // 1. REGISTER SERVICE WORKER (With correct Scope)
         if ('serviceWorker' in navigator) {
             // Explicitly register for the /Qalyx/ scope
             navigator.serviceWorker.register('/Qalyx/sw.js', { scope: '/Qalyx/' })

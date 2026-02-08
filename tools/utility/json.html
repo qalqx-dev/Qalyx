@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON | QALQX Supreme</title>
+    <link rel="stylesheet" href="../../style.css">
+    <script src="../../app.js" defer></script>
+</head>
+<body>
+    <div class="nav"><a href="../../index.html" class="back-btn">←</a><h2>JSON PRETTIER</h2></div>
+    <div class="container">
+        
+        <textarea id="in" placeholder="Paste messy JSON here..." 
+            style="height:150px; background:#111; color:#aaa; font-family:monospace; font-size:0.8rem;"></textarea>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:15px;">
+            <button onclick="format()">✨ BEAUTIFY</button>
+            <button onclick="minify()" style="background:#333;">📦 MINIFY</button>
+        </div>
+
+        <label>Result</label>
+        <textarea id="out" readonly 
+            style="height:250px; background:#051105; color:#00FF7F; font-family:monospace; font-size:0.8rem; border-color:#00FF00;"></textarea>
+        
+        <button onclick="copy()" style="background:#222; border:1px solid #444; margin-top:10px;">COPY RESULT</button>
+
+    </div>
+
+    <script>
+        function format() {
+            try {
+                const raw = document.getElementById('in').value;
+                const obj = JSON.parse(raw);
+                document.getElementById('out').value = JSON.stringify(obj, null, 4); // 4 spaces
+            } catch(e) {
+                document.getElementById('out').value = "❌ Invalid JSON:\n" + e.message;
+            }
+        }
+
+        function minify() {
+            try {
+                const raw = document.getElementById('in').value;
+                const obj = JSON.parse(raw);
+                document.getElementById('out').value = JSON.stringify(obj);
+            } catch(e) {
+                document.getElementById('out').value = "❌ Invalid JSON:\n" + e.message;
+            }
+        }
+
+        function copy() {
+            navigator.clipboard.writeText(document.getElementById('out').value);
+            alert("Copied!");
+        }
+    </script>
+</body>
+</html>

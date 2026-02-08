@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sketch | QALQX Supreme</title>
+    <link rel="stylesheet" href="../../style.css">
+    <script src="../../app.js" defer></script>
+    <style>
+        .toolbar {
+            display: flex; gap: 10px; margin-bottom: 10px; background: #222;
+            padding: 10px; border-radius: 8px; overflow-x: auto;
+        }
+        .color-btn {
+            width: 30px; height: 30px; border-radius: 50%; border: 2px solid #444; flex-shrink: 0;
+        }
+        .color-btn.active { border-color: #fff; transform: scale(1.1); }
+        
+        canvas {
+            background: #fff; border-radius: 12px; cursor: crosshair;
+            touch-action: none; /* Critical for mobile drawing */
+            width: 100%; height: 60vh;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav"><a href="../../index.html" class="back-btn">←</a><h2>SKETCH PAD</h2></div>
+    <div class="container">
+        
+        <div class="toolbar">
+            <div class="color-btn active" style="background:#000" onclick="setColor('#000', this)"></div>
+            <div class="color-btn" style="background:#FF0055" onclick="setColor('#FF0055', this)"></div>
+            <div class="color-btn" style="background:#00E5FF" onclick="setColor('#00E5FF', this)"></div>
+            <div class="color-btn" style="background:#00FF7F" onclick="setColor('#00FF7F', this)"></div>
+            <div class="color-btn" style="background:#FFFF00" onclick="setColor('#FFFF00', this)"></div>
+            <div class="color-btn" style="background:#FFF; border:2px solid #ccc;" onclick="setColor('#FFF', this)">🧽</div> <input type="range" id="size" min="2" max="20" value="4" style="width:80px;">
+        </div>
+
+        <canvas id="pad"></canvas>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px;">
+            <button onclick="download()">💾 SAVE</button>
+            <button onclick="wipe()" style="background:#333; color:#FF4500;">❌ CLEAR</button>
+        </div>
+
+    </div>
+
+    <script>
+        const canvas = document.getElementById('pad');
+        const ctx = canvas.getContext('2d');
+        let painting = false;
+        let color = '#000';
+
+        function resize() {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            // Fill white on init
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(0,0,canvas.width, canvas.height);
+        }
+        window.onload = resize;
+
+        function setColor(c, el) {
+            color = c;
+            document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function startPos(e) {
+            painting = true;
+            draw(e);
+        }
+        function endPos() {
+            painting = false;
+            ctx.beginPath();
+        }
+        function draw(e) {
+            if(!painting) return;
+            
+            // Handle Touch vs Mouse
+            let clientX = e.clientX;
+            let clientY = e.clientY;
+            if(e.touches) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            }
+
+            const rect = canvas.getBoundingClientRect();
+            const x = clientX - rect.left;
+            const y = clientY - rect.top;
+
+            ctx.lineWidth = document.getElementById('size').value;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = color;
+
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+        }
+
+        // Event Listeners
+        canvas.addEventListener('mousedown', startPos);
+        canvas.addEventListener('mouseup', endPos);
+        canvas.addEventListener('mousemove', draw);
+
+        canvas.addEventListener('touchstart', startPos);
+        canvas.addEventListener('touchend', endPos);
+        canvas.addEventListener('touchmove', draw);
+
+        function wipe() {
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(0,0,canvas.width, canvas.height);
+        }
+        function download() {
+            const link = document.createElement('a');
+            link.download = 'sketch.jpg';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+    </script>
+</body>
+</html>

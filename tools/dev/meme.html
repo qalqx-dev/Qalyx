@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meme Gen | QALQX Supreme</title>
+    <link rel="stylesheet" href="../../style.css">
+    <script src="../../app.js" defer></script>
+    <style>
+        .canvas-box {
+            background: #222; border: 2px dashed #444; border-radius: 12px;
+            overflow: hidden; display: flex; justify-content: center; align-items: center;
+            min-height: 200px; margin-bottom: 20px;
+        }
+        canvas { max-width: 100%; height: auto; display: none; }
+        .controls { display: grid; grid-template-columns: 1fr; gap: 10px; }
+        .upload-btn { 
+            background: rgba(0, 229, 255, 0.1); color: var(--primary); 
+            border: 1px solid var(--primary); padding: 15px; width: 100%; 
+            text-align: center; border-radius: 8px; cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav"><a href="../../index.html" class="back-btn">←</a><h2>MEME MAKER</h2></div>
+    <div class="container">
+        
+        <label class="upload-btn">
+            📂 UPLOAD IMAGE
+            <input type="file" id="imgIn" accept="image/*" style="display:none" onchange="loadImg()">
+        </label>
+
+        <div class="canvas-box">
+            <div id="placeholder" style="color:#666;">Preview Area</div>
+            <canvas id="memeCanvas"></canvas>
+        </div>
+
+        <div class="controls">
+            <input type="text" id="topText" placeholder="TOP TEXT" oninput="draw()">
+            <input type="text" id="botText" placeholder="BOTTOM TEXT" oninput="draw()">
+            
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                <button onclick="download()">💾 SAVE</button>
+                <button onclick="clearAll()" style="background:#333; color:#FF4500;">🗑️ RESET</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const canvas = document.getElementById('memeCanvas');
+        const ctx = canvas.getContext('2d');
+        let image = new Image();
+
+        function loadImg() {
+            const file = document.getElementById('imgIn').files[0];
+            if(!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                image.src = e.target.result;
+                image.onload = () => {
+                    document.getElementById('placeholder').style.display = 'none';
+                    canvas.style.display = 'block';
+                    // Resize canvas to match image
+                    canvas.width = image.width;
+                    canvas.height = image.height;
+                    draw();
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function draw() {
+            if(!image.src) return;
+
+            // 1. Draw Image
+            ctx.drawImage(image, 0, 0);
+
+            // 2. Configure Text
+            const top = document.getElementById('topText').value.toUpperCase();
+            const bot = document.getElementById('botText').value.toUpperCase();
+            
+            ctx.fillStyle = 'white';
+            ctx.strokeStyle = 'black';
+            ctx.lineWidth = canvas.width * 0.02; // Dynamic stroke
+            ctx.textAlign = 'center';
+            
+            // Dynamic Font Size (10% of image height)
+            const fontSize = Math.floor(canvas.height * 0.1);
+            ctx.font = `900 ${fontSize}px Impact, sans-serif`;
+
+            // 3. Draw Top
+            ctx.textBaseline = 'top';
+            ctx.strokeText(top, canvas.width/2, fontSize * 0.2);
+            ctx.fillText(top, canvas.width/2, fontSize * 0.2);
+
+            // 4. Draw Bottom
+            ctx.textBaseline = 'bottom';
+            ctx.strokeText(bot, canvas.width/2, canvas.height - (fontSize * 0.2));
+            ctx.fillText(bot, canvas.width/2, canvas.height - (fontSize * 0.2));
+        }
+
+        function download() {
+            if(!image.src) { alert("Upload an image first!"); return; }
+            const link = document.createElement('a');
+            link.download = 'qalqx-meme.jpg';
+            link.href = canvas.toDataURL('image/jpeg');
+            link.click();
+        }
+
+        function clearAll() {
+            document.getElementById('imgIn').value = "";
+            document.getElementById('topText').value = "";
+            document.getElementById('botText').value = "";
+            document.getElementById('placeholder').style.display = 'block';
+            canvas.style.display = 'none';
+            image = new Image();
+        }
+    </script>
+</body>
+</html>

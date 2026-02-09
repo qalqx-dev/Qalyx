@@ -1,11 +1,11 @@
 name: Build Android APK
 
 on:
-  workflow_dispatch: # This adds a "Run" button to your Actions tab
+  workflow_dispatch:
 
 jobs:
   build:
-    name: Build APK with Bubblewrap
+    name: Build APK
     runs-on: ubuntu-latest
 
     steps:
@@ -17,7 +17,7 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Install JDK & Android SDK
+      - name: Setup Java JDK
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
@@ -26,9 +26,25 @@ jobs:
       - name: Install Bubblewrap CLI
         run: npm install -g @bubblewrap/cli
 
+      - name: Install Android SDK Command Line Tools
+        run: |
+          # Manually fetch Android tools to prevent Bubblewrap from asking for them
+          mkdir -p $HOME/android-sdk/cmdline-tools
+          wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmdline-tools.zip
+          unzip cmdline-tools.zip -d $HOME/android-sdk/cmdline-tools
+          mv $HOME/android-sdk/cmdline-tools/cmdline-tools $HOME/android-sdk/cmdline-tools/latest
+          
+          # Set Environment Variables
+          echo "ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
+          echo "PATH=$HOME/android-sdk/cmdline-tools/latest/bin:$HOME/android-sdk/platform-tools:$PATH" >> $GITHUB_ENV
+
+      - name: Accept Android Licenses
+        run: |
+          yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
+
       - name: Initialize Android Project
         run: |
-          # Initialize TWA with your specific details (Non-Interactive Mode)
+          # Initialize TWA with explicit manifest
           bubblewrap init --manifest=https://qalqx-dev.github.io/Qalyx/manifest.json \
           --directory=app \
           --packageId=com.qalqx.os \
@@ -36,17 +52,19 @@ jobs:
           --host=qalqx-dev.github.io \
           --name="QALQX" \
           --launcherIcon=https://qalqx-dev.github.io/Qalyx/icon-512.png \
-          --skipPwaValidation
+          --skipPwaValidation \
+          --themeColor="#000000" \
+          --backgroundColor="#000000" \
+          --startUrl=/Qalyx/index.html
 
       - name: Build APK
         run: |
           cd app
-          # Build the APK (bypassing manual signing for now)
-          bubblewrap build --skipSigning
+          # Build specifically for APK, skipping signing wizard
+          bubblewrap build --skipSigning --apk
 
-      - name: Upload APK
+      - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: QALQX-Release
+          name: QALQX-APK
           path: app/*.apk
-          

@@ -2,31 +2,32 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Settings | QALQX</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Config | QALQX</title>
     <link rel="stylesheet" href="style.css">
     <script src="app.js" defer></script>
     <style>
         .setting-group { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
-        .setting-title { font-size: 0.9rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; }
+        .setting-title { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; }
         
         .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .theme-btn { 
             height: 50px; border-radius: 8px; border: 2px solid transparent; cursor: pointer; 
-            display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem;
-            transition: transform 0.2s;
+            display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.7rem;
+            transition: transform 0.2s; color: #000;
         }
         .theme-btn:active { transform: scale(0.95); }
         
         /* Preview Colors */
-        .t-default { background: #000; border-color: #00E5FF; color: #00E5FF; }
-        .t-green { background: #051105; border-color: #00FF00; color: #00FF00; }
-        .t-gold { background: #110f05; border-color: #FFD700; color: #FFD700; }
-        .t-red { background: #110505; border-color: #FF0055; color: #FF0055; }
-        .t-light { background: #fff; border-color: #007BFF; color: #000; }
+        .t-green { background: #00FF00; box-shadow: 0 0 10px #00FF00; }
+        .t-gold { background: #FFD700; box-shadow: 0 0 10px #FFD700; }
+        .t-red { background: #FF0055; box-shadow: 0 0 10px #FF0055; color: #fff; }
+        .t-blue { background: #00E5FF; box-shadow: 0 0 10px #00E5FF; }
+        .t-light { background: #ffffff; border: 2px solid #ccc; color: #000; }
 
-        .toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
+        .toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
         .toggle-row:last-child { border-bottom: none; }
+        .toggle-row span { font-size: 0.9rem; }
     </style>
 </head>
 <body>
@@ -34,34 +35,43 @@
     <div class="container">
         
         <div class="setting-group">
-            <div class="setting-title">Interface Theme</div>
+            <div class="setting-title">Visual Interface</div>
             <div class="theme-grid">
-                <div class="theme-btn t-default" onclick="saveTheme('default')">CYBER CYAN</div>
+                <div class="theme-btn t-blue" onclick="saveTheme('default')">CYBER</div>
                 <div class="theme-btn t-green" onclick="saveTheme('theme-green')">MATRIX</div>
-                <div class="theme-btn t-gold" onclick="saveTheme('theme-gold')">ROYAL GOLD</div>
-                <div class="theme-btn t-red" onclick="saveTheme('theme-red')">CRIMSON</div>
-                <div class="theme-btn t-light" onclick="saveTheme('theme-light')" style="grid-column: span 2;">LIGHT MODE (PAPER)</div>
+                <div class="theme-btn t-gold" onclick="saveTheme('theme-gold')">ROYAL</div>
+                <div class="theme-btn t-red" onclick="saveTheme('theme-red')">SITH</div>
+                <div class="theme-btn t-light" onclick="saveTheme('theme-light')" style="grid-column: span 2;">PAPER (LIGHT)</div>
             </div>
         </div>
 
         <div class="setting-group">
-            <div class="setting-title">Preferences</div>
+            <div class="setting-title">Installation</div>
+            <div class="toggle-row" onclick="installPWA()" style="cursor:pointer;">
+                <span>Install Web App (PWA)</span>
+                <span style="font-size:1.2rem;">📱</span>
+            </div>
             <div class="toggle-row">
-                <span>Haptic Vibration</span>
+                <span>Download Android APK</span>
+                <a href="qalqx.apk" download style="text-decoration:none; background:var(--primary); color:#000; padding:6px 15px; border-radius:20px; font-size:0.75rem; font-weight:bold;">GET .APK</a>
+            </div>
+            <div style="font-size:0.7rem; color:#666; margin-top:10px; line-height:1.4;">
+                *For APK: Enable "Install from Unknown Sources" in Android Settings.
+            </div>
+        </div>
+
+        <div class="setting-group">
+            <div class="setting-title">Memory Core</div>
+            <div class="toggle-row">
+                <span>Haptic Feedback</span>
                 <input type="checkbox" id="hapticToggle" checked onchange="toggleHaptics()">
             </div>
-            <div class="toggle-row">
-                <span>Sound Effects</span>
-                <input type="checkbox" disabled><span style="font-size:0.7rem; color:#666;">COMING SOON</span>
-            </div>
+            <button onclick="clearData()" style="width:100%; padding:15px; background:rgba(255, 69, 0, 0.15); color:#FF4500; border:1px solid #FF4500; border-radius:8px; margin-top:10px; font-weight:bold;">FACTORY RESET</button>
         </div>
 
-        <div class="setting-group">
-            <div class="setting-title">Data Management</div>
-            <button onclick="clearData()" style="background:rgba(255, 69, 0, 0.2); color:#FF4500; border:1px solid #FF4500;">RESET ALL APP DATA</button>
-            <div style="font-size:0.7rem; color:#666; margin-top:10px; text-align:center;">
-                QALQX OS v1.0 • Build 2026.02.08
-            </div>
+        <div style="text-align:center; color:#444; font-size:0.7rem; margin-top:20px;">
+            QALQX OS v4.0 • Build 2026.02.09<br>
+            Secure • Offline • Local
         </div>
 
     </div>
@@ -77,11 +87,29 @@
             localStorage.setItem('qalqx-haptics', isOn ? 'on' : 'off');
         }
 
+        function saveTheme(themeName) {
+            document.body.className = themeName; // Instant Preview
+            localStorage.setItem('qalqx-theme', themeName);
+            // Apply to parent if needed (reloads page to apply globally)
+            setTimeout(() => location.reload(), 300);
+        }
+
         function clearData() {
-            if(confirm("Factory Reset: This will clear all saved themes, notes, and settings. Continue?")) {
+            if(confirm("Factory Reset: Wipes all notes, tasks, and settings. Proceed?")) {
                 localStorage.clear();
                 location.reload();
             }
+        }
+
+        // PWA Install Trigger
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+        });
+        function installPWA() {
+            if(deferredPrompt) deferredPrompt.prompt();
+            else alert("App is already installed or not supported in this browser.");
         }
     </script>
 </body>

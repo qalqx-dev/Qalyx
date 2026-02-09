@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diff | QALQX</title>
+    <link rel="stylesheet" href="../../style.css">
+    <script src="../../app.js" defer></script>
+    <style>
+        .split-view { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; height: 30vh; margin-bottom: 20px; }
+        textarea { 
+            width: 100%; height: 100%; background: #111; color: #aaa; 
+            border: 1px solid #333; padding: 10px; resize: none; font-family: monospace; font-size: 0.75rem;
+        }
+        .diff-output {
+            background: #000; border: 1px solid #333; padding: 15px;
+            font-family: monospace; white-space: pre-wrap; color: #888;
+            height: 40vh; overflow-y: auto; font-size: 0.8rem;
+        }
+        .added { background: rgba(0, 255, 0, 0.2); color: #4eff4e; display: block; }
+        .removed { background: rgba(255, 0, 0, 0.2); color: #ff4e4e; display: block; text-decoration: line-through; }
+        .unchanged { color: #555; display: block; }
+    </style>
+</head>
+<body>
+    <div class="nav"><a href="../../index.html" class="back-btn">←</a><h2>DIFF CHECKER</h2></div>
+    <div class="container" style="max-width:1000px;">
+        
+        <div class="split-view">
+            <textarea id="txt1" placeholder="Original Text...">Hello World
+This is QALQX v1
+It works fine.</textarea>
+            <textarea id="txt2" placeholder="New Text...">Hello World
+This is QALQX v4
+It works perfectly.</textarea>
+        </div>
+
+        <button onclick="compare()" style="width:100%; margin-bottom:20px;">🔍 COMPARE</button>
+
+        <div id="output" class="diff-output"></div>
+
+    </div>
+
+    <script>
+        function compare() {
+            const t1 = document.getElementById('txt1').value.split('\n');
+            const t2 = document.getElementById('txt2').value.split('\n');
+            const out = document.getElementById('output');
+            out.innerHTML = "";
+
+            // Simple Line-by-Line Diff Algorithm
+            let max = Math.max(t1.length, t2.length);
+            
+            for(let i=0; i<max; i++) {
+                const l1 = t1[i];
+                const l2 = t2[i];
+
+                if(l1 === l2) {
+                    if(l1) out.innerHTML += `<span class="unchanged">  ${l1}</span>`;
+                } else {
+                    if(l1 !== undefined) out.innerHTML += `<span class="removed">- ${l1}</span>`;
+                    if(l2 !== undefined) out.innerHTML += `<span class="added">+ ${l2}</span>`;
+                }
+            }
+        }
+        // Run on load
+        compare();
+    </script>
+</body>
+</html>

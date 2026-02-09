@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vault | QALQX</title>
+    <link rel="stylesheet" href="../../style.css">
+    <script src="../../app.js" defer></script>
+    <style>
+        .drop-zone {
+            border: 2px dashed #444; padding: 40px; text-align: center;
+            border-radius: 12px; cursor: pointer; transition: 0.2s; margin-bottom: 20px;
+        }
+        .drop-zone:hover { border-color: var(--primary); background: rgba(0, 229, 255, 0.05); }
+        .status { font-family: monospace; color: var(--primary); margin-top: 10px; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+    <div class="nav"><a href="../../index.html" class="back-btn">←</a><h2>FILE VAULT (AES)</h2></div>
+    <div class="container">
+        
+        <div style="background:#111; padding:15px; border-radius:8px; margin-bottom:20px; font-size:0.8rem; color:#aaa; border-left:3px solid #FF0055;">
+            ⚠️ <b>Warning:</b> If you forget the password, the file is lost forever. There is no recovery.
+        </div>
+
+        <div class="drop-zone" onclick="document.getElementById('fileIn').click()">
+            <div style="font-size:2rem;">📁</div>
+            <div id="fileName">Tap to Select File</div>
+            <input type="file" id="fileIn" style="display:none" onchange="loadFile()">
+        </div>
+
+        <input type="password" id="pass" placeholder="Enter Encryption Password" style="width:100%; padding:15px; background:#222; border:1px solid #444; color:#fff; border-radius:8px; margin-bottom:20px;">
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+            <button onclick="process('encrypt')" style="background:#FF0055; color:#fff;">🔒 LOCK</button>
+            <button onclick="process('decrypt')" style="background:#00E5FF; color:#000;">🔓 UNLOCK</button>
+        </div>
+
+        <div class="status" id="status"></div>
+
+    </div>
+
+    <script>
+        let fileData = null;
+
+        function loadFile() {
+            const file = document.getElementById('fileIn').files[0];
+            if(file) {
+                document.getElementById('fileName').innerText = file.name + ` (${Math.round(file.size/1024)} KB)`;
+                const reader = new FileReader();
+                reader.onload = (e) => fileData = e.target.result; // ArrayBuffer
+                reader.readAsArrayBuffer(file);
+            }
+        }
+
+        async function process(mode) {
+            const pass = document.getElementById('pass').value;
+            const status = document.getElementById('status');
+            
+            if(!fileData || !pass) { status.innerText = "Error: File or Password missing."; return; }
+
+            status.innerText = "Processing crypto...";
+
+            try {
+                // 1. Generate Key from Password (PBKDF2)
+                const enc = new TextEncoder();
+                const keyMaterial = await window.crypto.subtle.importKey("raw", enc.encode(pass), "PBKDF2", false, ["deriveKey"]);
+                
+                // 2. Encrypt or Decrypt
+                if(mode === 'encrypt') {
+                    const salt = window.crypto.getRandomValues(new Uint8Array(16));
+                    const iv = window.crypto.getRandomValues(new Uint8Array(12));
+                    const key = await window.crypto.subtle.deriveKey(
+                        { name: "PBKDF2", salt: salt, iterations: 100000, hash: "SHA-256" },
+                        keyMaterial, { name: "AES-GCM", length: 256 }, false, ["encrypt"]
+                    );
+                    
+                    const encrypted = await window.crypto.subtle.encrypt({ name: "AES-GCM", iv: iv }, key, fileData);
+                    
+                    // Pack: Salt + IV + Data
+                    const blob = new Blob([salt, iv, encrypted], { type: "application/octet-stream" });
+                    download(blob, "locked_file.qalqx");
+                    status.innerText = "✅ Encrypted Successfully.";
+
+                } else {
+                    // Unpack: Salt (16) + IV (12) + Data
+                    const salt = fileData.slice(0, 16);
+                    const iv = fileData.slice(16, 28);
+                    const data = fileData.slice(28);
+
+                    const key = await window.crypto.subtle.deriveKey(
+                        { name: "PBKDF2", salt: salt, iterations: 100000, hash: "SHA-256" },
+                        keyMaterial, { name: "AES-GCM", length: 256 }, false, ["decrypt"]
+                    );
+
+                    const decrypted = await window.crypto.subtle.decrypt({ name: "AES-GCM", iv: iv }, key, data);
+                    
+                    const blob = new Blob([decrypted]);
+                    download(blob, "unlocked_file");
+                    status.innerText = "✅ Decrypted Successfully.";
+                }
+
+            } catch(e) {
+                console.error(e);
+                status.innerText = "❌ Failed. Wrong password?";
+            }
+        }
+
+        function download(blob, name) {
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = name;
+            link.click();
+        }
+    </script>
+</body>
+</html>

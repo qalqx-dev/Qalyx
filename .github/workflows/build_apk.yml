@@ -26,25 +26,26 @@ jobs:
       - name: Install Bubblewrap CLI
         run: npm install -g @bubblewrap/cli
 
-      - name: Install Android SDK Command Line Tools
-        run: |
-          # Manually fetch Android tools to prevent Bubblewrap from asking for them
-          mkdir -p $HOME/android-sdk/cmdline-tools
-          wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmdline-tools.zip
-          unzip cmdline-tools.zip -d $HOME/android-sdk/cmdline-tools
-          mv $HOME/android-sdk/cmdline-tools/cmdline-tools $HOME/android-sdk/cmdline-tools/latest
-          
-          # Set Environment Variables
-          echo "ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
-          echo "PATH=$HOME/android-sdk/cmdline-tools/latest/bin:$HOME/android-sdk/platform-tools:$PATH" >> $GITHUB_ENV
+      - name: Auto-Install Android Dependencies
+        # This pipes "yes" to the doctor command, accepting all licenses automatically
+        run: yes | bubblewrap doctor
 
-      - name: Accept Android Licenses
+      - name: Generate Signing Key (Keystore)
+        # We create our own key so Bubblewrap doesn't ask to make one
         run: |
-          yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
+          keytool -genkeypair \
+            -alias android \
+            -keyalg RSA \
+            -keysize 2048 \
+            -validity 10000 \
+            -keystore key.jks \
+            -dname "CN=QALQX, OU=OS, O=QALQX, L=Internet, S=Cloud, C=US" \
+            -storepass password \
+            -keypass password
 
       - name: Initialize Android Project
+        # We pass the key details here so 'build' never prompts for them
         run: |
-          # Initialize TWA with explicit manifest
           bubblewrap init --manifest=https://qalqx-dev.github.io/Qalyx/manifest.json \
           --directory=app \
           --packageId=com.qalqx.os \
@@ -52,19 +53,23 @@ jobs:
           --host=qalqx-dev.github.io \
           --name="QALQX" \
           --launcherIcon=https://qalqx-dev.github.io/Qalyx/icon-512.png \
-          --skipPwaValidation \
           --themeColor="#000000" \
           --backgroundColor="#000000" \
-          --startUrl=/Qalyx/index.html
+          --startUrl=/Qalyx/index.html \
+          --skipPwaValidation \
+          --signingKeyPath=../key.jks \
+          --signingKeyAlias=android \
+          --signingKeyPassword=password \
+          --signingStorePassword=password
 
       - name: Build APK
         run: |
           cd app
-          # Build specifically for APK, skipping signing wizard
-          bubblewrap build --skipSigning --apk
+          # Now it simply builds without asking questions
+          bubblewrap build
 
-      - name: Upload APK Artifact
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: QALQX-APK
+          name: QALQX-Release
           path: app/*.apk

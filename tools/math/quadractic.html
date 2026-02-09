@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quad | QALQX Supreme</title>
+    <link rel="stylesheet" href="../../style.css">
+    <script src="../../app.js" defer></script>
+    <style>
+        .graph-box {
+            background: #fff; border-radius: 12px; height: 250px;
+            margin-bottom: 20px; position: relative; overflow: hidden;
+        }
+        canvas { width: 100%; height: 100%; }
+        .roots-display { 
+            display: flex; justify-content: space-around; 
+            background: rgba(0, 229, 255, 0.1); padding: 15px; 
+            border-radius: 8px; border: 1px solid var(--primary);
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav"><a href="../../index.html" class="back-btn">←</a><h2>QUADRATIC</h2></div>
+    <div class="container">
+        
+        <div class="graph-box">
+            <canvas id="graph"></canvas>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;">
+            <div><label>a</label><input type="number" id="a" value="1" oninput="solve()"></div>
+            <div><label>b</label><input type="number" id="b" value="-3" oninput="solve()"></div>
+            <div><label>c</label><input type="number" id="c" value="2" oninput="solve()"></div>
+        </div>
+
+        <div class="roots-display">
+            <div style="text-align:center;">
+                <div style="font-size:0.8rem; color:#aaa;">ROOT 1</div>
+                <div id="x1" style="font-size:1.5rem; font-weight:bold; color:#fff;">-</div>
+            </div>
+            <div style="text-align:center;">
+                <div style="font-size:0.8rem; color:#aaa;">ROOT 2</div>
+                <div id="x2" style="font-size:1.5rem; font-weight:bold; color:#fff;">-</div>
+            </div>
+        </div>
+
+        <div style="text-align:center; margin-top:20px; color:#666; font-size:0.8rem;">
+            Discriminant (Δ): <span id="delta">0</span>
+        </div>
+
+    </div>
+
+    <script>
+        const canvas = document.getElementById('graph');
+        const ctx = canvas.getContext('2d');
+
+        function resize() {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            solve();
+        }
+        window.onload = resize;
+
+        function solve() {
+            const a = parseFloat(document.getElementById('a').value) || 0;
+            const b = parseFloat(document.getElementById('b').value) || 0;
+            const c = parseFloat(document.getElementById('c').value) || 0;
+
+            // 1. Calculate Roots
+            const delta = (b*b) - (4*a*c);
+            document.getElementById('delta').innerText = delta;
+
+            if(delta > 0) {
+                const x1 = (-b + Math.sqrt(delta)) / (2*a);
+                const x2 = (-b - Math.sqrt(delta)) / (2*a);
+                document.getElementById('x1').innerText = x1.toFixed(2);
+                document.getElementById('x2').innerText = x2.toFixed(2);
+            } else if (delta === 0) {
+                const x = -b / (2*a);
+                document.getElementById('x1').innerText = x.toFixed(2);
+                document.getElementById('x2').innerText = x.toFixed(2);
+            } else {
+                document.getElementById('x1').innerText = "Complex";
+                document.getElementById('x2').innerText = "Complex";
+            }
+
+            drawGraph(a, b, c);
+        }
+
+        function drawGraph(a, b, c) {
+            // Reset
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            const w = canvas.width;
+            const h = canvas.height;
+            const centerX = w / 2;
+            const centerY = h / 2;
+            const scale = 20; // Pixels per unit
+
+            // Draw Axes
+            ctx.beginPath();
+            ctx.strokeStyle = '#ddd';
+            ctx.moveTo(0, centerY); ctx.lineTo(w, centerY); // X
+            ctx.moveTo(centerX, 0); ctx.lineTo(centerX, h); // Y
+            ctx.stroke();
+
+            // Draw Curve
+            ctx.beginPath();
+            ctx.strokeStyle = '#FF0055';
+            ctx.lineWidth = 2;
+
+            for (let px = 0; px < w; px++) {
+                // Convert pixel x to graph x
+                const x = (px - centerX) / scale;
+                // Calculate y
+                const y = (a*x*x) + (b*x) + c;
+                // Convert graph y to pixel y (invert because canvas y goes down)
+                const py = centerY - (y * scale);
+                
+                if (px === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+            }
+            ctx.stroke();
+        }
+    </script>
+</body>
+</html>

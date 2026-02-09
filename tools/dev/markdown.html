@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MD Live | QALQX Supreme</title>
+    <link rel="stylesheet" href="../../style.css">
+    <script src="../../app.js" defer></script>
+    <style>
+        .editor-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; height: 70vh;
+        }
+        textarea {
+            width: 100%; height: 100%; background: #111; color: #ddd; 
+            border: 1px solid #333; resize: none; font-family: monospace; padding: 10px;
+        }
+        .preview {
+            width: 100%; height: 100%; background: #fff; color: #000;
+            border-radius: 12px; padding: 20px; overflow-y: auto;
+        }
+        /* Markdown Styles within Preview */
+        .preview h1 { border-bottom: 1px solid #ccc; font-size: 1.5rem; }
+        .preview code { background: #eee; padding: 2px 5px; border-radius: 4px; font-family: monospace; }
+        .preview blockquote { border-left: 3px solid var(--primary); padding-left: 10px; color: #555; }
+    </style>
+</head>
+<body>
+    <div class="nav"><a href="../../index.html" class="back-btn">←</a><h2>MARKDOWN LIVE</h2></div>
+    <div class="container" style="max-width:800px;">
+        
+        <div class="editor-grid">
+            <textarea id="in" oninput="render()" placeholder="# Type Markdown here..."></textarea>
+            <div id="out" class="preview"></div>
+        </div>
+
+    </div>
+
+    <script>
+        function render() {
+            let txt = document.getElementById('in').value;
+            
+            // Simple Regex Markdown Parser (Client Side)
+            txt = txt
+                .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+                .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+                .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+                .replace(/\*\*(.*)\*\*/gim, '<b>$1</b>')
+                .replace(/\*(.*)\*/gim, '<i>$1</i>')
+                .replace(/`(.*)`/gim, '<code>$1</code>')
+                .replace(/^\> (.*$)/gim, '<blockquote>$1</blockquote>')
+                .replace(/\n/gim, '<br>');
+
+            document.getElementById('out').innerHTML = txt;
+        }
+        
+        // Init Sample
+        document.getElementById('in').value = "# Hello QALQX\nThis is a **live** preview.\n> Try typing here!";
+        render();
+    </script>
+</body>
+</html>

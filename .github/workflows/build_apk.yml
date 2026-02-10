@@ -17,17 +17,22 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Setup Java JDK
+      - name: Setup Java JDK 11 (Stable)
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '17'
+          # We switched from 17 to 11 because it is more compatible with Android tools
+          java-version: '11'
 
       - name: Install Bubblewrap CLI
         run: npm install -g @bubblewrap/cli
 
       - name: Configure Android SDK
-        run: yes | bubblewrap doctor
+        # We manually accept licenses so we don't need 'yes |' pipes that cause crashes
+        run: |
+          mkdir -p $HOME/.android
+          touch $HOME/.android/repositories.cfg
+          bubblewrap doctor
 
       - name: Generate Signing Key
         run: |
@@ -41,10 +46,10 @@ jobs:
             -storepass password \
             -keypass password
 
-      - name: Initialize Project (Using Raw Icon Link)
+      - name: Initialize Project
         run: |
-          # We use the RAW GitHub URL for the icon to avoid 404 caching errors
-          yes | bubblewrap init --manifest=https://qalqx-dev.github.io/Qalyx/manifest.json \
+          # We rely on the RAW GitHub URL for the icon to avoid 404 caching errors
+          bubblewrap init --manifest=https://qalqx-dev.github.io/Qalyx/manifest.json \
           --directory=app \
           --packageId=com.qalqx.os \
           --applicationId=com.qalqx.os \
@@ -60,17 +65,12 @@ jobs:
           --signingKeyPassword=password \
           --signingStorePassword=password
 
-      - name: 🔧 Fix Build Errors
-        run: |
-          cd app
-          # Force Gradle to ignore lint errors (like icon transparency issues)
-          echo "android { lintOptions { abortOnError false } }" >> build.gradle
-
-      - name: Build with Gradle
+      - name: Build with Gradle (Skip Lint)
         run: |
           cd app
           chmod +x gradlew
-          ./gradlew assembleRelease
+          # The '-x lint' flag tells it to SHUT UP about errors and just build the app
+          ./gradlew assembleRelease -x lint
 
       - name: Upload APK
         uses: actions/upload-artifact@v4

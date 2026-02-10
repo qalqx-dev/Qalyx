@@ -26,11 +26,6 @@ jobs:
       - name: Install Bubblewrap CLI
         run: npm install -g @bubblewrap/cli
 
-      - name: ⏳ Wait for GitHub Pages Deployment
-        run: |
-          echo "Waiting 60 seconds for live site to update..."
-          sleep 60
-
       - name: Configure Android SDK
         run: yes | bubblewrap doctor
 
@@ -46,15 +41,16 @@ jobs:
             -storepass password \
             -keypass password
 
-      - name: Initialize Project
+      - name: Initialize Project (Using Raw Icon Link)
         run: |
+          # We use the RAW GitHub URL for the icon to avoid 404 caching errors
           yes | bubblewrap init --manifest=https://qalqx-dev.github.io/Qalyx/manifest.json \
           --directory=app \
           --packageId=com.qalqx.os \
           --applicationId=com.qalqx.os \
           --host=qalqx-dev.github.io \
           --name="QALQX" \
-          --launcherIcon=https://qalqx-dev.github.io/Qalyx/icon-512.png \
+          --launcherIcon=https://raw.githubusercontent.com/qalqx-dev/Qalyx/main/icon-512.png \
           --themeColor="#000000" \
           --backgroundColor="#000000" \
           --startUrl=/Qalyx/index.html \
@@ -64,17 +60,17 @@ jobs:
           --signingKeyPassword=password \
           --signingStorePassword=password
 
-      - name: 🔧 Fix Build Errors (Disable Strict Linting)
+      - name: 🔧 Fix Build Errors
         run: |
           cd app
-          # This command injects code to ignore errors, preventing "Exit Code 1"
+          # Force Gradle to ignore lint errors (like icon transparency issues)
           echo "android { lintOptions { abortOnError false } }" >> build.gradle
 
       - name: Build with Gradle
         run: |
           cd app
           chmod +x gradlew
-          ./gradlew assembleRelease --stacktrace
+          ./gradlew assembleRelease
 
       - name: Upload APK
         uses: actions/upload-artifact@v4

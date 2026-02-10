@@ -26,12 +26,12 @@ jobs:
       - name: Install Bubblewrap CLI
         run: npm install -g @bubblewrap/cli
 
-      - name: Auto-Install Android Dependencies
-        # This pipes "yes" to the doctor command, accepting all licenses automatically
-        run: yes | bubblewrap doctor
+      - name: Configure Android SDK (Silent)
+        run: |
+          yes | bubblewrap doctor
+          # This command forces acceptance of all licenses so it never asks later
 
-      - name: Generate Signing Key (Keystore)
-        # We create our own key so Bubblewrap doesn't ask to make one
+      - name: Generate Signing Key
         run: |
           keytool -genkeypair \
             -alias android \
@@ -43,10 +43,10 @@ jobs:
             -storepass password \
             -keypass password
 
-      - name: Initialize Android Project
-        # We pass the key details here so 'build' never prompts for them
+      - name: Initialize Project
         run: |
-          bubblewrap init --manifest=https://qalqx-dev.github.io/Qalyx/manifest.json \
+          # We pipe 'yes' into init just in case it asks to overwrite 'app' folder
+          yes | bubblewrap init --manifest=https://qalqx-dev.github.io/Qalyx/manifest.json \
           --directory=app \
           --packageId=com.qalqx.os \
           --applicationId=com.qalqx.os \
@@ -62,14 +62,16 @@ jobs:
           --signingKeyPassword=password \
           --signingStorePassword=password
 
-      - name: Build APK
+      - name: Build with Gradle (The Bypass)
         run: |
           cd app
-          # Now it simply builds without asking questions
-          bubblewrap build
+          # Instead of 'bubblewrap build', we use Gradle directly.
+          # This bypasses all interactive prompts.
+          chmod +x gradlew
+          ./gradlew assembleRelease
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: QALQX-Release
-          path: app/*.apk
+          path: app/build/outputs/apk/release/*.apk

@@ -17,22 +17,30 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Setup Java JDK 11 (Stable)
+      - name: Setup Java JDK 11
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          # We switched from 17 to 11 because it is more compatible with Android tools
           java-version: '11'
 
       - name: Install Bubblewrap CLI
         run: npm install -g @bubblewrap/cli
 
+      - name: 📥 Download Assets Manually
+        run: |
+          # We download the files ourselves to prevent Bubblewrap from crashing on network errors
+          wget https://qalqx-dev.github.io/Qalyx/manifest.json -O ./manifest.json
+          wget https://raw.githubusercontent.com/qalqx-dev/Qalyx/main/icon-512.png -O ./icon-512.png
+          
+          # Verify they exist
+          ls -lh ./manifest.json ./icon-512.png
+
       - name: Configure Android SDK
-        # We manually accept licenses so we don't need 'yes |' pipes that cause crashes
         run: |
           mkdir -p $HOME/.android
           touch $HOME/.android/repositories.cfg
-          bubblewrap doctor
+          # We pipe yes to accept any hidden licenses
+          yes | bubblewrap doctor
 
       - name: Generate Signing Key
         run: |
@@ -46,16 +54,16 @@ jobs:
             -storepass password \
             -keypass password
 
-      - name: Initialize Project
+      - name: Initialize Project (Local Files)
         run: |
-          # We rely on the RAW GitHub URL for the icon to avoid 404 caching errors
-          bubblewrap init --manifest=https://qalqx-dev.github.io/Qalyx/manifest.json \
+          # Pointing to LOCAL files (./manifest.json) instead of URLs
+          bubblewrap init --manifest=./manifest.json \
           --directory=app \
           --packageId=com.qalqx.os \
           --applicationId=com.qalqx.os \
           --host=qalqx-dev.github.io \
           --name="QALQX" \
-          --launcherIcon=https://raw.githubusercontent.com/qalqx-dev/Qalyx/main/icon-512.png \
+          --launcherIcon=./icon-512.png \
           --themeColor="#000000" \
           --backgroundColor="#000000" \
           --startUrl=/Qalyx/index.html \
@@ -63,14 +71,14 @@ jobs:
           --signingKeyPath=../key.jks \
           --signingKeyAlias=android \
           --signingKeyPassword=password \
-          --signingStorePassword=password
+          --signingStorePassword=password \
+          --debug
 
       - name: Build with Gradle (Skip Lint)
         run: |
           cd app
           chmod +x gradlew
-          # The '-x lint' flag tells it to SHUT UP about errors and just build the app
-          ./gradlew assembleRelease -x lint
+          ./gradlew assembleRelease -x lint --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4

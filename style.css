@@ -139,3 +139,38 @@ body.theme-light {
 .back-btn { text-decoration: none; color: var(--text-main); font-size: 1.5rem; margin-right: 15px; }
 .container { padding: 20px; max-width: 800px; margin: 0 auto; }
 .nav { padding: 20px; display: flex; align-items: center; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+/* FOOTER LINK STYLES */
+.monoaxis-footer a {
+    color: #ffffff;          /* White text */
+    text-decoration: none;   /* No underline */
+    border-bottom: 1px dotted #666; /* Subtle tech underline */
+    transition: all 0.3s ease;
+}
+
+.monoaxis-footer a:hover {
+    color: #00ffff;          /* Glow Cyan on hover */
+    border-bottom: 1px solid #00ffff;
+    text-shadow: 0 0 5px #00ffff;
+}
+/* FOOTER STYLES */
+.monoaxis-footer {
+    margin-top: 50px;
+    padding: 30px 20px;
+    border-top: 1px solid #333;
+    text-align: center;
+    color: #666;
+    font-family: monospace;
+    font-size: 0.8rem;
+    width: 100%;
+}
+
+.monoaxis-footer strong {
+    color: #fff;
+    letter-spacing: 1px;
+}
+
+.monoaxis-footer .rights {
+    margin: 10px 0;
+    line-height: 1.4;
+    font-size: 0.7rem;
+}

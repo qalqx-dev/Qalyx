@@ -1,237 +1,232 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8717585762192866" crossorigin="anonymous"></script>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E99HY50BDM"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-E99HY50BDM');
 </script>
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#000000">
-    <title>QALQX | The Supreme Utility OS</title>
-    
-    <meta name="description" content="QALQX is a free, offline-capable Utility OS for students and developers. 60+ Tools in your pocket.">
-    <meta name="keywords" content="QALQX, Student Tools, Offline App, PWA, Scientific Calculator">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <title>QALQX | The Ultimate Offline Utility OS & 60+ Tools</title>
+    <meta name="description" content="QALQX is a free, offline-first utility OS with 60+ tools for students, developers, and everyday productivity: calculators, converters, notes, QR, security, and more.">
+    <meta name="keywords" content="QALQX, offline utility tools, student tools, developer tools, calculator, QR generator, password generator, unit converter, PWA app, productivity tools">
     <meta name="author" content="QALQX Foundation">
-
+    <link rel="canonical" href="https://qalqx-dev.github.io/Qalyx/">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://qalqx-dev.github.io/Qalyx/">
-    <meta property="og:title" content="QALQX OS">
-    <meta property="og:description" content="The Ultimate Utility OS. 60+ Tools. Offline Ready.">
+    <meta property="og:site_name" content="QALQX">
+    <meta property="og:title" content="QALQX | Offline Utility OS with 60+ Tools">
+    <meta property="og:description" content="A fast, private, offline-ready collection of utility tools for students, developers, and everyday tasks.">
     <meta property="og:image" content="https://img.icons8.com/fluency/512/00E5FF/imac-settings.png">
-
+    <meta property="og:image:alt" content="QALQX utility OS icon">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="QALQX | Offline Utility OS with 60+ Tools">
+    <meta name="twitter:description" content="Explore 60+ free tools for study, coding, health, finance, and daily productivity.">
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="https://img.icons8.com/fluency/192/00E5FF/imac-settings.png">
     <script src="app.js" defer></script>
-
-    <meta name="google-site-verification" content="z6afThVG_5aHMyL-6pzebF-1uXViBFX_09lFsnLbb6Q" />  
-  
+    <meta name="google-site-verification" content="z6afThVG_5aHMyL-6pzebF-1uXViBFX_09lFsnLbb6Q" />
 </head>
 <body>
-
     <nav class="dock">
-        <a href="#" class="dock-item active">
-            <div class="dock-icon">🏠</div>
-            <div>Home</div>
-        </a>
-        <a href="tools/math/calc.html" class="dock-item">
-            <div class="dock-icon">🧮</div>
-            <div>Calc</div>
-        </a>
-        <a href="tools/productivity/notes.html" class="dock-item">
-            <div class="dock-icon">📝</div>
-            <div>Notes</div>
-        </a>
-        <a href="tools/utility/speed.html" class="dock-item">
-            <div class="dock-icon">⚡</div>
-            <div>Speed</div>
-        </a>
-        <a href="settings.html" class="dock-item">
-            <div class="dock-icon">⚙️</div>
-            <div>Config</div>
-        </a>
+        <a href="#" class="dock-item active"><div class="dock-icon">🏠</div><div>Home</div></a>
+        <a href="tools/math/calc.html" class="dock-item"><div class="dock-icon">🧮</div><div>Calc</div></a>
+        <a href="tools/productivity/notes.html" class="dock-item"><div class="dock-icon">📝</div><div>Notes</div></a>
+        <a href="tools/utility/speed.html" class="dock-item"><div class="dock-icon">⚡</div><div>Speed</div></a>
+        <a href="faq.html" class="dock-item"><div class="dock-icon">❓</div><div>FAQ</div></a>
+        <a href="settings.html" class="dock-item"><div class="dock-icon">⚙️</div><div>Config</div></a>
     </nav>
 
-    <main>
-        <div class="header-section">
+    <main class="main-shell">
+        <section class="header-section">
             <div class="greet-box">
                 <h1 id="greet">System Ready</h1>
                 <p id="dateLine">Loading...</p>
             </div>
-            <div style="display:flex; gap:15px; align-items:center;">
-                <div id="batLvl" style="font-size:0.9rem; color:#888;">🔋 --%</div>
-                <div id="installBtn" style="display:none; cursor:pointer; font-size:1.4rem;" onclick="installPWA()">⬇️</div>
+            <div style="display:flex; gap:12px; align-items:center;">
+                <div id="batLvl" style="font-size:0.9rem; color:#a7b4c6;">🔋 --%</div>
+                <div id="installBtn" style="display:none; cursor:pointer; font-size:1.1rem;" onclick="installPWA()">⬇️</div>
             </div>
-        </div>
+        </section>
 
-        <div class="search-container">
+        <section class="hero-panel">
+            <div>
+                <p class="eyebrow">QALQX OS</p>
+                <h1>One dashboard. 60+ tools. Every screen.</h1>
+                <p class="hero-copy">A responsive, offline-first utility hub for students, developers, creators, and everyday problem-solvers. Browse by flow, search instantly, and keep your favorite tools close.</p>
+                <div class="hero-actions">
+                    <a class="ghost-btn" href="faq.html">Why QALQX?</a>
+                    <a class="primary-btn" href="settings.html">Install App</a>
+                </div>
+            </div>
+            <div class="hero-stats">
+                <article class="stat-card"><strong>60+</strong><span>core utilities</span></article>
+                <article class="stat-card"><strong>Offline</strong><span>works without constant internet</span></article>
+                <article class="stat-card"><strong>PWA</strong><span>install on desktop or mobile</span></article>
+            </div>
+        </section>
+
+        <section class="toolbar-card">
             <div class="search-bar">
                 <span>🔍</span>
-                <input type="text" id="search" placeholder="Search 60+ Tools..." onkeyup="filterApps()">
+                <input type="text" id="search" placeholder="Search tools by name, category, or keyword" onkeyup="filterApps()">
             </div>
-        </div>
+            <div class="mini-pills">
+                <span>⚡ Fast</span>
+                <span>🧠 Smart</span>
+                <span>📱 Responsive</span>
+                <span>🔐 Private</span>
+            </div>
+        </section>
 
-        <div class="chips-wrapper">
-            <div class="chip active" onclick="filterCat('all', this)">All Apps</div>
-            <div class="chip" onclick="filterCat('prod', this)">Productivity</div>
-            <div class="chip" onclick="filterCat('dev', this)">Developer</div>
-            <div class="chip" onclick="filterCat('sci', this)">Science</div>
-            <div class="chip" onclick="filterCat('life', this)">Life & Health</div>
-            <div class="chip" onclick="filterCat('fun', this)">Arcade</div>
-        </div>
+        <section class="chip-section">
+            <div class="chip active" onclick="filterCat('all', this)">All Tools</div>
+            <div class="chip" onclick="filterCat('daily', this)">Daily</div>
+            <div class="chip" onclick="filterCat('creator', this)">Creator</div>
+            <div class="chip" onclick="filterCat('study', this)">Study</div>
+            <div class="chip" onclick="filterCat('life', this)">Life</div>
+            <div class="chip" onclick="filterCat('play', this)">Play</div>
+        </section>
 
-        <div class="app-grid" id="mainGrid">
-            
-            <a href="tools/productivity/notes.html" class="app-card" data-cat="prod"><div class="icon-box">📝</div><div class="app-name">Notes</div></a>
-            <a href="tools/productivity/todo.html" class="app-card" data-cat="prod"><div class="icon-box">✅</div><div class="app-name">Tasks</div></a>
-            <a href="tools/productivity/focus.html" class="app-card" data-cat="prod"><div class="icon-box">🎯</div><div class="app-name">Focus</div></a>
-            <a href="tools/time/stopwatch.html" class="app-card" data-cat="prod"><div class="icon-box">⏱️</div><div class="app-name">Timer</div></a>
-            
-            <a href="tools/utility/speed.html" class="app-card" data-cat="prod"><div class="icon-box">⚡</div><div class="app-name">Speed</div></a>
-            <a href="tools/utility/system.html" class="app-card" data-cat="prod"><div class="icon-box">📱</div><div class="app-name">System</div></a>
-            <a href="tools/utility/converter.html" class="app-card" data-cat="prod"><div class="icon-box">⚖️</div><div class="app-name">Units</div></a>
-            <a href="tools/utility/compressor.html" class="app-card" data-cat="prod"><div class="icon-box">📉</div><div class="app-name">Shrink</div></a>
-            <a href="tools/utility/aspect.html" class="app-card" data-cat="prod"><div class="icon-box">🖥️</div><div class="app-name">Ratio</div></a>
-
-            <a href="tools/dev/base64.html" class="app-card" data-cat="dev"><div class="icon-box">🧬</div><div class="app-name">Base64</div></a>
-            <a href="tools/dev/color.html" class="app-card" data-cat="dev"><div class="icon-box">🎨</div><div class="app-name">Colors</div></a>
-            <a href="tools/dev/ip.html" class="app-card" data-cat="dev"><div class="icon-box">🌐</div><div class="app-name">Trace</div></a>
-            <a href="tools/dev/qr.html" class="app-card" data-cat="dev"><div class="icon-box">🔳</div><div class="app-name">QR Gen</div></a>
-            <a href="tools/utility/json.html" class="app-card" data-cat="dev"><div class="icon-box">✨</div><div class="app-name">JSON</div></a>
-            <a href="tools/dev/markdown.html" class="app-card" data-cat="dev"><div class="icon-box">📝</div><div class="app-name">Markdwn</div></a>
-           <a href="tools/dev/diff.html" class="app-card" data-cat="dev"><div class="icon-box">⚖️</div><div class="app-name">Diff</div></a>
-            <a href="tools/security/encrypt.html" class="app-card" data-cat="dev"><div class="icon-box">🔒</div><div class="app-name">Vault</div></a>
-
-            <a href="tools/security/pass.html" class="app-card" data-cat="dev"><div class="icon-box">🔐</div><div class="app-name">Pass</div></a>
-            <a href="tools/security/hash.html" class="app-card" data-cat="dev"><div class="icon-box">🛡️</div><div class="app-name">Hash</div></a>
-
-            <a href="tools/math/calc.html" class="app-card" data-cat="sci"><div class="icon-box">🧮</div><div class="app-name">Calc</div></a>
-            <a href="tools/math/quadratic.html" class="app-card" data-cat="sci"><div class="icon-box">📈</div><div class="app-name">Quad</div></a>
-            <a href="tools/science/periodic.html" class="app-card" data-cat="sci"><div class="icon-box">🧪</div><div class="app-name">Table</div></a>
-            <a href="tools/physics/ohms.html" class="app-card" data-cat="sci"><div class="icon-box">⚡</div><div class="app-name">Ohms</div></a>
-            <a href="tools/physics/kinetic.html" class="app-card" data-cat="sci"><div class="icon-box">🌠</div><div class="app-name">K.E.</div></a>
-            <a href="tools/physics/force.html" class="app-card" data-cat="sci"><div class="icon-box">🚀</div><div class="app-name">Force</div></a>
-            <a href="tools/physics/velocity.html" class="app-card" data-cat="sci"><div class="icon-box">🏎️</div><div class="app-name">Vel</div></a>
-            <a href="tools/student/geometry.html" class="app-card" data-cat="sci"><div class="icon-box">📐</div><div class="app-name">Geo</div></a>
-
-            <a href="tools/age.html" class="app-card" data-cat="life"><div class="icon-box">🎂</div><div class="app-name">Age</div></a>
-            <a href="tools/finance/emi.html" class="app-card" data-cat="life"><div class="icon-box">🏦</div><div class="app-name">EMI</div></a>
-            <a href="tools/finance/discount.html" class="app-card" data-cat="life"><div class="icon-box">🏷️</div><div class="app-name">Disc</div></a>
-            <a href="tools/finance/tip.html" class="app-card" data-cat="life"><div class="icon-box">🍽️</div><div class="app-name">Tip</div></a>
-            <a href="tools/health/bmi.html" class="app-card" data-cat="life"><div class="icon-box">💪</div><div class="app-name">BMI</div></a>
-            <a href="tools/health/breath.html" class="app-card" data-cat="life"><div class="icon-box">🧘</div><div class="app-name">Breath</div></a>
-
-            <a href="tools/dev/meme.html" class="app-card" data-cat="fun"><div class="icon-box">🐸</div><div class="app-name">Meme</div></a>
-            <a href="tools/utility/sketch.html" class="app-card" data-cat="fun"><div class="icon-box">🎨</div><div class="app-name">Sketch</div></a>
-            <a href="tools/audio/recorder.html" class="app-card" data-cat="fun"><div class="icon-box">🎙️</div><div class="app-name">Rec</div></a>
-            <a href="tools/game/spin.html" class="app-card" data-cat="fun"><div class="icon-box">🎡</div><div class="app-name">Spin</div></a>
-            <a href="tools/audio/tone.html" class="app-card" data-cat="fun"><div class="icon-box">🔊</div><div class="app-name">Tone</div></a>
-            <a href="tools/game/coin.html" class="app-card" data-cat="fun"><div class="icon-box">🪙</div><div class="app-name">Coin</div></a>
-            <a href="tools/game/dice.html" class="app-card" data-cat="fun"><div class="icon-box">🎲</div><div class="app-name">Dice</div></a>
-            <a href="tools/audio/tts.html" class="app-card" data-cat="fun"><div class="icon-box">🤖</div><div class="app-name">Voice</div></a>
-            <a href="tools/audio/metro.html" class="app-card" data-cat="fun"><div class="icon-box">🥁</div><div class="app-name">Metro</div></a>
-            <a href="tools/game/8ball.html" class="app-card" data-cat="fun"><div class="icon-box">🎱</div><div class="app-name">Magic 8</div></a>
-        </div>
+        <section class="app-grid" id="mainGrid"></section>
     </main>
-<footer class="monoaxis-footer">
-    <div class="footer-content">
-        
-        <p class="copyright">
-            &copy; 2026 <a href="https://monoaxis.netlify.app" target="_blank"><strong>MONOAXIS</strong></a>&reg;
-        </p>
-        
-        <p class="rights">
-            All Rights Reserved. Unauthorized reproduction or distribution of this intellectual property (Flux, Qalqx, Monoaxis-Core) is strictly prohibited.
-        </p>
-        
-        <p class="credits">
-            Designed & Architected by <a href="https://monoaxis.netlify.app" target="_blank">MONOAXIS</a>.
-        </p>
-        
-    </div>
-</footer>
+
+    <footer class="monoaxis-footer">
+        <div class="footer-content">
+            <p class="copyright">&copy; 2026 <a href="https://monoaxis.netlify.app" target="_blank"><strong>MONOAXIS</strong></a>&reg;</p>
+            <p class="rights">All Rights Reserved. Unauthorized reproduction or distribution of this intellectual property (Flux, Qalqx, Monoaxis-Core) is strictly prohibited.</p>
+            <p class="credits">Designed & Architected by <a href="https://monoaxis.netlify.app" target="_blank">MONOAXIS</a>.</p>
+        </div>
+    </footer>
+
     <script>
-        // 1. DYNAMIC TIME
+        const toolCards = [
+            { path: 'tools/productivity/notes.html', name: 'Notes', cat: 'daily', icon: '📝', tag: 'Daily' },
+            { path: 'tools/productivity/todo.html', name: 'Tasks', cat: 'daily', icon: '✅', tag: 'Daily' },
+            { path: 'tools/productivity/focus.html', name: 'Focus', cat: 'daily', icon: '🎯', tag: 'Daily' },
+            { path: 'tools/time/stopwatch.html', name: 'Timer', cat: 'daily', icon: '⏱️', tag: 'Daily' },
+            { path: 'tools/time/datediff.html', name: 'Date Diff', cat: 'daily', icon: '📅', tag: 'Daily' },
+            { path: 'tools/time/leap.html', name: 'Leap Year', cat: 'daily', icon: '📆', tag: 'Daily' },
+            { path: 'tools/time/week.html', name: 'Week', cat: 'daily', icon: '🗓️', tag: 'Daily' },
+            { path: 'tools/utility/aspect.html', name: 'Aspect Ratio', cat: 'daily', icon: '🖥️', tag: 'Utility' },
+            { path: 'tools/utility/compressor.html', name: 'Shrink', cat: 'daily', icon: '📦', tag: 'Utility' },
+            { path: 'tools/utility/converter.html', name: 'Convert', cat: 'daily', icon: '⚖️', tag: 'Utility' },
+            { path: 'tools/utility/json.html', name: 'JSON', cat: 'daily', icon: '🧩', tag: 'Utility' },
+            { path: 'tools/utility/random.html', name: 'Random Picker', cat: 'daily', icon: '🎲', tag: 'Utility' },
+            { path: 'tools/utility/screen.html', name: 'Screen Check', cat: 'daily', icon: '📱', tag: 'Utility' },
+            { path: 'tools/utility/sketch.html', name: 'Sketch', cat: 'daily', icon: '🎨', tag: 'Utility' },
+            { path: 'tools/utility/speed.html', name: 'Speed Test', cat: 'daily', icon: '⚡', tag: 'Utility' },
+            { path: 'tools/utility/system.html', name: 'System Info', cat: 'daily', icon: '🧰', tag: 'Utility' },
+            { path: 'tools/utility/tally.html', name: 'Tally', cat: 'daily', icon: '🔢', tag: 'Utility' },
+            { path: 'tools/age.html', name: 'Age', cat: 'life', icon: '🎂', tag: 'Life' },
+            { path: 'tools/finance/discount.html', name: 'Discount', cat: 'life', icon: '🏷️', tag: 'Finance' },
+            { path: 'tools/finance/emi.html', name: 'EMI', cat: 'life', icon: '🏦', tag: 'Finance' },
+            { path: 'tools/finance/tip.html', name: 'Tip Calc', cat: 'life', icon: '🍽️', tag: 'Finance' },
+            { path: 'tools/health/bmi.html', name: 'BMI', cat: 'life', icon: '💪', tag: 'Health' },
+            { path: 'tools/health/breath.html', name: 'Breath', cat: 'life', icon: '🧘', tag: 'Wellness' },
+            { path: 'tools/dev/base64.html', name: 'Base64', cat: 'creator', icon: '🧬', tag: 'Code' },
+            { path: 'tools/dev/color.html', name: 'Color', cat: 'creator', icon: '🎨', tag: 'Code' },
+            { path: 'tools/dev/diff.html', name: 'Diff', cat: 'creator', icon: '⚖️', tag: 'Code' },
+            { path: 'tools/dev/ip.html', name: 'IP Trace', cat: 'creator', icon: '🌐', tag: 'Code' },
+            { path: 'tools/dev/lorem.html', name: 'Lorem', cat: 'creator', icon: '📝', tag: 'Text' },
+            { path: 'tools/dev/markdown.html', name: 'Markdown', cat: 'creator', icon: '📄', tag: 'Text' },
+            { path: 'tools/dev/meme.html', name: 'Meme Maker', cat: 'creator', icon: '🐸', tag: 'Fun' },
+            { path: 'tools/dev/morse.html', name: 'Morse', cat: 'creator', icon: '📡', tag: 'Code' },
+            { path: 'tools/dev/qr.html', name: 'QR Gen', cat: 'creator', icon: '🔳', tag: 'Code' },
+            { path: 'tools/dev/roman.html', name: 'Roman', cat: 'creator', icon: '🏛️', tag: 'Text' },
+            { path: 'tools/dev/text.html', name: 'Text Tools', cat: 'creator', icon: '🖋️', tag: 'Text' },
+            { path: 'tools/security/encrypt.html', name: 'Vault', cat: 'creator', icon: '🔒', tag: 'Security' },
+            { path: 'tools/security/hash.html', name: 'Hash', cat: 'creator', icon: '🛡️', tag: 'Security' },
+            { path: 'tools/security/pass.html', name: 'Pass Gen', cat: 'creator', icon: '🔐', tag: 'Security' },
+            { path: 'tools/security/strength.html', name: 'Strength', cat: 'creator', icon: '🧱', tag: 'Security' },
+            { path: 'tools/math/calc.html', name: 'Calculator', cat: 'study', icon: '🧮', tag: 'Math' },
+            { path: 'tools/math/factorial.html', name: 'Factorial', cat: 'study', icon: '📐', tag: 'Math' },
+            { path: 'tools/math/quadratic.html', name: 'Quadratic', cat: 'study', icon: '📈', tag: 'Math' },
+            { path: 'tools/math/random.html', name: 'Random', cat: 'study', icon: '🎯', tag: 'Math' },
+            { path: 'tools/physics/force.html', name: 'Force', cat: 'study', icon: '🚀', tag: 'Physics' },
+            { path: 'tools/physics/kinetic.html', name: 'Kinetic', cat: 'study', icon: '🌠', tag: 'Physics' },
+            { path: 'tools/physics/ohms.html', name: 'Ohm's Law', cat: 'study', icon: '⚡', tag: 'Physics' },
+            { path: 'tools/physics/velocity.html', name: 'Velocity', cat: 'study', icon: '🏎️', tag: 'Physics' },
+            { path: 'tools/science/periodic.html', name: 'Periodic', cat: 'study', icon: '🧪', tag: 'Science' },
+            { path: 'tools/student/geometry.html', name: 'Geometry', cat: 'study', icon: '📐', tag: 'Student' },
+            { path: 'tools/student/grade.html', name: 'Grade Calc', cat: 'study', icon: '🎓', tag: 'Student' },
+            { path: 'tools/audio/metro.html', name: 'Metro Beat', cat: 'play', icon: '🎧', tag: 'Audio' },
+            { path: 'tools/audio/recorder.html', name: 'Recorder', cat: 'play', icon: '🎙️', tag: 'Audio' },
+            { path: 'tools/audio/tone.html', name: 'Tone', cat: 'play', icon: '🔊', tag: 'Audio' },
+            { path: 'tools/audio/tts.html', name: 'Voice TTS', cat: 'play', icon: '🤖', tag: 'Audio' },
+            { path: 'tools/game/8ball.html', name: 'Magic 8', cat: 'play', icon: '🎱', tag: 'Game' },
+            { path: 'tools/game/coin.html', name: 'Flip Coin', cat: 'play', icon: '🪙', tag: 'Game' },
+            { path: 'tools/game/dice.html', name: 'Dice Roll', cat: 'play', icon: '🎲', tag: 'Game' },
+            { path: 'tools/game/reaction.html', name: 'Reaction', cat: 'play', icon: '⚡', tag: 'Game' },
+            { path: 'tools/game/rps.html', name: 'Rock Paper Scissors', cat: 'play', icon: '✊', tag: 'Game' },
+            { path: 'tools/game/spin.html', name: 'Spin', cat: 'play', icon: '🎡', tag: 'Game' },
+            { path: 'tools/game/tictactoe.html', name: 'Tic-Tac-Toe', cat: 'play', icon: '❌', tag: 'Game' },
+            { path: 'tools/sys/about.html', name: 'About', cat: 'daily', icon: 'ℹ️', tag: 'System' },
+        ];
+
+        function renderTools() {
+            const grid = document.getElementById('mainGrid');
+            grid.innerHTML = toolCards.map(card => `
+                <a href="${card.path}" class="app-card" data-cat="${card.cat}" data-name="${card.name.toLowerCase()}">
+                    <div class="card-glow"></div>
+                    <div class="icon-box">${card.icon}</div>
+                    <div class="app-name">${card.name}</div>
+                    <span class="app-tag">${card.tag}</span>
+                </a>
+            `).join('');
+        }
+
+        function filterCat(cat, btn) {
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            document.querySelectorAll('.app-card').forEach(card => {
+                card.style.display = (cat === 'all' || card.getAttribute('data-cat') === cat) ? 'flex' : 'none';
+            });
+        }
+
+        function filterApps() {
+            const val = document.getElementById('search').value.toLowerCase().trim();
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            document.querySelector('.chip').classList.add('active');
+            document.querySelectorAll('.app-card').forEach(card => {
+                const text = (card.textContent + ' ' + card.getAttribute('data-name')).toLowerCase();
+                card.style.display = text.includes(val) ? 'flex' : 'none';
+            });
+        }
+
+        renderTools();
+        filterCat('all', document.querySelector('.chip'));
+
         function updateTime() {
             const hr = new Date().getHours();
-            const msg = hr < 12 ? "Good Morning" : hr < 18 ? "Good Afternoon" : "Good Evening";
-            document.getElementById('greet').innerText = msg + ", Founder";
+            const msg = hr < 12 ? 'Good Morning' : hr < 18 ? 'Good Afternoon' : 'Good Evening';
+            document.getElementById('greet').innerText = msg + ', Founder';
             document.getElementById('dateLine').innerText = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
         }
         updateTime();
 
-        // 2. BATTERY STATUS
-        if(navigator.getBattery) {
+        if (navigator.getBattery) {
             navigator.getBattery().then(bat => {
-                const updateBat = () => document.getElementById('batLvl').innerText = "🔋 " + Math.round(bat.level * 100) + "%";
+                const updateBat = () => document.getElementById('batLvl').innerText = '🔋 ' + Math.round(bat.level * 100) + '%';
                 updateBat();
                 bat.addEventListener('levelchange', updateBat);
             });
         }
 
-        // 3. CATEGORY FILTER
-        function filterCat(cat, btn) {
-            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-            btn.classList.add('active');
-            const cards = document.querySelectorAll('.app-card');
-            cards.forEach(card => {
-                if(cat === 'all' || card.getAttribute('data-cat') === cat) card.style.display = 'flex';
-                else card.style.display = 'none';
-            });
-        }
-
-        // 4. SEARCH + EASTER EGGS
-        function filterApps() {
-            const val = document.getElementById('search').value.toLowerCase();
-            
-            // Easter Eggs
-            if(val === 'matrix') {
-                document.body.classList.add('theme-green'); localStorage.setItem('qalqx-theme', 'theme-green');
-                document.getElementById('search').value = ""; alert("MATRIX MODE: ENABLED"); return;
-            }
-            if(val === 'gold') {
-                document.body.classList.add('theme-gold'); localStorage.setItem('qalqx-theme', 'theme-gold');
-                document.getElementById('search').value = ""; alert("ROYAL MODE: ENABLED"); return;
-            }
-
-            // Normal Search
-            if(val.length > 0) document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-            const cards = document.querySelectorAll('.app-card');
-            cards.forEach(card => {
-                if(card.innerText.toLowerCase().includes(val)) card.style.display = 'flex';
-                else card.style.display = 'none';
-            });
-        }
-
-        // 5. INSTALL LOGIC
         let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            document.getElementById('installBtn').style.display = 'block';
-        });
+        window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; document.getElementById('installBtn').style.display = 'block'; });
+        function installPWA() { if (!deferredPrompt) return; deferredPrompt.prompt(); deferredPrompt.userChoice.then(() => { deferredPrompt = null; }); }
 
-        function installPWA() {
-            if(!deferredPrompt) return;
-            deferredPrompt.prompt();
-            deferredPrompt.userChoice.then((choice) => {
-                if(choice.outcome === 'accepted') document.getElementById('installBtn').style.display = 'none';
-                deferredPrompt = null;
-            });
-        }
-
-        // 6. SERVICE WORKER
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/Qalyx/sw.js', { scope: '/Qalyx/' })
-            .catch(console.error);
+            navigator.serviceWorker.register('/Qalyx/sw.js', { scope: '/Qalyx/' }).catch(console.error);
         }
     </script>
 </body>

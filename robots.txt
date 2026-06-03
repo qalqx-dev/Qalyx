@@ -1,0 +1,16 @@
+# Robots.txt for QALQX
+# Helps search engines discover, crawl, and index the site efficiently.
+
+User-agent: *
+Allow: /
+Disallow: /sw.js
+Disallow: /manifest.json
+Disallow: /app.js
+
+Sitemap: https://qalqx-dev.github.io/Qalyx/sitemap.xml
+Host: https://qalqx-dev.github.io/Qalyx
+
+Allow: /index.html
+Allow: /settings.html
+Allow: /faq.html
+Allow: /tools/

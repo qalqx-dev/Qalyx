@@ -1,6 +1,7 @@
 // QALQX SYSTEM KERNEL v2.0
 document.addEventListener('DOMContentLoaded', () => {
-    
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     // --- 1. THEME LOADER ---
     const savedTheme = localStorage.getItem('qalqx-theme') || 'default';
     if(savedTheme !== 'default') {
@@ -8,14 +9,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- 2. HAPTIC ENGINE ---
-    const buttons = document.querySelectorAll('button, .card, .back-btn, input[type="range"], .chip');
+    const buttons = document.querySelectorAll('button, .card, .back-btn, input[type="range"], .chip, .app-card, .dock-item');
     buttons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            // Only vibrate if toggled ON (default is true)
-            if(localStorage.getItem('qalqx-haptics') !== 'off' && navigator.vibrate) {
-                navigator.vibrate(10);
+        const trigger = (event) => {
+            if (event.type === 'click' || event.type === 'touchstart' || event.type === 'pointerdown') {
+                if(localStorage.getItem('qalqx-haptics') !== 'off' && navigator.vibrate) {
+                    navigator.vibrate(10);
+                }
             }
-        });
+        };
+        btn.addEventListener('click', trigger);
+        btn.addEventListener('touchstart', trigger, { passive: true });
+        btn.addEventListener('pointerdown', trigger, { passive: true });
     });
 
     // --- 3. INPUT ANIMATION ---
@@ -27,6 +32,39 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    document.addEventListener('keydown', (event) => {
+        const target = event.target;
+        const isTyping = target && /INPUT|TEXTAREA|SELECT/.test(target.tagName);
+        if (isTyping) return;
+
+        if (event.key === '/' || event.key === '?') {
+            event.preventDefault();
+            const search = document.getElementById('search');
+            if (search) {
+                search.focus();
+                search.select();
+                if (navigator.vibrate) navigator.vibrate(8);
+            }
+        }
+
+        if (event.key === 'h' && !event.metaKey && !event.ctrlKey) {
+            const firstCard = document.querySelector('.app-card');
+            if (firstCard) firstCard.focus();
+        }
+    }, { passive: false });
+
+    if (!reduceMotion && 'DeviceMotionEvent' in window) {
+        let lastShake = 0;
+        window.addEventListener('devicemotion', (e) => {
+            const a = e.accelerationIncludingGravity || { x: 0, y: 0, z: 0 };
+            const force = Math.sqrt((a.x || 0) ** 2 + (a.y || 0) ** 2 + (a.z || 0) ** 2);
+            if (force > 18 && Date.now() - lastShake > 900) {
+                lastShake = Date.now();
+                if (navigator.vibrate) navigator.vibrate([12, 18, 12]);
+            }
+        }, { passive: true });
+    }
 
     console.log("QALQX System Online. Theme:", savedTheme);
 });

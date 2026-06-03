@@ -1,4 +1,14 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Leap | QALQX</title><link rel="stylesheet" href="../../style.css"></head><body>
+<!DOCTYPE html><html lang="en"><head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-E99HY50BDM"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-E99HY50BDM');
+</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Leap | QALQX</title><link rel="stylesheet" href="../../style.css"></head><body>
 <div class="nav"><a href="../../index.html" class="back-btn">←</a><h2>LEAP YEAR</h2></div>
 <div class="container"><input type="number" id="yr" placeholder="Year (e.g. 2024)" oninput="chk()"><div id="res" style="font-size:2rem; color:var(--primary); text-align:center; margin-top:20px; font-weight:bold;">-</div></div>
 <script>function chk(){let y=document.getElementById('yr').value;let l=(y%4==0&&y%100!=0)||y%400==0;document.getElementById('res').innerText=l?"LEAP YEAR":"COMMON YEAR";document.getElementById('res').style.color=l?"#00FF7F":"#FF4500";}</script>

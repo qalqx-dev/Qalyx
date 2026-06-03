@@ -32,11 +32,11 @@ body.theme-green { --primary: #00FF00; --bg: #031005; --surface: #0b1a0d; --surf
 body.theme-gold { --primary: #FFD700; --bg: #111005; --surface: #1a170b; --surface-2: #22210d; --border: rgba(255,223,85,0.18); }
 body.theme-red { --primary: #FF0055; --bg: #130406; --surface: #1d090d; --surface-2: #261016; --border: rgba(255,95,145,0.18); }
 body.theme-light {
-    --primary: #007BFF;
+    --primary: #5193d8;
     --bg: #edf2f8;
     --surface: #ffffff;
     --surface-2: #f5f7fb;
-    --border: rgba(0,0,0,0.10);
+    --border: rgb(255, 255, 255);
     --text-main: #102033;
     --text-muted: #4d5a6a;
 }

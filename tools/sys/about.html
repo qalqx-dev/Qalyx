@@ -15,12 +15,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About | QALQX</title>
+    <meta name="description" content="Learn what QALQX is, what it offers, and how the toolkit is built for quick everyday utility and productivity.">
     <link rel="stylesheet" href="../../style.css">
+    <script src="../../app.js" defer></script>
     <style>
-        .logo { font-size: 3rem; font-weight: bold; color: #fff; text-align: center; margin-bottom: 5px; }
-        .ver { color: var(--primary); text-align: center; font-family: monospace; letter-spacing: 2px; margin-bottom: 30px; }
-        .list { font-size: 0.9rem; color: #aaa; line-height: 1.8; border-top: 1px solid #333; padding-top: 20px; }
-        .credit { margin-top: 40px; text-align: center; color: #666; font-size: 0.8rem; }
+        .logo { font-size: 3rem; font-weight: 800; color: #fff; text-align: center; margin-bottom: 6px; }
+        .ver { color: var(--primary); text-align: center; font-family: monospace; letter-spacing: 2px; margin-bottom: 18px; }
+        .about-grid { display: grid; gap: 14px; margin-top: 18px; }
+        .about-card { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 16px; }
+        .about-card h3 { margin: 0 0 8px; font-size: 1rem; color: var(--text-main); }
+        .about-card p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; margin: 0; }
+        .chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .chip-row span { padding: 6px 10px; border-radius: 999px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-main); font-size: 0.75rem; }
+        .credit { margin-top: 24px; text-align: center; color: var(--text-muted); font-size: 0.82rem; line-height: 1.5; }
     </style>
 </head>
 <body>
@@ -29,24 +36,31 @@
         <div class="logo">QALQX</div>
         <div class="ver">OS VERSION 1.0</div>
         
-        <div class="result-box" style="display:block;">
-            <div style="color:var(--primary); font-weight:bold;">Status: ONLINE</div>
-            <div>Modules: 50/50 Active</div>
-            <div>Platform: PWA / Web</div>
-        </div>
-
-        <div class="list">
-            • Physics Engine: Active<br>
-            • Dev Suite: Active<br>
-            • Audio Lab: Active<br>
-            • Security Core: Active<br>
-            • Student Hub: Active
+        <div class="about-grid">
+            <article class="about-card">
+                <h3>What QALQX does</h3>
+                <p>QALQX is a compact utility hub for quick math, finance, productivity, audio, security, and study tools. It is designed to feel like a portable toolkit you can open instantly on any device.</p>
+            </article>
+            <article class="about-card">
+                <h3>Current build</h3>
+                <p>Status: online • Modules: 50/50 active • Platform: PWA / responsive web app</p>
+                <div class="chip-row">
+                    <span>Math</span>
+                    <span>Finance</span>
+                    <span>Audio</span>
+                    <span>Security</span>
+                    <span>Student</span>
+                </div>
+            </article>
+            <article class="about-card">
+                <h3>Why it feels fast</h3>
+                <p>Each page is lightweight, mobile-friendly, and tuned to keep core actions close at hand with minimal friction and clear visual feedback.</p>
+            </article>
         </div>
 
         <div class="credit">
-            Built by Founder<br>
-            Visakhapatnam, India<br>
-            2026
+            Built for quick utility, learning, and everyday workflow.<br>
+            QALQX • Visakhapatnam, India • 2026
         </div>
     </div>
 </body>

@@ -24,20 +24,28 @@
         .setting-group { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
         .setting-title { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; }
         
-        .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .theme-btn { 
-            height: 50px; border-radius: 8px; border: 2px solid transparent; cursor: pointer; 
-            display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.7rem;
-            transition: transform 0.2s; color: #000;
+        .theme-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .theme-btn {
+            position: relative; overflow: hidden; min-height: 58px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.18);
+            cursor: pointer; display: flex; flex-direction: column; align-items: flex-start; justify-content: center;
+            padding: 10px 12px; font-weight: 800; font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase;
+            box-shadow: 0 10px 24px rgba(0,0,0,0.18); transition: transform 0.18s ease, box-shadow 0.18s ease;
         }
-        .theme-btn:active { transform: scale(0.95); }
-        
-        /* Preview Colors */
-        .t-green { background: #00FF00; box-shadow: 0 0 10px #00FF00; }
-        .t-gold { background: #FFD700; box-shadow: 0 0 10px #FFD700; }
-        .t-red { background: #FF0055; box-shadow: 0 0 10px #FF0055; color: #fff; }
-        .t-blue { background: #00E5FF; box-shadow: 0 0 10px #00E5FF; }
-        .t-light { background: #ffffff; border: 2px solid #ccc; color: #000; }
+        .theme-btn small { font-size: 0.62rem; text-transform: none; letter-spacing: 0.08em; opacity: 0.88; }
+        .theme-btn::after {
+            content: ""; position: absolute; inset: 0; background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.18) 45%, transparent 60%);
+            transform: translateX(-120%); transition: transform 0.35s ease;
+        }
+        .theme-btn:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(0,0,0,0.24); }
+        .theme-btn:hover::after { transform: translateX(120%); }
+        .theme-btn:active { transform: scale(0.98); }
+
+        .t-blue { background: linear-gradient(135deg, #0ef5ff 0%, #0b6bff 100%); color: #032033; }
+        .t-green { background: linear-gradient(135deg, #98ffcd 0%, #10c46a 100%); color: #062312; }
+        .t-gold { background: linear-gradient(135deg, #ffeaa7 0%, #ffb703 100%); color: #2b2204; }
+        .t-red { background: linear-gradient(135deg, #ff8ab5 0%, #ff0055 100%); color: #fff; }
+        .t-light { background: linear-gradient(135deg, #ffffff 0%, #edf3ff 100%); border-color: rgba(16, 24, 40, 0.14); color: #102033; }
+        .theme-btn.full { grid-column: span 2; }
 
         .toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
         .toggle-row:last-child { border-bottom: none; }
@@ -51,11 +59,11 @@
         <div class="setting-group">
             <div class="setting-title">Visual Interface</div>
             <div class="theme-grid">
-                <div class="theme-btn t-blue" onclick="saveTheme('default')">CYBER</div>
-                <div class="theme-btn t-green" onclick="saveTheme('theme-green')">MATRIX</div>
-                <div class="theme-btn t-gold" onclick="saveTheme('theme-gold')">ROYAL</div>
-                <div class="theme-btn t-red" onclick="saveTheme('theme-red')">SITH</div>
-                <div class="theme-btn t-light" onclick="saveTheme('theme-light')" style="grid-column: span 2;">PAPER (LIGHT)</div>
+                <div class="theme-btn t-blue" onclick="applyTheme('default')" role="button" tabindex="0" aria-label="Apply Cyber theme"><span>CYBER</span><small>default neon glow</small></div>
+                <div class="theme-btn t-green" onclick="applyTheme('theme-green')" role="button" tabindex="0" aria-label="Apply Matrix theme"><span>MATRIX</span><small>fresh green energy</small></div>
+                <div class="theme-btn t-gold" onclick="applyTheme('theme-gold')" role="button" tabindex="0" aria-label="Apply Royal theme"><span>ROYAL</span><small>golden highlights</small></div>
+                <div class="theme-btn t-red" onclick="applyTheme('theme-red')" role="button" tabindex="0" aria-label="Apply Sith theme"><span>SITH</span><small>dark crimson pulse</small></div>
+                <div class="theme-btn t-light full" onclick="applyTheme('theme-light')" role="button" tabindex="0" aria-label="Apply Paper theme"><span>PAPER</span><small>light mode for long sessions</small></div>
             </div>
         </div>
 
@@ -116,11 +124,11 @@
             localStorage.setItem('qalqx-haptics', isOn ? 'on' : 'off');
         }
 
-        function saveTheme(themeName) {
-            document.body.className = themeName; // Instant Preview
+        function applyTheme(themeName) {
+            document.body.classList.remove('theme-green', 'theme-gold', 'theme-red', 'theme-light');
+            if (themeName !== 'default') document.body.classList.add(themeName);
             localStorage.setItem('qalqx-theme', themeName);
-            // Apply to parent if needed (reloads page to apply globally)
-            setTimeout(() => location.reload(), 300);
+            setTimeout(() => location.reload(), 250);
         }
 
         function clearData() {

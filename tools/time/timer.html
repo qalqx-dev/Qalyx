@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi Timer | QALQX Supreme</title>
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="manifest" href="../../manifest.json">
+    <script src="../../app.js" defer></script>
+    <style>
+        .panel { border: 1px solid var(--border); border-radius: 22px; padding: 16px; background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02)); margin-top: 16px; }
+        .grid { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 16px; }
+        .field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+        .field label { font-size: 0.74rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.16em; }
+        .field input, .field select, .field button { border-radius: 14px; border: 1px solid var(--border); background: rgba(255,255,255,0.04); color: var(--text-main); padding: 10px 12px; font-size: 0.95rem; }
+        .field input:focus, .field select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,229,255,0.10); }
+        .row { display: flex; gap: 10px; flex-wrap: wrap; }
+        .timer-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+        .timer-card { border-radius: 18px; border: 1px solid var(--border); padding: 12px; background: rgba(255,255,255,0.035); }
+        .timer-top { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+        .timer-label { font-weight: 700; }
+        .timer-time { font-family: monospace; font-size: 1.45rem; margin: 10px 0; }
+        .ring { width: 96px; height: 96px; margin: 8px auto; position: relative; }
+        .ring svg { transform: rotate(-90deg); width: 96px; height: 96px; }
+        .ring circle { fill: none; stroke: rgba(255,255,255,0.12); stroke-width: 8; }
+        .ring .progress { stroke: var(--primary); stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 0.25s linear; }
+        .timer-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+        .lap-list { max-height: 260px; overflow: auto; border: 1px solid var(--border); border-radius: 14px; padding: 8px; background: rgba(255,255,255,0.03); }
+        .lap-row { display: flex; justify-content: space-between; padding: 8px 6px; border-bottom: 1px solid rgba(255,255,255,0.08); font-size: 0.9rem; }
+        .lap-row.fastest { color: #6dffb6; }
+        .lap-row.slowest { color: #ff8da1; }
+        .canvas-wrap { border: 1px solid var(--border); border-radius: 14px; padding: 8px; background: rgba(255,255,255,0.03); }
+        canvas { width: 100%; height: 200px; }
+        .pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid var(--border); font-size: 0.78rem; }
+        @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } .timer-list { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="main-shell">
+        <div class="header-section">
+            <div class="greet-box">
+                <h1>Multi Timer Lab</h1>
+                <p>Worker timing • audio alarms • HIIT engine</p>
+            </div>
+            <a href="../../index.html" class="back-btn" aria-label="Back home">←</a>
+        </div>
+
+        <section class="panel">
+            <div class="grid">
+                <div>
+                    <div class="panel-title"><span>Timer setup</span><span>Up to 10</span></div>
+                    <div class="field">
+                        <label for="labelInput">Label</label>
+                        <input id="labelInput" placeholder="Focus sprint">
+                    </div>
+                    <div class="field">
+                        <label for="durationInput">Duration (seconds)</label>
+                        <input id="durationInput" type="number" min="1" max="3600" value="60">
+                    </div>
+                    <div class="row">
+                        <button class="primary-btn" id="addTimerBtn">Add timer</button>
+                        <button class="ghost-btn" id="clearTimersBtn">Clear all</button>
+                    </div>
+                </div>
+                <div>
+                    <div class="panel-title"><span>HIIT mode</span><span>Programmable</span></div>
+                    <div class="field">
+                        <label for="warmupInput">Warm-up (s)</label>
+                        <input id="warmupInput" type="number" min="0" max="600" value="10">
+                    </div>
+                    <div class="field">
+                        <label for="workInput">Work (s)</label>
+                        <input id="workInput" type="number" min="1" max="600" value="30">
+                    </div>
+                    <div class="field">
+                        <label for="restInput">Rest (s)</label>
+                        <input id="restInput" type="number" min="0" max="600" value="15">
+                    </div>
+                    <div class="field">
+                        <label for="setsInput">Sets</label>
+                        <input id="setsInput" type="number" min="1" max="20" value="4">
+                    </div>
+                    <div class="field">
+                        <label for="cooldownInput">Cool-down (s)</label>
+                        <input id="cooldownInput" type="number" min="0" max="600" value="10">
+                    </div>
+                    <div class="row">
+                        <button class="primary-btn" id="startHiitBtn">Start HIIT</button>
+                        <button class="ghost-btn" id="stopHiitBtn">Stop</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="panel-title"><span>Active timers</span><span id="timerSummary">0 running</span></div>
+            <div class="timer-list" id="timerList"></div>
+        </section>
+
+        <section class="panel">
+            <div class="panel-title"><span>Stopwatch</span><span>Lap analytics</span></div>
+            <div class="row" style="align-items:center;">
+                <div class="pill" id="stopwatchDisplay">00:00:00.000</div>
+                <button class="primary-btn" id="startStopwatchBtn">Start</button>
+                <button class="ghost-btn" id="lapStopwatchBtn">Lap</button>
+                <button class="ghost-btn" id="resetStopwatchBtn">Reset</button>
+            </div>
+            <div class="lap-list" id="lapList" style="margin-top: 12px;"></div>
+            <div class="canvas-wrap" style="margin-top: 12px;"><canvas id="lapChart"></canvas></div>
+        </section>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'qalqx-timer-v1';
+        const worker = new Worker(URL.createObjectURL(new Blob([`
+            let timers = [];
+            let stopwatch = null;
+            let stopwatchInterval = null;
+            self.onmessage = function (e) {
+                const { type, id, duration, label } = e.data;
+                if (type === 'addTimer') {
+                    timers.push({ id, duration, label, remaining: duration, running: false, startedAt: null });
+                    postMessage({ type: 'syncTimers', timers });
+                }
+                if (type === 'startTimer') {
+                    const timer = timers.find(t => t.id === id);
+                    if (timer) {
+                        timer.running = true;
+                        timer.startedAt = Date.now();
+                        timer.remaining = timer.remaining > 0 ? timer.remaining : timer.duration;
+                    }
+                }
+                if (type === 'pauseTimer') {
+                    const timer = timers.find(t => t.id === id);
+                    if (timer && timer.running) {
+                        const elapsed = Math.floor((Date.now() - timer.startedAt) / 1000);
+                        timer.remaining = Math.max(0, timer.remaining - elapsed);
+                        timer.running = false;
+                    }
+                }
+                if (type === 'resetTimer') {
+                    const timer = timers.find(t => t.id === id);
+                    if (timer) {
+                        timer.remaining = timer.duration;
+                        timer.running = false;
+                        timer.startedAt = null;
+                    }
+                }
+                if (type === 'tick') {
+                    if (stopwatch) {
+                        stopwatch += 100;
+                        postMessage({ type: 'tickStopwatch', value: stopwatch });
+                    }
+                    timers = timers.map(timer => {
+                        if (!timer.running) return timer;
+                        const elapsed = Math.floor((Date.now() - timer.startedAt) / 1000);
+                        const nextRemaining = Math.max(0, timer.remaining - elapsed);
+                        if (nextRemaining === 0) {
+                            timer.running = false;
+                            timer.startedAt = null;
+                            timer.remaining = 0;
+                            postMessage({ type: 'alarm', timerId: timer.id, label: timer.label });
+                        }
+                        timer.startedAt = Date.now();
+                        timer.remaining = nextRemaining;
+                        return timer;
+                    });
+                    postMessage({ type: 'syncTimers', timers });
+                }
+                if (type === 'stopwatchStart') {
+                    stopwatch = stopwatch || 0;
+                    stopwatchInterval = setInterval(() => {
+                        stopwatch += 100;
+                        postMessage({ type: 'tickStopwatch', value: stopwatch });
+                    }, 100);
+                }
+                if (type === 'stopwatchStop') {
+                    clearInterval(stopwatchInterval);
+                    stopwatchInterval = null;
+                }
+                if (type === 'stopwatchReset') {
+                    stopwatch = 0;
+                    clearInterval(stopwatchInterval);
+                    stopwatchInterval = null;
+                    postMessage({ type: 'tickStopwatch', value: stopwatch });
+                }
+            };
+        `], { type: 'text/javascript' }));
+
+        const state = {
+            timers: [],
+            stopwatch: { running: false, startTime: 0, elapsed: 0, laps: [] },
+            hiit: { running: false, currentPhase: 'warmup', currentRound: 0, step: 0 },
+            audio: null
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadState();
+            bindEvents();
+            renderTimers();
+            renderLaps();
+            worker.onmessage = handleWorkerMessage;
+            setInterval(() => worker.postMessage({ type: 'tick' }), 1000);
+        });
+
+        function bindEvents() {
+            document.getElementById('addTimerBtn').addEventListener('click', addTimer);
+            document.getElementById('clearTimersBtn').addEventListener('click', clearTimers);
+            document.getElementById('startStopwatchBtn').addEventListener('click', toggleStopwatch);
+            document.getElementById('lapStopwatchBtn').addEventListener('click', lapStopwatch);
+            document.getElementById('resetStopwatchBtn').addEventListener('click', resetStopwatch);
+            document.getElementById('startHiitBtn').addEventListener('click', startHiit);
+            document.getElementById('stopHiitBtn').addEventListener('click', stopHiit);
+        }
+
+        function addTimer() {
+            const label = document.getElementById('labelInput').value.trim() || `Timer ${state.timers.length + 1}`;
+            const duration = Number(document.getElementById('durationInput').value || 60);
+            if (state.timers.length >= 10) return;
+            const timer = { id: `timer-${Date.now()}-${Math.random().toString(16).slice(2)}`, label, duration, remaining: duration, running: false };
+            state.timers.push(timer);
+            worker.postMessage({ type: 'addTimer', id: timer.id, duration, label });
+            saveState();
+            renderTimers();
+        }
+
+        function clearTimers() {
+            state.timers = [];
+            saveState();
+            renderTimers();
+        }
+
+        function renderTimers() {
+            const list = document.getElementById('timerList');
+            if (!state.timers.length) {
+                list.innerHTML = '<div class="empty">No timers added yet.</div>';
+                document.getElementById('timerSummary').textContent = '0 running';
+                return;
+            }
+            list.innerHTML = state.timers.map((timer) => {
+                const pct = Math.max(0, Math.min(100, (timer.remaining / timer.duration) * 100));
+                const progress = 2 * Math.PI * 40;
+                const offset = progress - (pct / 100) * progress;
+                return `
+                    <article class="timer-card">
+                        <div class="timer-top">
+                            <strong class="timer-label">${timer.label}</strong>
+                            <span class="pill">${timer.running ? 'Running' : 'Paused'}</span>
+                        </div>
+                        <div class="ring">
+                            <svg viewBox="0 0 96 96">
+                                <circle cx="48" cy="48" r="40"></circle>
+                                <circle class="progress" cx="48" cy="48" r="40" stroke-dasharray="${progress}" stroke-dashoffset="${offset}"></circle>
+                            </svg>
+                        </div>
+                        <div class="timer-time">${formatDuration(timer.remaining)}</div>
+                        <div class="timer-actions">
+                            <button class="primary-btn" onclick="controlTimer('${timer.id}', 'start')">Start</button>
+                            <button class="ghost-btn" onclick="controlTimer('${timer.id}', 'pause')">Pause</button>
+                            <button class="ghost-btn" onclick="controlTimer('${timer.id}', 'reset')">Reset</button>
+                        </div>
+                    </article>
+                `;
+            }).join('');
+            const runningCount = state.timers.filter(timer => timer.running).length;
+            document.getElementById('timerSummary').textContent = `${runningCount} running`;
+        }
+
+        function controlTimer(id, action) {
+            const timer = state.timers.find(item => item.id === id);
+            if (!timer) return;
+            if (action === 'start') {
+                timer.running = true;
+                worker.postMessage({ type: 'startTimer', id });
+            } else if (action === 'pause') {
+                worker.postMessage({ type: 'pauseTimer', id });
+            } else if (action === 'reset') {
+                timer.running = false;
+                timer.remaining = timer.duration;
+                worker.postMessage({ type: 'resetTimer', id });
+            }
+            saveState();
+            renderTimers();
+        }
+
+        window.controlTimer = controlTimer;
+
+        function formatDuration(seconds) {
+            const hrs = String(Math.floor(seconds / 3600)).padStart(2, '0');
+            const mins = String(Math.floor((seconds % 3600) / 60)).padStart(2, '0');
+            const secs = String(seconds % 60).padStart(2, '0');
+            return `${hrs}:${mins}:${secs}`;
+        }
+
+        function handleWorkerMessage(event) {
+            const { type, timers, value, timerId, label } = event.data;
+            if (type === 'syncTimers') {
+                state.timers = timers.map((timer) => ({ ...timer }));
+                renderTimers();
+            }
+            if (type === 'tickStopwatch') {
+                state.stopwatch.elapsed = value;
+                document.getElementById('stopwatchDisplay').textContent = formatMs(value);
+            }
+            if (type === 'alarm') {
+                playAlarm();
+                if ('speechSynthesis' in window) {
+                    const utter = new SpeechSynthesisUtterance(`${label} complete`);
+                    window.speechSynthesis.speak(utter);
+                }
+            }
+        }
+
+        function formatMs(ms) {
+            const totalMs = Math.max(0, ms);
+            const hours = Math.floor(totalMs / 3600000).toString().padStart(2, '0');
+            const mins = Math.floor((totalMs % 3600000) / 60000).toString().padStart(2, '0');
+            const secs = Math.floor((totalMs % 60000) / 1000).toString().padStart(2, '0');
+            const centis = Math.floor((totalMs % 1000) / 10).toString().padStart(2, '0');
+            return `${hours}:${mins}:${secs}.${centis}`;
+        }
+
+        function toggleStopwatch() {
+            if (!state.stopwatch.running) {
+                state.stopwatch.running = true;
+                state.stopwatch.startTime = Date.now();
+                worker.postMessage({ type: 'stopwatchStart' });
+                document.getElementById('startStopwatchBtn').textContent = 'Pause';
+            } else {
+                state.stopwatch.running = false;
+                state.stopwatch.elapsed = state.stopwatch.elapsed || 0;
+                worker.postMessage({ type: 'stopwatchStop' });
+                document.getElementById('startStopwatchBtn').textContent = 'Resume';
+            }
+        }
+
+        function lapStopwatch() {
+            if (!state.stopwatch.running) return;
+            const elapsed = state.stopwatch.elapsed + (Date.now() - state.stopwatch.startTime);
+            const lap = { id: Date.now(), elapsed };
+            state.stopwatch.laps.push(lap);
+            renderLaps();
+        }
+
+        function resetStopwatch() {
+            state.stopwatch.running = false;
+            state.stopwatch.elapsed = 0;
+            state.stopwatch.laps = [];
+            worker.postMessage({ type: 'stopwatchReset' });
+            document.getElementById('startStopwatchBtn').textContent = 'Start';
+            renderLaps();
+        }
+
+        function renderLaps() {
+            const list = document.getElementById('lapList');
+            if (!state.stopwatch.laps.length) {
+                list.innerHTML = '<div class="empty">No laps yet.</div>';
+                drawChart([]);
+                return;
+            }
+            const laps = state.stopwatch.laps.map((lap, index) => {
+                const previous = index > 0 ? state.stopwatch.laps[index - 1].elapsed : lap.elapsed;
+                const delta = lap.elapsed - previous;
+                const className = index === 0 ? '' : delta < 0 ? 'fastest' : delta > 0 ? 'slowest' : '';
+                return `
+                    <div class="lap-row ${className}">
+                        <span>Lap ${index + 1}</span>
+                        <span>${formatMs(lap.elapsed)}</span>
+                        <span>${delta >= 0 ? '+' : ''}${formatMs(delta)}</span>
+                    </div>
+                `;
+            });
+            list.innerHTML = laps.join('');
+            drawChart(state.stopwatch.laps.map(lap => lap.elapsed));
+        }
+
+        function drawChart(values) {
+            const canvas = document.getElementById('lapChart');
+            const ctx = canvas.getContext('2d');
+            const width = canvas.clientWidth || 500;
+            const height = 200;
+            canvas.width = width;
+            canvas.height = height;
+            ctx.clearRect(0, 0, width, height);
+            ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i < 5; i++) {
+                const y = (i / 4) * height;
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(width, y); ctx.stroke();
+            }
+            if (!values.length) return;
+            const max = Math.max(...values, 1);
+            ctx.strokeStyle = 'var(--primary)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            values.forEach((value, index) => {
+                const x = (index / Math.max(1, values.length - 1)) * (width - 20) + 10;
+                const y = height - ((value / max) * (height - 20)) - 10;
+                index === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+            });
+            ctx.stroke();
+        }
+
+        function playAlarm() {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContext) return;
+            const ctx = state.audio || new AudioContext();
+            state.audio = ctx;
+            if (ctx.state === 'suspended') ctx.resume();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.value = 880;
+            gain.gain.value = 0.1;
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start();
+            gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.25);
+            osc.stop(ctx.currentTime + 0.25);
+        }
+
+        function startHiit() {
+            const warmup = Number(document.getElementById('warmupInput').value || 0);
+            const work = Number(document.getElementById('workInput').value || 30);
+            const rest = Number(document.getElementById('restInput').value || 15);
+            const sets = Number(document.getElementById('setsInput').value || 4);
+            const cooldown = Number(document.getElementById('cooldownInput').value || 0);
+            stopHiit();
+            const phases = [];
+            if (warmup > 0) phases.push({ label: 'Warm-up', duration: warmup });
+            for (let i = 0; i < sets; i++) {
+                phases.push({ label: `Work ${i + 1}`, duration: work });
+                if (rest > 0 && i < sets - 1) phases.push({ label: `Rest ${i + 1}`, duration: rest });
+            }
+            if (cooldown > 0) phases.push({ label: 'Cool-down', duration: cooldown });
+            state.hiit.running = true;
+            state.hiit.phases = phases;
+            state.hiit.step = 0;
+            state.hiit.currentRound = 0;
+            runHiitPhase();
+        }
+
+        function runHiitPhase() {
+            if (!state.hiit.running) return;
+            const phase = state.hiit.phases[state.hiit.step];
+            if (!phase) {
+                stopHiit();
+                return;
+            }
+            const timer = { id: `hiit-${Date.now()}`, label: phase.label, duration: phase.duration, remaining: phase.duration, running: true };
+            state.timers = state.timers.filter(item => !item.id.startsWith('hiit-'));
+            state.timers.push(timer);
+            worker.postMessage({ type: 'addTimer', id: timer.id, duration: phase.duration, label: phase.label });
+            state.hiit.currentPhase = phase.label;
+            renderTimers();
+            const run = () => {
+                if (!state.hiit.running) return;
+                worker.postMessage({ type: 'startTimer', id: timer.id });
+                const interval = setInterval(() => {
+                    if (!state.hiit.running) {
+                        clearInterval(interval);
+                        return;
+                    }
+                    worker.postMessage({ type: 'tick' });
+                }, 1000);
+                setTimeout(() => {
+                    clearInterval(interval);
+                    worker.postMessage({ type: 'pauseTimer', id: timer.id });
+                    state.hiit.step += 1;
+                    runHiitPhase();
+                }, phase.duration * 1000);
+            };
+            run();
+        }
+
+        function stopHiit() {
+            state.hiit.running = false;
+            state.timers = state.timers.filter(item => !item.id.startsWith('hiit-'));
+            renderTimers();
+        }
+
+        function loadState() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (!saved) return;
+            try {
+                const parsed = JSON.parse(saved);
+                if (Array.isArray(parsed.timers)) state.timers = parsed.timers;
+            } catch (e) {}
+        }
+
+        function saveState() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({ timers: state.timers }));
+        }
+    </script>
+</body>
+</html>

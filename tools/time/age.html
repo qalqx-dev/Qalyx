@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Precision Age | QALQX Supreme</title>
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="manifest" href="../../manifest.json">
+    <script src="../../app.js" defer></script>
+    <style>
+        :root {
+            --card-bg: rgba(255,255,255,0.04);
+            --card-border: rgba(255,255,255,0.10);
+            --soft: rgba(255,255,255,0.70);
+        }
+
+        .panel {
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            padding: 18px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+            margin-top: 16px;
+            box-shadow: 0 16px 40px rgba(0,0,0,0.22);
+        }
+
+        .panel-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            color: var(--text-main);
+            font-weight: 700;
+            font-size: 0.95rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .field { display: flex; flex-direction: column; gap: 8px; }
+        .field label { font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.16em; }
+        .field input, .field select {
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,0.04);
+            color: var(--text-main);
+            padding: 11px 12px;
+            font-size: 0.95rem;
+            outline: none;
+        }
+        .field input:focus, .field select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,229,255,0.10); }
+
+        .button-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+        .mini-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 10px;
+        }
+        .mini-card {
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 12px;
+            background: rgba(255,255,255,0.03);
+            min-height: 90px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .mini-card small { color: var(--text-muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; }
+        .mini-card strong { margin-top: 6px; font-size: 1rem; color: var(--primary); }
+
+        .age-display {
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+            font-size: clamp(1.2rem, 2.2vw, 1.7rem);
+            color: var(--text-main);
+            line-height: 1.35;
+            margin-top: 8px;
+        }
+
+        .progress-track {
+            width: 100%; height: 12px; border-radius: 999px; background: rgba(255,255,255,0.08); overflow: hidden; border: 1px solid var(--border);
+        }
+        .progress-fill {
+            height: 100%; width: 0%; border-radius: inherit;
+            background: linear-gradient(90deg, var(--primary), #8ff7ff);
+            transition: width 0.25s ease;
+        }
+        .progress-meta { display: flex; justify-content: space-between; gap: 12px; color: var(--text-muted); font-size: 0.84rem; margin-top: 8px; }
+
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 10px;
+        }
+        .metric-card {
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 12px;
+            background: rgba(255,255,255,0.03);
+        }
+        .metric-card span { color: var(--text-muted); font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.12em; }
+        .metric-card strong { display: block; margin-top: 6px; font-size: 1rem; color: var(--text-main); }
+
+        .planet-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 10px;
+        }
+        .planet-card {
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 12px;
+            background: rgba(255,255,255,0.03);
+        }
+        .planet-card .planet-name { color: var(--primary); font-weight: 700; font-size: 0.9rem; }
+        .planet-card .planet-value { margin-top: 6px; font-size: 1rem; color: var(--text-main); }
+
+        .identity-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+        }
+        .identity-card {
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 12px;
+            background: rgba(255,255,255,0.03);
+            text-align: center;
+        }
+        .identity-card .icon { font-size: 1.3rem; margin-bottom: 6px; }
+        .identity-card strong { display: block; font-size: 0.98rem; }
+        .identity-card span { color: var(--text-muted); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.12em; }
+
+        .milestone-list {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+        .milestone-item {
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 12px;
+            background: rgba(255,255,255,0.03);
+        }
+        .milestone-item strong { display: block; margin-bottom: 4px; color: var(--primary); }
+        .milestone-item span { color: var(--text-muted); font-size: 0.84rem; line-height: 1.45; }
+
+        @media (max-width: 760px) {
+            .form-grid, .mini-grid, .metric-grid, .planet-grid, .identity-grid, .milestone-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-shell">
+        <div class="header-section">
+            <div class="greet-box">
+                <h1>Live Precision Age</h1>
+                <p>Biological timeline • cosmic age matrix • life countdown</p>
+            </div>
+            <a href="../../index.html" class="back-btn" aria-label="Back home">←</a>
+        </div>
+
+        <section class="hero-panel">
+            <div>
+                <div class="eyebrow" id="clockStatus">Standing by</div>
+                <h1 id="ageHeader">0y : 0m : 0d : 0h : 0m : 0s : 0ms</h1>
+                <p class="hero-copy" id="ageSubtitle">Enter your details and watch your age tick in real time.</p>
+                <div class="hero-actions">
+                    <button type="button" class="primary-btn" id="saveBtn">Save Profile</button>
+                    <button type="button" class="ghost-btn" id="resetBtn">Reset</button>
+                </div>
+            </div>
+            <div class="hero-stats">
+                <div class="stat-card">
+                    <strong id="timeAlive">0 ms</strong>
+                    <span>Current age</span>
+                </div>
+                <div class="stat-card">
+                    <strong id="nextBirthday">—</strong>
+                    <span>Next birthday</span>
+                </div>
+                <div class="stat-card">
+                    <strong id="lifePercent">0%</strong>
+                    <span>Life progress</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="panel-title">
+                <span>Birth profile</span>
+                <span>Local storage enabled</span>
+            </div>
+
+            <div class="form-grid">
+                <div class="field">
+                    <label for="dob">Date of birth</label>
+                    <input type="date" id="dob">
+                </div>
+                <div class="field">
+                    <label for="birthTime">Exact time</label>
+                    <input type="time" id="birthTime" value="00:00">
+                </div>
+                <div class="field">
+                    <label for="timezone">Timezone</label>
+                    <select id="timezone"></select>
+                </div>
+                <div class="field">
+                    <label for="country">Country</label>
+                    <select id="country"></select>
+                </div>
+                <div class="field">
+                    <label for="gender">Gender</label>
+                    <select id="gender">
+                        <option value="other">Other</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="targetLife">Target life expectancy (years)</label>
+                    <input type="number" id="targetLife" min="1" max="150" step="1" value="80">
+                </div>
+            </div>
+
+            <div class="button-row">
+                <button type="button" class="primary-btn" id="saveInlineBtn">Save</button>
+                <button type="button" class="ghost-btn" id="resetInlineBtn">Reset defaults</button>
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="panel-title">
+                <span>Equivalent age matrix</span>
+                <span>Live precision</span>
+            </div>
+            <div class="mini-grid">
+                <div class="mini-card"><small>Years</small><strong id="eqYears">0</strong></div>
+                <div class="mini-card"><small>Months</small><strong id="eqMonths">0</strong></div>
+                <div class="mini-card"><small>Weeks</small><strong id="eqWeeks">0</strong></div>
+                <div class="mini-card"><small>Days</small><strong id="eqDays">0</strong></div>
+                <div class="mini-card"><small>Hours</small><strong id="eqHours">0</strong></div>
+                <div class="mini-card"><small>Minutes</small><strong id="eqMinutes">0</strong></div>
+                <div class="mini-card"><small>Seconds</small><strong id="eqSeconds">0</strong></div>
+                <div class="mini-card"><small>Milliseconds</small><strong id="eqMilliseconds">0</strong></div>
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="panel-title">
+                <span>Life engine</span>
+                <span>Estimated baseline</span>
+            </div>
+            <div class="progress-track">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-meta">
+                <span id="progressText">0% of target expectancy</span>
+                <span id="baselineText">Baseline: 0 years</span>
+            </div>
+            <div class="metric-grid" style="margin-top: 12px;">
+                <div class="metric-card"><span>Heartbeats</span><strong id="heartbeats">0</strong></div>
+                <div class="metric-card"><span>Breaths</span><strong id="breaths">0</strong></div>
+                <div class="metric-card"><span>Sleep hours</span><strong id="sleepHours">0</strong></div>
+                <div class="metric-card"><span>Eating hours</span><strong id="eatHours">0</strong></div>
+            </div>
+            <div class="metric-grid" style="margin-top: 10px;">
+                <div class="metric-card"><span>Distance on Earth</span><strong id="spaceDistance">0 km</strong></div>
+                <div class="metric-card"><span>Estimate target</span><strong id="targetDisplay">80 years</strong></div>
+                <div class="metric-card"><span>Baseline life</span><strong id="baselineDisplay">0 years</strong></div>
+                <div class="metric-card"><span>Birth location</span><strong id="countryDisplay">—</strong></div>
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="panel-title">
+                <span>Cosmic age matrix</span>
+                <span>Planetary years</span>
+            </div>
+            <div class="planet-grid" id="planetGrid"></div>
+        </section>
+
+        <section class="panel">
+            <div class="panel-title">
+                <span>Astronomy & zodiac</span>
+                <span>Birth signature</span>
+            </div>
+            <div class="identity-grid">
+                <div class="identity-card">
+                    <div class="icon" id="zodiacIcon">✦</div>
+                    <span>Western zodiac</span>
+                    <strong id="westernZodiac">—</strong>
+                </div>
+                <div class="identity-card">
+                    <div class="icon" id="chineseIcon">🐉</div>
+                    <span>Chinese zodiac</span>
+                    <strong id="chineseZodiac">—</strong>
+                </div>
+                <div class="identity-card">
+                    <div class="icon" id="moonIcon">🌙</div>
+                    <span>Moon phase</span>
+                    <strong id="moonPhase">—</strong>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="panel-title">
+                <span>Milestones</span>
+                <span>Countdowns & dates</span>
+            </div>
+            <div class="milestone-list">
+                <div class="milestone-item">
+                    <strong>10,000th day</strong>
+                    <span id="day10000">—</span>
+                </div>
+                <div class="milestone-item">
+                    <strong>20,000th day</strong>
+                    <span id="day20000">—</span>
+                </div>
+                <div class="milestone-item">
+                    <strong>25,000th day</strong>
+                    <span id="day25000">—</span>
+                </div>
+                <div class="milestone-item">
+                    <strong>1,000,000,000th second</strong>
+                    <span id="secondBillion">—</span>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'qalqx-age-profile-v1';
+
+        const countryMeta = {
+            US: { label: 'United States', life: 79, latitude: 38 },
+            CA: { label: 'Canada', life: 82, latitude: 56 },
+            MX: { label: 'Mexico', life: 75, latitude: 23 },
+            BR: { label: 'Brazil', life: 76, latitude: -14 },
+            GB: { label: 'United Kingdom', life: 81, latitude: 54 },
+            FR: { label: 'France', life: 83, latitude: 46 },
+            DE: { label: 'Germany', life: 81, latitude: 51 },
+            IN: { label: 'India', life: 70, latitude: 22 },
+            JP: { label: 'Japan', life: 84, latitude: 36 },
+            AU: { label: 'Australia', life: 83, latitude: -25 },
+            ZA: { label: 'South Africa', life: 64, latitude: -29 },
+            KE: { label: 'Kenya', life: 66, latitude: 0 },
+            CN: { label: 'China', life: 78, latitude: 35 },
+            SG: { label: 'Singapore', life: 84, latitude: 1 },
+            AE: { label: 'United Arab Emirates', life: 78, latitude: 24 },
+            NG: { label: 'Nigeria', life: 55, latitude: 9 },
+            SE: { label: 'Sweden', life: 83, latitude: 60 }
+        };
+
+        const timeZoneOptions = (() => {
+            if (Intl.supportedValuesOf) {
+                try { return Intl.supportedValuesOf('timeZone'); } catch (e) { return []; }
+            }
+            return ['UTC', 'America/New_York', 'America/Los_Angeles', 'Europe/London', 'Europe/Paris', 'Asia/Tokyo', 'Asia/Kolkata', 'Australia/Sydney'];
+        })();
+
+        const planetRatios = [
+            { name: 'Mercury', ratio: 0.2408467 },
+            { name: 'Venus', ratio: 0.61519726 },
+            { name: 'Mars', ratio: 1.8808158 },
+            { name: 'Jupiter', ratio: 11.862615 },
+            { name: 'Saturn', ratio: 29.447498 },
+            { name: 'Uranus', ratio: 84.016846 },
+            { name: 'Neptune', ratio: 164.79132 }
+        ];
+
+        const zodiacSigns = [
+            { name: 'Capricorn', icon: '♑', element: 'Earth', start: [12, 22], end: [1, 19] },
+            { name: 'Aquarius', icon: '♒', element: 'Air', start: [1, 20], end: [2, 18] },
+            { name: 'Pisces', icon: '♓', element: 'Water', start: [2, 19], end: [3, 20] },
+            { name: 'Aries', icon: '♈', element: 'Fire', start: [3, 21], end: [4, 19] },
+            { name: 'Taurus', icon: '♉', element: 'Earth', start: [4, 20], end: [5, 20] },
+            { name: 'Gemini', icon: '♊', element: 'Air', start: [5, 21], end: [6, 20] },
+            { name: 'Cancer', icon: '♋', element: 'Water', start: [6, 21], end: [7, 22] },
+            { name: 'Leo', icon: '♌', element: 'Fire', start: [7, 23], end: [8, 22] },
+            { name: 'Virgo', icon: '♍', element: 'Earth', start: [8, 23], end: [9, 22] },
+            { name: 'Libra', icon: '♎', element: 'Air', start: [9, 23], end: [10, 22] },
+            { name: 'Scorpio', icon: '♏', element: 'Water', start: [10, 23], end: [11, 21] },
+            { name: 'Sagittarius', icon: '♐', element: 'Fire', start: [11, 22], end: [12, 21] }
+        ];
+
+        const chineseAnimals = ['Rat', 'Ox', 'Tiger', 'Rabbit', 'Dragon', 'Snake', 'Horse', 'Goat', 'Monkey', 'Rooster', 'Dog', 'Pig'];
+        const chineseElements = ['Wood', 'Fire', 'Earth', 'Metal', 'Water'];
+
+        const elements = {
+            Wood: ['Rat', 'Tiger', 'Rabbit', 'Dragon', 'Snake', 'Horse', 'Goat', 'Monkey', 'Rooster', 'Dog', 'Pig', 'Ox'],
+            Fire: ['Ox', 'Rabbit', 'Snake', 'Horse', 'Goat', 'Monkey', 'Dog', 'Pig', 'Rat', 'Tiger', 'Rooster', 'Dragon'],
+            Earth: ['Tiger', 'Dragon', 'Horse', 'Monkey', 'Rat', 'Ox', 'Rabbit', 'Snake', 'Goat', 'Rooster', 'Dog', 'Pig'],
+            Metal: ['Rabbit', 'Snake', 'Goat', 'Rooster', 'Rat', 'Tiger', 'Dragon', 'Horse', 'Monkey', 'Dog', 'Pig', 'Ox'],
+            Water: ['Monkey', 'Rooster', 'Dog', 'Pig', 'Rat', 'Ox', 'Tiger', 'Rabbit', 'Dragon', 'Snake', 'Horse', 'Goat']
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            populateSelects();
+            hydrateProfile();
+            bindEvents();
+            registerPwa();
+            requestAnimationFrame(renderLoop);
+        });
+
+        function populateSelects() {
+            const tzSelect = document.getElementById('timezone');
+            const countrySelect = document.getElementById('country');
+
+            tzSelect.innerHTML = timeZoneOptions.map(zone => `<option value="${zone}">${zone}</option>`).join('');
+            countrySelect.innerHTML = Object.entries(countryMeta).map(([code, meta]) => `<option value="${code}">${meta.label}</option>`).join('');
+
+            tzSelect.value = 'UTC';
+            countrySelect.value = 'US';
+        }
+
+        function bindEvents() {
+            ['dob', 'birthTime', 'timezone', 'country', 'gender', 'targetLife'].forEach(id => {
+                document.getElementById(id).addEventListener('input', saveProfile);
+                document.getElementById(id).addEventListener('change', saveProfile);
+            });
+
+            document.getElementById('saveBtn').addEventListener('click', () => {
+                saveProfile();
+                showToast('Profile saved');
+            });
+            document.getElementById('saveInlineBtn').addEventListener('click', () => {
+                saveProfile();
+                showToast('Profile saved');
+            });
+            document.getElementById('resetBtn').addEventListener('click', resetProfile);
+            document.getElementById('resetInlineBtn').addEventListener('click', resetProfile);
+        }
+
+        function hydrateProfile() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            const profile = stored ? JSON.parse(stored) : null;
+            const defaults = {
+                dob: '1990-01-01',
+                birthTime: '00:00',
+                timezone: 'UTC',
+                country: 'US',
+                gender: 'other',
+                targetLife: 80
+            };
+
+            const active = { ...defaults, ...(profile || {}) };
+            document.getElementById('dob').value = active.dob;
+            document.getElementById('birthTime').value = active.birthTime;
+            document.getElementById('timezone').value = active.timezone;
+            document.getElementById('country').value = active.country;
+            document.getElementById('gender').value = active.gender;
+            document.getElementById('targetLife').value = active.targetLife;
+        }
+
+        function saveProfile() {
+            const profile = {
+                dob: document.getElementById('dob').value,
+                birthTime: document.getElementById('birthTime').value || '00:00',
+                timezone: document.getElementById('timezone').value || 'UTC',
+                country: document.getElementById('country').value || 'US',
+                gender: document.getElementById('gender').value || 'other',
+                targetLife: Number(document.getElementById('targetLife').value || 80)
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+        }
+
+        function resetProfile() {
+            const defaults = {
+                dob: '1990-01-01',
+                birthTime: '00:00',
+                timezone: 'UTC',
+                country: 'US',
+                gender: 'other',
+                targetLife: 80
+            };
+            document.getElementById('dob').value = defaults.dob;
+            document.getElementById('birthTime').value = defaults.birthTime;
+            document.getElementById('timezone').value = defaults.timezone;
+            document.getElementById('country').value = defaults.country;
+            document.getElementById('gender').value = defaults.gender;
+            document.getElementById('targetLife').value = defaults.targetLife;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(defaults));
+            showToast('Defaults restored');
+        }
+
+        function getProfile() {
+            return {
+                dob: document.getElementById('dob').value,
+                birthTime: document.getElementById('birthTime').value || '00:00',
+                timezone: document.getElementById('timezone').value || 'UTC',
+                country: document.getElementById('country').value || 'US',
+                gender: document.getElementById('gender').value || 'other',
+                targetLife: Number(document.getElementById('targetLife').value || 80)
+            };
+        }
+
+        function getTimeZoneOffset(date, timeZone) {
+            const formatter = new Intl.DateTimeFormat('en-US', {
+                timeZone,
+                hour12: false,
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            const parts = formatter.formatToParts(date);
+            const map = Object.fromEntries(parts.map(part => [part.type, part.value]));
+            const asUtc = Date.UTC(
+                Number(map.year),
+                Number(map.month) - 1,
+                Number(map.day),
+                Number(map.hour),
+                Number(map.minute),
+                Number(map.second)
+            );
+            return asUtc - date.getTime();
+        }
+
+        function parseBirthInstant(profile) {
+            if (!profile.dob) return null;
+            const [year, month, day] = profile.dob.split('-').map(Number);
+            const [hours, minutes] = (profile.birthTime || '00:00').split(':').map(Number);
+            const wallUtc = Date.UTC(year, month - 1, day, hours, minutes, 0, 0);
+            const offsetMs = getTimeZoneOffset(new Date(wallUtc), profile.timezone || 'UTC');
+            return new Date(wallUtc - offsetMs);
+        }
+
+        function getAgeParts(diffMs) {
+            const msPerYear = 365.2425 * 24 * 60 * 60 * 1000;
+            const msPerMonth = msPerYear / 12;
+            const msPerWeek = 7 * 24 * 60 * 60 * 1000;
+            const msPerDay = 24 * 60 * 60 * 1000;
+            const msPerHour = 60 * 60 * 1000;
+            const msPerMinute = 60 * 1000;
+
+            const years = Math.floor(diffMs / msPerYear);
+            const months = Math.floor((diffMs % msPerYear) / msPerMonth);
+            const weeks = Math.floor(diffMs / msPerWeek);
+            const days = Math.floor(diffMs / msPerDay);
+            const hours = Math.floor(diffMs / msPerHour);
+            const minutes = Math.floor(diffMs / msPerMinute);
+            const seconds = Math.floor(diffMs / 1000);
+            const milliseconds = Math.floor(diffMs);
+
+            return { years, months, weeks, days, hours, minutes, seconds, milliseconds };
+        }
+
+        function formatDateTime(value, timeZone) {
+            return new Intl.DateTimeFormat(undefined, {
+                dateStyle: 'medium',
+                timeStyle: 'medium',
+                timeZone
+            }).format(value);
+        }
+
+        function getWesternZodiac(month, day) {
+            const adjusted = month * 100 + day;
+            if (adjusted >= 1222 || adjusted <= 119) return zodiacSigns[0];
+            for (const sign of zodiacSigns) {
+                const [startMonth, startDay] = sign.start;
+                const [endMonth, endDay] = sign.end;
+                const startValue = startMonth * 100 + startDay;
+                const endValue = endMonth * 100 + endDay;
+                const currentValue = month * 100 + day;
+                if (startMonth > endMonth) {
+                    if (currentValue >= startValue || currentValue <= endValue) {
+                        return sign;
+                    }
+                } else if (currentValue >= startValue && currentValue <= endValue) {
+                    return sign;
+                }
+            }
+            return zodiacSigns[0];
+        }
+
+        function getBirthPartsInTimeZone(profile) {
+            if (!profile.dob) return null;
+            const formatter = new Intl.DateTimeFormat('en-CA', {
+                timeZone: profile.timezone || 'UTC',
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            });
+            const parts = formatter.formatToParts(parseBirthInstant(profile));
+            const values = Object.fromEntries(parts.filter(part => part.type !== 'literal').map(part => [part.type, part.value]));
+            return {
+                year: Number(values.year),
+                month: Number(values.month),
+                day: Number(values.day),
+                hour: Number(values.hour),
+                minute: Number(values.minute),
+                second: Number(values.second)
+            };
+        }
+
+        function getChineseZodiac(year, month, day) {
+            const lunarOffsetYear = (month < 2 || (month === 2 && day < 4)) ? year - 1 : year;
+            const animal = chineseAnimals[(lunarOffsetYear + 8) % 12];
+            const element = chineseElements[Math.floor((lunarOffsetYear - 4) / 12) % 5];
+            return `${animal} • ${element}`;
+        }
+
+        function getMoonPhase(birthDate) {
+            const moonAge = (birthDate.getTime() / 86400000 + 29.53058867) % 29.53058867;
+            const phaseIndex = Math.floor(moonAge / (29.53058867 / 8));
+            const phases = ['New Moon', 'Waxing Crescent', 'First Quarter', 'Waxing Gibbous', 'Full Moon', 'Waning Gibbous', 'Last Quarter', 'Waning Crescent'];
+            return phases[phaseIndex % phases.length];
+        }
+
+        function getNextBirthday(birthInstant, now) {
+            const next = new Date(now.getFullYear(), birthInstant.getMonth(), birthInstant.getDate(), birthInstant.getHours(), birthInstant.getMinutes(), birthInstant.getSeconds(), birthInstant.getMilliseconds());
+            if (next < now) {
+                next.setFullYear(next.getFullYear() + 1);
+            }
+            return next;
+        }
+
+        function buildPlanetMatrix(ageYears) {
+            return planetRatios.map(planet => ({
+                name: planet.name,
+                value: `${(ageYears / planet.ratio).toFixed(2)} yrs`
+            }));
+        }
+
+        function renderLoop() {
+            const profile = getProfile();
+            const now = new Date();
+            const birthInstant = parseBirthInstant(profile);
+
+            if (!profile.dob || !birthInstant) {
+                document.getElementById('clockStatus').textContent = 'Waiting for birth date';
+                requestAnimationFrame(renderLoop);
+                return;
+            }
+
+            const diffMs = now - birthInstant;
+            const ageParts = getAgeParts(diffMs);
+            const targetLife = Math.max(Number(profile.targetLife) || 80, 1);
+            const countryInfo = countryMeta[profile.country] || countryMeta.US;
+            const baselineLife = Math.max(Math.round(countryInfo.life + (profile.gender === 'male' ? -3 : profile.gender === 'female' ? 2 : 0)), 1);
+            const lifePercent = Math.min(100, (diffMs / (365.2425 * 24 * 60 * 60 * 1000 * targetLife)) * 100);
+            const ageYears = diffMs / (365.2425 * 24 * 60 * 60 * 1000);
+            const heartbeats = Math.round((diffMs / 1000 / 60) * 70);
+            const breaths = Math.round((diffMs / 1000 / 60) * 16);
+            const sleepHours = Math.round((diffMs / 1000 / 3600) / 3);
+            const eatHours = Math.round((diffMs / 1000 / 3600) / 12);
+            const latitude = countryInfo.latitude || 0;
+            const rotationSpeed = 460 * Math.cos((latitude * Math.PI) / 180);
+            const spaceDistanceKm = (diffMs / 1000) * ((rotationSpeed / 1000) + 29.78);
+            const nextBirthday = getNextBirthday(birthInstant, now);
+            const countdownString = nextBirthday > now ? `${Math.ceil((nextBirthday - now) / 1000)}s` : 'Today';
+            const birthParts = getBirthPartsInTimeZone(profile);
+            const zodiac = getWesternZodiac(birthParts.month, birthParts.day);
+            const chinese = getChineseZodiac(birthParts.year, birthParts.month, birthParts.day);
+            const moon = getMoonPhase(birthInstant);
+            const milestones = [
+                { label: '10,000th day', date: new Date(birthInstant.getTime() + 10000 * 24 * 60 * 60 * 1000) },
+                { label: '20,000th day', date: new Date(birthInstant.getTime() + 20000 * 24 * 60 * 60 * 1000) },
+                { label: '25,000th day', date: new Date(birthInstant.getTime() + 25000 * 24 * 60 * 60 * 1000) },
+                { label: '1,000,000,000th second', date: new Date(birthInstant.getTime() + 1000000000 * 1000) }
+            ];
+
+            document.getElementById('clockStatus').textContent = 'Ticking live';
+            document.getElementById('ageHeader').textContent = `${ageParts.years}y : ${ageParts.months}m : ${ageParts.days}d : ${ageParts.hours}h : ${ageParts.minutes}m : ${ageParts.seconds}s : ${ageParts.milliseconds % 1000}ms`;
+            document.getElementById('ageSubtitle').textContent = `Born ${formatDateTime(birthInstant, profile.timezone)} • ${countdownString} until your next birthday`;
+            document.getElementById('timeAlive').textContent = `${ageParts.milliseconds.toLocaleString()} ms`;
+            document.getElementById('nextBirthday').textContent = `${formatDateTime(nextBirthday, profile.timezone)}`;
+            document.getElementById('lifePercent').textContent = `${lifePercent.toFixed(1)}%`;
+
+            document.getElementById('eqYears').textContent = ageParts.years.toLocaleString();
+            document.getElementById('eqMonths').textContent = (ageParts.years * 12 + ageParts.months).toLocaleString();
+            document.getElementById('eqWeeks').textContent = ageParts.weeks.toLocaleString();
+            document.getElementById('eqDays').textContent = ageParts.days.toLocaleString();
+            document.getElementById('eqHours').textContent = ageParts.hours.toLocaleString();
+            document.getElementById('eqMinutes').textContent = ageParts.minutes.toLocaleString();
+            document.getElementById('eqSeconds').textContent = ageParts.seconds.toLocaleString();
+            document.getElementById('eqMilliseconds').textContent = ageParts.milliseconds.toLocaleString();
+
+            document.getElementById('progressFill').style.width = `${Math.min(100, lifePercent)}%`;
+            document.getElementById('progressText').textContent = `${lifePercent.toFixed(1)}% of target expectancy`;
+            document.getElementById('baselineText').textContent = `Baseline: ${baselineLife} years`;
+            document.getElementById('heartbeats').textContent = heartbeats.toLocaleString();
+            document.getElementById('breaths').textContent = breaths.toLocaleString();
+            document.getElementById('sleepHours').textContent = sleepHours.toLocaleString();
+            document.getElementById('eatHours').textContent = eatHours.toLocaleString();
+            document.getElementById('spaceDistance').textContent = `${spaceDistanceKm.toFixed(0).toLocaleString()} km`;
+            document.getElementById('targetDisplay').textContent = `${targetLife} years`;
+            document.getElementById('baselineDisplay').textContent = `${baselineLife} years`;
+            document.getElementById('countryDisplay').textContent = countryInfo.label;
+
+            document.getElementById('planetGrid').innerHTML = buildPlanetMatrix(ageYears).map(planet => `
+                <div class="planet-card">
+                    <div class="planet-name">${planet.name}</div>
+                    <div class="planet-value">${planet.value}</div>
+                </div>
+            `).join('');
+
+            document.getElementById('westernZodiac').textContent = `${zodiac.name} • ${zodiac.element}`;
+            document.getElementById('zodiacIcon').textContent = zodiac.icon;
+            document.getElementById('chineseZodiac').textContent = chinese;
+            document.getElementById('chineseIcon').textContent = '🐉';
+            document.getElementById('moonPhase').textContent = moon;
+            document.getElementById('moonIcon').textContent = moon.includes('Full') ? '🌕' : '🌙';
+
+            document.getElementById('day10000').textContent = formatDateTime(milestones[0].date, profile.timezone);
+            document.getElementById('day20000').textContent = formatDateTime(milestones[1].date, profile.timezone);
+            document.getElementById('day25000').textContent = formatDateTime(milestones[2].date, profile.timezone);
+            document.getElementById('secondBillion').textContent = formatDateTime(milestones[3].date, profile.timezone);
+
+            requestAnimationFrame(renderLoop);
+        }
+
+        function registerPwa() {
+            if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+                navigator.serviceWorker.register('../../sw.js').catch(() => {});
+            }
+        }
+
+        function showToast(message) {
+            if (window.showToast && window.showToast !== showToast) {
+                window.showToast(message, 'success');
+            }
+        }
+    </script>
+</body>
+</html>

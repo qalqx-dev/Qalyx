@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World Clock | QALQX Supreme</title>
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="manifest" href="../../manifest.json">
+    <script src="../../app.js" defer></script>
+    <style>
+        .panel { border: 1px solid var(--border); border-radius: 22px; padding: 16px; background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02)); margin-top: 16px; }
+        .field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+        .field label { font-size: 0.76rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.16em; }
+        .field input, .field select, .field button { border-radius: 14px; border: 1px solid var(--border); background: rgba(255,255,255,0.04); color: var(--text-main); padding: 10px 12px; font-size: 0.95rem; }
+        .field input:focus, .field select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,229,255,0.10); }
+        .row { display: flex; gap: 10px; flex-wrap: wrap; }
+        .clock-grid { display: grid; grid-template-columns: repeat(3, minmax(240px, 1fr)); gap: 12px; }
+        .clock-card { padding: 14px; border-radius: 18px; border: 1px solid var(--border); background: rgba(255,255,255,0.03); min-height: 220px; display: flex; flex-direction: column; justify-content: space-between; }
+        .clock-head { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+        .clock-head strong { font-size: 0.95rem; }
+        .clock-head span { font-size: 0.78rem; color: var(--text-muted); }
+        .clock-visual { display: flex; align-items: center; justify-content: center; margin: 8px 0; }
+        .clock-face { width: 110px; height: 110px; border-radius: 50%; border: 2px solid var(--primary); position: relative; background: radial-gradient(circle, rgba(0,229,255,0.14), rgba(255,255,255,0.03)); }
+        .clock-face .hand { position: absolute; left: 50%; top: 50%; transform-origin: 50% 100%; background: var(--text-main); border-radius: 999px; }
+        .hour { width: 5px; height: 28px; }
+        .minute { width: 4px; height: 40px; }
+        .second { width: 2px; height: 46px; background: var(--primary); }
+        .center { width: 8px; height: 8px; border-radius: 50%; background: var(--primary); position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+        .digital { font-family: monospace; font-size: 1.15rem; color: var(--text-main); text-align: center; }
+        .status-pill { display: inline-block; padding: 4px 8px; border-radius: 999px; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; }
+        .status-work { background: rgba(0,255,120,0.16); color: #6dffb6; }
+        .status-wake { background: rgba(255,214,0,0.17); color: #ffd24d; }
+        .status-sleep { background: rgba(255,85,104,0.18); color: #ff8d9b; }
+        .slider { width: 100%; margin-top: 10px; accent-color: var(--primary); }
+        .golden-window { border-color: rgba(0,229,255,0.55); box-shadow: 0 0 0 1px rgba(0,229,255,0.2), 0 10px 26px rgba(0,229,255,0.12); }
+        .empty { color: var(--text-muted); font-size: 0.9rem; }
+        .chip-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .chip { display: inline-flex; align-items: center; gap: 6px; }
+        .chip button { border: none; background: transparent; color: var(--text-main); cursor: pointer; padding: 0; }
+        @media (max-width: 960px) { .clock-grid { grid-template-columns: 1fr 1fr; } }
+        @media (max-width: 640px) { .clock-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="main-shell">
+        <div class="header-section">
+            <div class="greet-box">
+                <h1>World Clock Matrix</h1>
+                <p>Timezone overlap • travel slider • meeting planner</p>
+            </div>
+            <a href="../../index.html" class="back-btn" aria-label="Back home">←</a>
+        </div>
+
+        <section class="panel">
+            <div class="field">
+                <label for="homeTz">Home timezone</label>
+                <select id="homeTz"></select>
+            </div>
+            <div class="row">
+                <div class="field" style="flex:1; min-width: 220px;">
+                    <label for="cityInput">Add city or timezone</label>
+                    <input id="cityInput" placeholder="e.g. London or America/New_York">
+                </div>
+                <div class="field">
+                    <label>&nbsp;</label>
+                    <button class="primary-btn" id="addCityBtn">Add city</button>
+                </div>
+            </div>
+            <div class="field">
+                <label for="travelSlider">Time travel slider</label>
+                <input id="travelSlider" class="slider" type="range" min="0" max="23" value="0">
+            </div>
+            <div class="chip-list" id="cityChips"></div>
+        </section>
+
+        <section class="panel">
+            <div class="panel-title"><span>Active timezone grid</span><span id="travelLabel">Current local hour</span></div>
+            <div class="clock-grid" id="clockGrid"></div>
+        </section>
+
+        <section class="panel">
+            <div class="panel-title"><span>Meeting overlap</span><span>Golden window</span></div>
+            <div id="overlapSummary" class="empty">Add at least two cities to calculate overlap.</div>
+            <div class="row" style="margin-top: 10px;">
+                <button class="ghost-btn" id="exportBtn">Export .ics</button>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'qalqx-worldclock-v1';
+        const timeZoneOptions = (() => {
+            if (Intl.supportedValuesOf) {
+                try { return Intl.supportedValuesOf('timeZone'); } catch (e) { return []; }
+            }
+            return ['UTC', 'America/New_York', 'America/Los_Angeles', 'Europe/London', 'Europe/Paris', 'Asia/Tokyo', 'Asia/Kolkata', 'Australia/Sydney'];
+        })();
+
+        const defaultCities = ['UTC', 'Europe/London', 'America/New_York', 'Asia/Tokyo'];
+        const state = { homeTz: 'UTC', cities: [...defaultCities], travelOffset: 0, lastMeeting: null };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            populateZones();
+            loadState();
+            bindEvents();
+            render();
+            setInterval(render, 1000);
+        });
+
+        function populateZones() {
+            const home = document.getElementById('homeTz');
+            home.innerHTML = timeZoneOptions.map(zone => `<option value="${zone}">${zone}</option>`).join('');
+            home.value = 'UTC';
+        }
+
+        function bindEvents() {
+            document.getElementById('homeTz').addEventListener('change', (e) => {
+                state.homeTz = e.target.value;
+                saveState();
+                render();
+            });
+            document.getElementById('travelSlider').addEventListener('input', (e) => {
+                state.travelOffset = Number(e.target.value);
+                saveState();
+                render();
+            });
+            document.getElementById('addCityBtn').addEventListener('click', () => {
+                const value = document.getElementById('cityInput').value.trim();
+                if (!value) return;
+                const normalized = normalizeZone(value);
+                if (!normalized) return;
+                if (!state.cities.includes(normalized)) state.cities.push(normalized);
+                document.getElementById('cityInput').value = '';
+                saveState();
+                render();
+            });
+            document.getElementById('exportBtn').addEventListener('click', exportCalendar);
+        }
+
+        function normalizeZone(value) {
+            const trimmed = value.trim();
+            const exact = timeZoneOptions.find(zone => zone.toLowerCase() === trimmed.toLowerCase());
+            if (exact) return exact;
+            const guessed = timeZoneOptions.find(zone => zone.toLowerCase().includes(trimmed.toLowerCase()));
+            return guessed || null;
+        }
+
+        function loadState() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (!saved) return;
+            try {
+                const parsed = JSON.parse(saved);
+                state.homeTz = parsed.homeTz || 'UTC';
+                state.cities = Array.isArray(parsed.cities) && parsed.cities.length ? parsed.cities : [...defaultCities];
+                state.travelOffset = Number(parsed.travelOffset || 0);
+                document.getElementById('homeTz').value = state.homeTz;
+                document.getElementById('travelSlider').value = state.travelOffset;
+            } catch (e) {}
+        }
+
+        function saveState() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        }
+
+        function render() {
+            const now = new Date();
+            const travelDate = new Date(now.getTime());
+            travelDate.setHours((travelDate.getHours() + state.travelOffset) % 24, 0, 0, 0);
+            document.getElementById('travelLabel').textContent = `Travel offset: ${state.travelOffset}h • ${travelDate.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}`;
+            document.getElementById('travelSlider').value = state.travelOffset;
+
+            const allCards = state.cities.map((tz, index) => createClockCard(tz, travelDate, index));
+            document.getElementById('clockGrid').innerHTML = allCards.join('');
+            document.getElementById('cityChips').innerHTML = state.cities.map((tz, idx) => `
+                <div class="chip">
+                    <span>${tz}</span>
+                    <button aria-label="Remove ${tz}" onclick="removeCity('${tz}')">×</button>
+                </div>
+            `).join('');
+            renderOverlap();
+        }
+
+        function createClockCard(timeZone, baseDate, index) {
+            const date = new Date(baseDate.toLocaleString('en-US', { timeZone }));
+            const hours = date.getHours();
+            const minutes = date.getMinutes();
+            const seconds = date.getSeconds();
+            const hourAngle = (hours % 12) * 30 + minutes * 0.5;
+            const minuteAngle = minutes * 6 + seconds * 0.1;
+            const secondAngle = seconds * 6;
+            const status = getStatus(hours);
+            const cityName = timeZone.split('/').pop().replace(/_/g, ' ');
+            const label = timeZone === state.homeTz ? `${cityName} • Home` : cityName;
+            const digital = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: timeZone });
+            const day = date.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric', timeZone });
+            return `
+                <article class="clock-card ${status === 'work' ? 'golden-window' : ''}">
+                    <div class="clock-head">
+                        <div>
+                            <strong>${label}</strong>
+                            <div><span>${timeZone}</span></div>
+                        </div>
+                        <span class="status-pill ${status === 'work' ? 'status-work' : status === 'wake' ? 'status-wake' : 'status-sleep'}">${status}</span>
+                    </div>
+                    <div class="clock-visual">
+                        <div class="clock-face">
+                            <div class="hand hour" style="transform: rotate(${hourAngle}deg);"></div>
+                            <div class="hand minute" style="transform: rotate(${minuteAngle}deg);"></div>
+                            <div class="hand second" style="transform: rotate(${secondAngle}deg);"></div>
+                            <div class="center"></div>
+                        </div>
+                    </div>
+                    <div class="digital">${digital}</div>
+                    <div class="digital" style="font-size:0.8rem; color:var(--text-muted);">${day}</div>
+                </article>
+            `;
+        }
+
+        function getStatus(hours) {
+            if (hours >= 9 && hours < 17) return 'work';
+            if (hours >= 7 && hours < 22) return 'wake';
+            return 'sleep';
+        }
+
+        function renderOverlap() {
+            const selected = state.cities.slice();
+            if (selected.length < 2) {
+                document.getElementById('overlapSummary').innerHTML = '<div class="empty">Add at least two cities to calculate overlap.</div>';
+                return;
+            }
+
+            const windows = selected.map((tz) => {
+                const current = new Date();
+                const travelDate = new Date(current.getTime());
+                travelDate.setHours((travelDate.getHours() + state.travelOffset) % 24, 0, 0, 0);
+                const tzDate = new Date(travelDate.toLocaleString('en-US', { timeZone: tz }));
+                const hour = tzDate.getHours();
+                return hour;
+            });
+
+            const overlap = windows.filter(hour => hour >= 9 && hour < 17);
+            const goldenWindow = overlap.length === selected.length ? 'Working hours overlap is active' : `Best overlap window: ${overlap.length}/${selected.length} cities in work hours`;
+            document.getElementById('overlapSummary').innerHTML = `<div class="panel" style="margin:0; padding: 12px;">${goldenWindow}</div>`;
+        }
+
+        function exportCalendar() {
+            if (state.cities.length < 2) return;
+            const slots = [];
+            const start = new Date();
+            const end = new Date(start.getTime() + 60 * 60 * 1000);
+            for (let i = 0; i < state.cities.length; i++) {
+                slots.push(`${state.cities[i]} ${start.toISOString()} -> ${end.toISOString()}`);
+            }
+            const ics = [
+                'BEGIN:VCALENDAR',
+                'VERSION:2.0',
+                'BEGIN:VEVENT',
+                `DTSTART:${start.toISOString().replace(/[-:]/g, '').replace('.000', '')}`,
+                `DTEND:${end.toISOString().replace(/[-:]/g, '').replace('.000', '')}`,
+                'SUMMARY:Global Sync Meeting',
+                'DESCRIPTION:Generated by QALQX World Clock',
+                'END:VEVENT',
+                'END:VCALENDAR'
+            ].join('\n');
+            const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'qalyx-world-clock.ics';
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function removeCity(zone) {
+            state.cities = state.cities.filter(item => item !== zone);
+            saveState();
+            render();
+        }
+
+        window.removeCity = removeCity;
+    </script>
+</body>
+</html>

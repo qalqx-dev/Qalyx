@@ -1,13 +1,14 @@
 {
   "name": "QALQX OS",
   "short_name": "QALQX",
-  "start_url": "/Qalyx/index.html",
-  "scope": "/Qalyx/",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#000000",
-  "orientation": "portrait",
-  "description": "The Ultimate Utility OS. 60+ Pro Tools for Students & Devs.",
+  "orientation": "any",
+  "description": "The Ultimate Utility OS. 60+ tools for study, work, creativity, and everyday life.",
+  "categories": ["productivity", "utilities", "education"],
   "icons": [
     {
       "src": "icon-192.png",

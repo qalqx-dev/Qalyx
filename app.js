@@ -9,13 +9,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- 2. HAPTIC ENGINE ---
+    const hapticsEnabled = localStorage.getItem('qalqx-haptics') !== 'off';
+    const triggerHaptic = (pattern = 10) => {
+        if (!hapticsEnabled || !navigator.vibrate) return;
+        navigator.vibrate(pattern);
+    };
+
     const buttons = document.querySelectorAll('button, .card, .back-btn, input[type="range"], .chip, .app-card, .dock-item');
     buttons.forEach(btn => {
         const trigger = (event) => {
             if (event.type === 'click' || event.type === 'touchstart' || event.type === 'pointerdown') {
-                if(localStorage.getItem('qalqx-haptics') !== 'off' && navigator.vibrate) {
-                    navigator.vibrate(10);
-                }
+                triggerHaptic(10);
             }
         };
         btn.addEventListener('click', trigger);
@@ -27,9 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const inputs = document.querySelectorAll('input, textarea');
     inputs.forEach(inp => {
         inp.addEventListener('focus', () => {
-            if(localStorage.getItem('qalqx-haptics') !== 'off' && navigator.vibrate) {
-                navigator.vibrate(5);
-            }
+            triggerHaptic(5);
         });
     });
 
@@ -44,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (search) {
                 search.focus();
                 search.select();
-                if (navigator.vibrate) navigator.vibrate(8);
+                triggerHaptic(8);
             }
         }
 
@@ -66,20 +68,36 @@ document.addEventListener('DOMContentLoaded', () => {
         }, { passive: true });
     }
 
+    const segments = window.location.pathname.split('/').filter(Boolean);
+    const depth = Math.max(0, segments.length - 1);
+    const iconPrefix = depth > 0 ? '../'.repeat(depth) : './';
+    const iconHref = new URL(`${iconPrefix}icon-192.png`, window.location.href).toString();
+    let faviconLink = document.querySelector('link[rel="icon"], link[rel="shortcut icon"]');
+    if (!faviconLink) {
+        faviconLink = document.createElement('link');
+        faviconLink.rel = 'icon';
+        faviconLink.type = 'image/png';
+        document.head.appendChild(faviconLink);
+    }
+    faviconLink.href = iconHref;
+
+    if ('serviceWorker' in navigator) {
+        const swUrl = new URL('../../sw.js', window.location.href);
+        navigator.serviceWorker.register(swUrl.pathname, { scope: swUrl.pathname.replace(/sw\.js$/, '') }).catch(console.error);
+    }
+
     console.log("QALQX System Online. Theme:", savedTheme);
 });
 
 // GLOBAL UTILS
 function saveTheme(themeName) {
-    // Remove old themes
-    document.body.classList.remove('theme-green', 'theme-gold', 'theme-red', 'theme-light');
-    
-    // Add new (unless default)
+    const themeClasses = ['theme-green','theme-gold','theme-red','theme-light','theme-sunset','theme-ocean','theme-lilac','theme-midnight'];
+    document.body.classList.remove(...themeClasses);
+
     if(themeName !== 'default') {
         document.body.classList.add(themeName);
     }
-    
-    // Save to memory
+
     localStorage.setItem('qalqx-theme', themeName);
 }
 /* --- 4. TOAST NOTIFICATION SYSTEM --- */

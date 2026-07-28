@@ -1,76 +1,54 @@
-# QALQX OS v4.1 (Supreme Edition) 🚀
+# QALQX
 
-![QALQX Banner](https://img.icons8.com/fluency/512/00E5FF/imac-settings.png)
-*(Replace this link with a screenshot of your dashboard later!)*
-
-**The Ultimate Offline Utility OS for Students & Developers.** Running on the **Quantum Logic Engine**, QALQX transforms any device into a powerful workstation.
+QALQX is a calm, offline-ready utility experience built for everyday life. It brings study tools, productivity helpers, developer utilities, health calculators, games, and creative tools into one simple dashboard that works smoothly on desktop and mobile.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Platform](https://img.shields.io/badge/Platform-PWA%20%7C%20Android%20%7C%20iOS-blue)](https://qalqx-dev.github.io/Qalyx/)
+[![Live Site](https://img.shields.io/badge/Live-Site-blue)](https://qalqx-dev.github.io/Qalyx/)
 [![Status](https://img.shields.io/badge/Status-Active-brightgreen)]()
 
----
+## What it offers
 
-## ⚡ Features
-QALQX is built with a **"Mobile First, Offline First"** architecture.
-* **60+ Pro Tools:** From Scientific Calcs to AES Encryption.
-* **Iron Shield (Offline):** Works 100% without internet via Service Workers.
-* **Omni-Responsive:** Adapts to Phones, Foldables, Tablets, and Desktop Sidebars.
-* **Privacy Core:** All data stays local (LocalStorage). Zero tracking.
-* **Theme Engine:** Switch between Matrix, Gold, Cyber, and Light modes.
+- A clean, touch-friendly home screen with search and quick access to common tools
+- More than 60 utilities for study, work, health, finance, creativity, and play
+- Offline support through a service worker and web app manifest
+- A simple local-first experience with no sign-up required
 
----
+## Main categories
 
-## 🛠️ Tool Suite
+- Productivity: notes, tasks, focus timer
+- Time and life: stopwatch, date diff, age calculator, world clock
+- Study and math: calculator, grade helper, geometry, physics tools
+- Creator tools: QR, color, Markdown, text helpers, meme maker
+- Security and utility: password generator, hash tools, converters, system helpers
+- Fun: games, audio tools, reaction tests, and more
 
-### 🟢 Productivity
-* **Notes:** Auto-saving quick notes.
-* **Focus Timer:** Pomodoro style study timer.
-* **Tasks:** Kanban-style to-do list.
+## How to use it
 
-### 🔵 Developer
-* **Diff Checker:** Compare code snippets.
-* **Vault:** Military-grade AES-GCM file encryption.
-* **Logo Forge:** Generate app icons in-browser.
-* **Markdown Live:** Real-time MD editor.
+1. Open the live site or serve the folder locally.
+2. Browse the dashboard or search for a tool.
+3. Tap or click any card to open it instantly.
+4. Install it as a PWA for a fuller app-like experience.
 
-### 🟣 Science & Math
-* **Periodic Table:** Interactive element database.
-* **Quadratic Solver:** With graph visualization.
-* **Physics Engine:** Kinematics, Force, and Ohm's Law calculators.
+## Local development
 
----
+From the project root, run:
 
-## 📥 Installation
+```bash
+python3 -m http.server 8000
+```
 
-### Method 1: The PWA (Recommended)
-1.  Open [QALQX OS](https://qalqx-dev.github.io/Qalyx/) in Chrome/Safari.
-2.  Tap **Share/Menu** -> **Add to Home Screen**.
-3.  Enjoy the full-screen app experience.
+Then open:
 
-### Method 2: Android APK
-1.  Go to **Settings (⚙️)** inside the app.
-2.  Tap **"Download APK"**.
-3.  Install directly on your device.
+```text
+http://127.0.0.1:8000/
+```
 
----
+## Notes
 
-## 💻 Tech Stack
-* **Core:** HTML5, CSS3 (Variables + Grid), Vanilla JavaScript (ES6+).
-* **Storage:** LocalStorage & IndexedDB.
-* **PWA:** Service Workers (Caching) + Web Manifest.
-* **Crypto:** Web Crypto API (SubtleCrypto).
+- The app is designed to feel lightweight and approachable, even for first-time users.
+- Most tools save data locally in the browser, making them practical for quick use without setup.
+- The design is intentionally simple, modern, and consistent across pages.
 
----
+## License
 
-## 🤝 Contributing
-Found a bug? Want to add a tool?
-1.  Fork this repo.
-2.  Create your feature branch (`git checkout -b feature/NewTool`).
-3.  Commit your changes.
-4.  Push to the branch.
-5.  Open a Pull Request.
-
----
-
-**© 2026 QALQX Foundation.** *Built by the Founder.*
+This project is licensed under the MIT License.

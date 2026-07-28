@@ -9,7 +9,9 @@
 
   gtag('config', 'G-E99HY50BDM');
 </script>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>RNG | QALQX</title><link rel="stylesheet" href="../../style.css"></head><body>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>RNG | QALQX</title><link rel="stylesheet" href="../../style.css"><link rel="icon" href="../../icon-192.png" type="image/png">
+    <link rel="apple-touch-icon" href="../../icon-192.png">
+</head><body>
 <div class="nav"><a href="../../index.html" class="back-btn">←</a><h2>RNG</h2></div>
 <div class="container"><div style="display:flex; gap:10px;"><input id="min" placeholder="Min" value="1"><input id="max" placeholder="Max" value="100"></div><button onclick="gen()">GENERATE</button><div id="res" style="font-size:5rem; color:#fff; text-align:center; margin-top:20px;">-</div></div>
 <script>function gen(){let min=Math.ceil(document.getElementById('min').value);let max=Math.floor(document.getElementById('max').value);document.getElementById('res').innerText=Math.floor(Math.random()*(max-min+1))+min;}</script>

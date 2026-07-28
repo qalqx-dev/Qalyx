@@ -15,21 +15,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="robots" content="index, follow">
-    <meta name="description" content="Adjust QALQX settings, install the app as a PWA, manage theme options, and explore support resources.">
+    <meta name="description" content="Adjust QALQX settings, install the app as a PWA, manage theme options, and explore support resources for a smoother offline experience.">
+    <meta name="keywords" content="QALQX settings, install PWA, offline app settings, privacy settings, customize utility app">
+    <meta property="og:title" content="Config & Settings | QALQX">
+    <meta property="og:description" content="Install QALQX as a PWA, adjust themes, manage haptics, and explore support resources.">
+    <meta property="og:type" content="website">
     <title>Config & Settings | QALQX</title>
     <link rel="canonical" href="https://qalqx-dev.github.io/Qalyx/settings.html">
+    <link rel="icon" href="icon-192.png" type="image/png">
+    <link rel="apple-touch-icon" href="icon-192.png">
     <link rel="stylesheet" href="style.css">
     <script src="app.js" defer></script>
     <style>
-        .setting-group { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
-        .setting-title { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; }
-        
+        .setting-group { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 18px; margin-bottom: 16px; box-shadow: 0 10px 24px rgba(0,0,0,0.16); }
+        .setting-title { font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.16em; margin-bottom: 10px; }
+        .hero-card h3 { margin: 0 0 6px; font-size: 1.05rem; }
+        .hero-card p { margin: 0; color: var(--text-muted); line-height: 1.5; }
+        .status-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+        .status-pill {
+            display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 6px 10px;
+            border: 1px solid var(--border); background: rgba(255,255,255,0.04); color: var(--text-muted); font-size: 0.76rem;
+        }
+        .helper-text { font-size: 0.82rem; color: var(--text-muted); margin-top: 6px; line-height: 1.5; }
+
         .theme-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
         .theme-btn {
-            position: relative; overflow: hidden; min-height: 58px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.18);
+            position: relative; overflow: hidden; min-height: 62px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.18);
             cursor: pointer; display: flex; flex-direction: column; align-items: flex-start; justify-content: center;
             padding: 10px 12px; font-weight: 800; font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase;
-            box-shadow: 0 10px 24px rgba(0,0,0,0.18); transition: transform 0.18s ease, box-shadow 0.18s ease;
+            box-shadow: 0 10px 24px rgba(0,0,0,0.18); transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+            color: inherit;
         }
         .theme-btn small { font-size: 0.62rem; text-transform: none; letter-spacing: 0.08em; opacity: 0.88; }
         .theme-btn::after {
@@ -39,114 +54,214 @@
         .theme-btn:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(0,0,0,0.24); }
         .theme-btn:hover::after { transform: translateX(120%); }
         .theme-btn:active { transform: scale(0.98); }
+        .theme-btn.active { border-color: rgba(255,255,255,0.9); box-shadow: 0 0 0 2px rgba(0,229,255,0.25), 0 14px 26px rgba(0,0,0,0.24); }
 
         .t-blue { background: linear-gradient(135deg, #0ef5ff 0%, #0b6bff 100%); color: #032033; }
         .t-green { background: linear-gradient(135deg, #98ffcd 0%, #10c46a 100%); color: #062312; }
         .t-gold { background: linear-gradient(135deg, #ffeaa7 0%, #ffb703 100%); color: #2b2204; }
         .t-red { background: linear-gradient(135deg, #ff8ab5 0%, #ff0055 100%); color: #fff; }
         .t-light { background: linear-gradient(135deg, #ffffff 0%, #edf3ff 100%); border-color: rgba(16, 24, 40, 0.14); color: #102033; }
+        .t-sunset { background: linear-gradient(135deg, #ffb07a 0%, #ff6b3d 100%); color: #241005; }
+        .t-ocean { background: linear-gradient(135deg, #7ee7ff 0%, #1b8cff 100%); color: #031b24; }
+        .t-lilac { background: linear-gradient(135deg, #e8d8ff 0%, #9b74ff 100%); color: #201534; }
+        .t-midnight { background: linear-gradient(135deg, #6ad7ff 0%, #3e5cff 100%); color: #04101f; }
         .theme-btn.full { grid-column: span 2; }
 
-        .toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
+        .toggle-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
         .toggle-row:last-child { border-bottom: none; }
-        .toggle-row span { font-size: 0.9rem; }
+        .toggle-row strong { display: block; font-size: 0.95rem; margin-bottom: 3px; }
+        .toggle-row p { margin: 0; }
+
+        .soft-btn, .danger-btn, .link-pill {
+            text-decoration: none; border: 1px solid var(--border); border-radius: 999px; padding: 8px 14px; font-size: 0.78rem; font-weight: 700;
+            transition: transform 0.18s ease, background 0.18s ease;
+        }
+        .soft-btn { background: var(--primary); color: #02101a; }
+        .danger-btn { background: rgba(255, 69, 0, 0.14); color: #ff8b5b; border-color: rgba(255, 69, 0, 0.28); }
+        .link-pill { background: rgba(255,255,255,0.04); color: var(--text-main); }
+        .soft-btn:hover, .danger-btn:hover, .link-pill:hover { transform: translateY(-1px); }
+
+        .switch { position: relative; display: inline-flex; width: 48px; height: 28px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; inset: 0; background: rgba(255,255,255,0.12); border-radius: 999px; transition: background 0.2s ease; cursor: pointer; border: 1px solid var(--border); }
+        .slider::before { content: ""; position: absolute; width: 20px; height: 20px; left: 3px; top: 3px; border-radius: 50%; background: white; transition: transform 0.2s ease; }
+        .switch input:checked + .slider { background: rgba(0,229,255,0.24); }
+        .switch input:checked + .slider::before { transform: translateX(20px); }
+
+        .footer-note { text-align: center; color: var(--text-muted); font-size: 0.75rem; margin-top: 18px; line-height: 1.5; }
+
+        @media (max-width: 640px) {
+            .theme-grid { grid-template-columns: 1fr; }
+            .theme-btn.full { grid-column: span 1; }
+            .toggle-row { flex-direction: column; align-items: flex-start; }
+        }
     </style>
 </head>
 <body>
-    <div class="nav"><a href="index.html" class="back-btn">←</a><h2>SYSTEM CONFIG</h2></div>
+    <div class="nav">
+        <a href="index.html" class="back-btn" aria-label="Back to home">←</a>
+        <div>
+            <h2>SYSTEM CONFIG</h2>
+            <p style="margin:2px 0 0; color:var(--text-muted); font-size:0.82rem;">Customize QALQX for comfort, privacy, and speed.</p>
+        </div>
+    </div>
+
     <div class="container">
-        
-        <div class="setting-group">
-            <div class="setting-title">Visual Interface</div>
+        <section class="setting-group hero-card">
+            <div class="setting-title">Quick setup</div>
+            <h3>Make QALQX feel right for you</h3>
+            <p>Choose your preferred look, keep haptics on for a more tactile experience, and keep your favorite tools ready offline.</p>
+            <div class="status-row">
+                <span class="status-pill" id="statusTheme">Theme: Cyber</span>
+                <span class="status-pill" id="statusHaptics">Haptics: On</span>
+                <span class="status-pill">Offline ready</span>
+            </div>
+        </section>
+
+        <section class="setting-group">
+            <div class="setting-title">Visual style</div>
             <div class="theme-grid">
-                <div class="theme-btn t-blue" onclick="applyTheme('default')" role="button" tabindex="0" aria-label="Apply Cyber theme"><span>CYBER</span><small>default neon glow</small></div>
-                <div class="theme-btn t-green" onclick="applyTheme('theme-green')" role="button" tabindex="0" aria-label="Apply Matrix theme"><span>MATRIX</span><small>fresh green energy</small></div>
-                <div class="theme-btn t-gold" onclick="applyTheme('theme-gold')" role="button" tabindex="0" aria-label="Apply Royal theme"><span>ROYAL</span><small>golden highlights</small></div>
-                <div class="theme-btn t-red" onclick="applyTheme('theme-red')" role="button" tabindex="0" aria-label="Apply Sith theme"><span>SITH</span><small>dark crimson pulse</small></div>
-                <div class="theme-btn t-light full" onclick="applyTheme('theme-light')" role="button" tabindex="0" aria-label="Apply Paper theme"><span>PAPER</span><small>light mode for long sessions</small></div>
+                <button type="button" class="theme-btn t-blue active" data-theme="default" aria-label="Apply Cyber theme"><span>CYBER</span><small>default neon glow</small></button>
+                <button type="button" class="theme-btn t-green" data-theme="theme-green" aria-label="Apply Matrix theme"><span>MATRIX</span><small>fresh green energy</small></button>
+                <button type="button" class="theme-btn t-gold" data-theme="theme-gold" aria-label="Apply Royal theme"><span>ROYAL</span><small>golden highlights</small></button>
+                <button type="button" class="theme-btn t-red" data-theme="theme-red" aria-label="Apply Sith theme"><span>SITH</span><small>dark crimson pulse</small></button>
+                <button type="button" class="theme-btn t-sunset" data-theme="theme-sunset" aria-label="Apply Sunset theme"><span>SUNSET</span><small>warm and energetic</small></button>
+                <button type="button" class="theme-btn t-ocean" data-theme="theme-ocean" aria-label="Apply Ocean theme"><span>OCEAN</span><small>calm blue clarity</small></button>
+                <button type="button" class="theme-btn t-lilac" data-theme="theme-lilac" aria-label="Apply Lilac theme"><span>LILAC</span><small>soft and creative</small></button>
+                <button type="button" class="theme-btn t-midnight" data-theme="theme-midnight" aria-label="Apply Midnight theme"><span>MIDNIGHT</span><small>deep and focused</small></button>
+                <button type="button" class="theme-btn t-light full" data-theme="theme-light" aria-label="Apply Paper theme"><span>PAPER</span><small>light mode for long sessions</small></button>
             </div>
-        </div>
+            <p class="helper-text">Switch themes to match your mood, screen, or lighting without changing your tools.</p>
+        </section>
 
-        <div class="setting-group">
-            <div class="setting-title">Help & Discovery</div>
+        <section class="setting-group">
+            <div class="setting-title">App experience</div>
             <div class="toggle-row">
-                <span>Open FAQ & Help Center</span>
-                <a href="faq.html" style="text-decoration:none; background:var(--primary); color:#000; padding:6px 15px; border-radius:20px; font-size:0.75rem; font-weight:bold;">READ FAQ</a>
-            </div>
-        </div>
-
-        <div class="setting-group">
-            <div class="setting-title">Installation</div>
-            <div class="toggle-row" onclick="installPWA()" style="cursor:pointer;">
-                <span>Install Web App (PWA)</span>
-                <span style="font-size:1.2rem;">📱</span>
+                <div>
+                    <strong>Install as app</strong>
+                    <p class="helper-text">Use the PWA version for a cleaner, app-like home screen experience.</p>
+                </div>
+                <button type="button" class="soft-btn" onclick="installPWA()">Install</button>
             </div>
             <div class="toggle-row">
-                <span>Download Android APK</span>
-                <a href="qalqx.apk" download style="text-decoration:none; background:var(--primary); color:#000; padding:6px 15px; border-radius:20px; font-size:0.75rem; font-weight:bold;">GET .APK</a>
+                <div>
+                    <strong>Offline support</strong>
+                    <p class="helper-text">Core tools stay available even when connectivity is weak or temporarily unavailable.</p>
+                </div>
+                <span class="status-pill">Always on</span>
             </div>
-            <div style="font-size:0.7rem; color:#666; margin-top:10px; line-height:1.4;">
-                *For APK: Enable "Install from Unknown Sources" in Android Settings.
-            </div>
-        </div>
-        <div class="toggle-row" style="border-top:1px solid #333; margin-top:10px; padding-top:10px;">
-    <span>View Source Code</span>
-    <a href="https://github.com/qalqx-dev/Qalyx" target="_blank" style="text-decoration:none; background:#333; color:#fff; padding:6px 15px; border-radius:20px; font-size:0.75rem; font-weight:bold; display:flex; align-items:center; gap:5px;">
-        <span>GITHUB ↗</span>
-    </a>
-        </div>
-        
-
-        <div class="setting-group">
-            <div class="setting-title">Memory Core</div>
             <div class="toggle-row">
-                <span>Haptic Feedback</span>
-                <input type="checkbox" id="hapticToggle" checked onchange="toggleHaptics()">
+                <div>
+                    <strong>Haptic feedback</strong>
+                    <p class="helper-text">Small tactile taps make touch interactions feel more alive on phones and tablets.</p>
+                </div>
+                <label class="switch" aria-label="Toggle haptic feedback">
+                    <input type="checkbox" id="hapticToggle" checked onchange="toggleHaptics()">
+                    <span class="slider"></span>
+                </label>
             </div>
-            <button onclick="clearData()" style="width:100%; padding:15px; background:rgba(255, 69, 0, 0.15); color:#FF4500; border:1px solid #FF4500; border-radius:8px; margin-top:10px; font-weight:bold;">FACTORY RESET</button>
-        </div>
+        </section>
 
-        <div style="text-align:center; color:#444; font-size:0.7rem; margin-top:20px;">
-            QALQX OS v7.0 • Build 2026.06.03<br>
-            Secure • Offline • Local
-        </div>
+        <section class="setting-group">
+            <div class="setting-title">Help & resources</div>
+            <div class="toggle-row">
+                <div>
+                    <strong>FAQ & help center</strong>
+                    <p class="helper-text">Find answers about offline use, PWA installation, privacy, and the full tool library.</p>
+                </div>
+                <a href="faq.html" class="link-pill">Read FAQ</a>
+            </div>
+            <div class="toggle-row">
+                <div>
+                    <strong>Download Android APK</strong>
+                    <p class="helper-text">Install the app package directly on Android devices if you prefer it outside the browser.</p>
+                </div>
+                <a href="https://github.com/qalqx-dev/Qalyx/releases" target="_blank" rel="noopener noreferrer" class="link-pill">Get APK</a>
+            </div>
+            <div class="toggle-row">
+                <div>
+                    <strong>View source code</strong>
+                    <p class="helper-text">Explore the project and keep up with new tools and updates.</p>
+                </div>
+                <a href="https://github.com/qalqx-dev/Qalyx" target="_blank" rel="noopener noreferrer" class="link-pill">GitHub ↗</a>
+            </div>
+        </section>
 
+        <section class="setting-group">
+            <div class="setting-title">Privacy & memory</div>
+            <div class="toggle-row">
+                <div>
+                    <strong>Clear saved app data</strong>
+                    <p class="helper-text">This removes local notes, task lists, and saved settings from this browser.</p>
+                </div>
+                <button type="button" class="danger-btn" onclick="clearData()">Reset</button>
+            </div>
+        </section>
+
+        <div class="footer-note">
+            QALQX OS v7.0 • Secure • Offline • Local
+        </div>
     </div>
 
     <script>
-        // Init Toggles
-        if(localStorage.getItem('qalqx-haptics') === 'off') {
-            document.getElementById('hapticToggle').checked = false;
+        function updateStatus() {
+            const hapticsToggle = document.getElementById('hapticToggle');
+            const statusHaptics = document.getElementById('statusHaptics');
+            const savedTheme = localStorage.getItem('qalqx-theme') || 'default';
+            const themeLabel = savedTheme === 'theme-green' ? 'Matrix' : savedTheme === 'theme-gold' ? 'Royal' : savedTheme === 'theme-red' ? 'Sith' : savedTheme === 'theme-light' ? 'Paper' : savedTheme === 'theme-sunset' ? 'Sunset' : savedTheme === 'theme-ocean' ? 'Ocean' : savedTheme === 'theme-lilac' ? 'Lilac' : savedTheme === 'theme-midnight' ? 'Midnight' : 'Cyber';
+            document.getElementById('statusTheme').textContent = 'Theme: ' + themeLabel;
+            if (statusHaptics) {
+                statusHaptics.textContent = 'Haptics: ' + (hapticsToggle && hapticsToggle.checked ? 'On' : 'Off');
+            }
         }
 
         function toggleHaptics() {
             const isOn = document.getElementById('hapticToggle').checked;
             localStorage.setItem('qalqx-haptics', isOn ? 'on' : 'off');
+            updateStatus();
         }
 
         function applyTheme(themeName) {
             document.body.classList.remove('theme-green', 'theme-gold', 'theme-red', 'theme-light');
             if (themeName !== 'default') document.body.classList.add(themeName);
             localStorage.setItem('qalqx-theme', themeName);
-            setTimeout(() => location.reload(), 250);
+            document.querySelectorAll('.theme-btn').forEach((btn) => {
+                btn.classList.toggle('active', btn.getAttribute('data-theme') === (themeName === 'default' ? 'default' : themeName));
+            });
+            updateStatus();
         }
 
         function clearData() {
-            if(confirm("Factory Reset: Wipes all notes, tasks, and settings. Proceed?")) {
+            if (confirm('Factory Reset: Wipes all notes, tasks, and settings. Proceed?')) {
                 localStorage.clear();
                 location.reload();
             }
         }
 
-        // PWA Install Trigger
+        document.querySelectorAll('.theme-btn').forEach((btn) => {
+            btn.addEventListener('click', () => applyTheme(btn.getAttribute('data-theme')));
+        });
+
+        if (localStorage.getItem('qalqx-haptics') === 'off') {
+            document.getElementById('hapticToggle').checked = false;
+        }
+
+        const savedTheme = localStorage.getItem('qalqx-theme') || 'default';
+        applyTheme(savedTheme);
+        updateStatus();
+
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
         });
+
         function installPWA() {
-            if(deferredPrompt) deferredPrompt.prompt();
-            else alert("App is already installed or not supported in this browser.");
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+            } else {
+                alert('App is already installed or not supported in this browser.');
+            }
         }
     </script>
 </body>

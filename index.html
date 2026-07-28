@@ -15,9 +15,13 @@
     <meta name="theme-color" content="#000000">
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
     <title>QALQX | The Ultimate Offline Utility OS & 60+ Tools</title>
-    <meta name="description" content="QALQX is a free, offline-first utility OS with 60+ tools for students, developers, and everyday productivity: calculators, converters, notes, QR, security, and more.">
-    <meta name="keywords" content="QALQX, offline utility tools, student tools, developer tools, calculator, QR generator, password generator, unit converter, PWA app, productivity tools">
+    <meta name="description" content="QALQX is a free offline-first utility OS with 60+ tools for students, developers, creators, and everyday life. Use calculators, converters, notes, QR tools, security helpers, and more with no sign-up required.">
+    <meta name="keywords" content="offline utility tools, free utility app, student tools, developer tools, calculator, QR generator, password generator, unit converter, PWA app, productivity tools, note app, online offline tools">
     <meta name="author" content="QALQX Foundation">
+    <meta name="subject" content="Offline utility tools and productivity apps">
+    <meta name="theme-color" content="#000000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="QALQX">
     <link rel="canonical" href="https://qalqx-dev.github.io/Qalyx/">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://qalqx-dev.github.io/Qalyx/">
@@ -49,7 +53,7 @@
     <main class="main-shell">
         <section class="header-section">
             <div class="greet-box">
-                <h1 id="greet">System Ready</h1>
+                <h1 id="greet">Welcome back</h1>
                 <p id="dateLine">Loading...</p>
             </div>
             <div style="display:flex; gap:12px; align-items:center;">
@@ -60,32 +64,48 @@
 
         <section class="hero-panel">
             <div>
-                <p class="eyebrow">QALQX OS</p>
-                <h1>One dashboard. 60+ tools. Every screen.</h1>
-                <p class="hero-copy">A responsive, offline-first utility hub for students, developers, creators, and everyday problem-solvers. Browse by flow, search instantly, and keep your favorite tools close with keyboard shortcuts, touch-friendly controls, and smoother motion.</p>
+                <p class="eyebrow">Simple, helpful, always ready</p>
+                <h1>A calmer way to get things done.</h1>
+                <p class="hero-copy">Open the tool you need, get your answer, and move on. QALQX brings study help, everyday utilities, and quick creative tools into one easy place that feels calm and clear for students, professionals, and everyday problem-solvers.</p>
                 <div class="hero-actions">
-                    <a class="ghost-btn" href="faq.html">Why QALQX?</a>
-                    <a class="primary-btn" href="settings.html">Install App</a>
+                    <a class="ghost-btn" href="faq.html">How it works</a>
+                    <a class="primary-btn" href="settings.html">Install app</a>
+                </div>
+                <div class="hero-badges">
+                    <span>⚡ Fast</span>
+                    <span>🔒 Private</span>
+                    <span>📱 Works offline</span>
                 </div>
             </div>
             <div class="hero-stats">
-                <article class="stat-card"><strong>60+</strong><span>core utilities</span></article>
-                <article class="stat-card"><strong>Offline</strong><span>works without constant internet</span></article>
-                <article class="stat-card"><strong>PWA</strong><span>install on desktop or mobile</span></article>
+                <article class="stat-card"><strong>60+</strong><span>easy everyday tools</span></article>
+                <article class="stat-card"><strong>No signup</strong><span>just open and use</span></article>
+                <article class="stat-card"><strong>Made for real life</strong><span>study, work, health, and fun</span></article>
             </div>
         </section>
 
         <section class="toolbar-card">
             <div class="search-bar">
                 <span>🔍</span>
-                <input type="text" id="search" placeholder="Search tools by name, category, or keyword" onkeyup="filterApps()">
+                <input type="text" id="search" placeholder="Search for a tool, like notes, timer, or convert" onkeyup="filterApps()">
             </div>
             <div class="mini-pills">
-                <span>⌨️ / to search</span>
-                <span>📱 touch-ready</span>
-                <span>🧠 smart shortcuts</span>
-                <span>🔐 private by design</span>
+                <span>⌨️ Press / to search</span>
+                <span>📱 Touch-friendly</span>
+                <span>🧠 Helpful shortcuts</span>
+                <span>🔐 Private by design</span>
             </div>
+        </section>
+
+        <section class="quick-start-card">
+            <div class="section-heading">
+                <div>
+                    <p class="section-eyebrow">Popular right now</p>
+                    <h2>Start with the tools people use most</h2>
+                </div>
+                <a class="text-link" href="#mainGrid">Browse all tools</a>
+            </div>
+            <div class="quick-grid" id="quickGrid"></div>
         </section>
 
         <section class="chip-section">
@@ -95,6 +115,24 @@
             <div class="chip" onclick="filterCat('study', this)">Study</div>
             <div class="chip" onclick="filterCat('life', this)">Life</div>
             <div class="chip" onclick="filterCat('play', this)">Play</div>
+        </section>
+
+        <div class="empty-state" id="emptyState" hidden>
+            <h3>No tools matched that search yet.</h3>
+            <p>Try a broader word like “notes”, “time”, “convert”, or “study”.</p>
+        </div>
+        <section class="seo-support-card" aria-label="Useful utility categories">
+            <h3>Helpful categories for everyday use</h3>
+            <p>From calculators and grade helpers to QR generators, password tools, timers, converters, and health calculators, QALQX keeps practical utilities close at hand for work, school, and daily life.</p>
+            <div class="seo-tags">
+                <span>calculator</span>
+                <span>converter</span>
+                <span>notes</span>
+                <span>QR generator</span>
+                <span>password generator</span>
+                <span>timer</span>
+                <span>health calculator</span>
+            </div>
         </section>
 
         <section class="app-grid" id="mainGrid"></section>
@@ -177,7 +215,7 @@
         function renderTools() {
             const grid = document.getElementById('mainGrid');
             grid.innerHTML = toolCards.map(card => `
-                <a href="${card.path}" class="app-card" data-cat="${card.cat}" data-name="${card.name.toLowerCase()}">
+                <a href="${card.path}" class="app-card" data-cat="${card.cat}" data-name="${card.name.toLowerCase()}" data-tag="${card.tag.toLowerCase()}">
                     <div class="card-glow"></div>
                     <div class="icon-box">${card.icon}</div>
                     <div class="app-name">${card.name}</div>
@@ -186,12 +224,35 @@
             `).join('');
         }
 
+        function renderFeaturedTools() {
+            const quickGrid = document.getElementById('quickGrid');
+            const featured = toolCards.filter(card => ['Notes', 'Calculator', 'Timer', 'QR Gen', 'Convert', 'BMI'].includes(card.name));
+            quickGrid.innerHTML = featured.map(card => `
+                <a href="${card.path}" class="quick-card">
+                    <div class="quick-icon">${card.icon}</div>
+                    <div>
+                        <strong>${card.name}</strong>
+                        <p>${card.tag}</p>
+                    </div>
+                </a>
+            `).join('');
+        }
+
+        function updateEmptyState() {
+            const visibleCards = Array.from(document.querySelectorAll('.app-card')).filter(card => card.style.display !== 'none');
+            const emptyState = document.getElementById('emptyState');
+            if (emptyState) {
+                emptyState.hidden = visibleCards.length > 0;
+            }
+        }
+
         function filterCat(cat, btn) {
             document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
             if (btn) btn.classList.add('active');
             document.querySelectorAll('.app-card').forEach(card => {
                 card.style.display = (cat === 'all' || card.getAttribute('data-cat') === cat) ? 'flex' : 'none';
             });
+            updateEmptyState();
         }
 
         function filterApps() {
@@ -199,18 +260,20 @@
             document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
             document.querySelector('.chip').classList.add('active');
             document.querySelectorAll('.app-card').forEach(card => {
-                const text = (card.textContent + ' ' + card.getAttribute('data-name')).toLowerCase();
+                const text = (card.textContent + ' ' + card.getAttribute('data-name') + ' ' + card.getAttribute('data-tag')).toLowerCase();
                 card.style.display = text.includes(val) ? 'flex' : 'none';
             });
+            updateEmptyState();
         }
 
+        renderFeaturedTools();
         renderTools();
         filterCat('all', document.querySelector('.chip'));
 
         function updateTime() {
             const hr = new Date().getHours();
-            const msg = hr < 12 ? 'Good Morning' : hr < 18 ? 'Good Afternoon' : 'Good Evening';
-            document.getElementById('greet').innerText = msg + ', Founder';
+            const msg = hr < 12 ? 'Good morning' : hr < 18 ? 'Good afternoon' : 'Good evening';
+            document.getElementById('greet').innerText = msg + ', friend';
             document.getElementById('dateLine').innerText = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
         }
         updateTime();
